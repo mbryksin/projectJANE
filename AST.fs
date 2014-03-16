@@ -1,4 +1,8 @@
-﻿
+﻿type ExpressionOrType =
+    interface
+    end
+
+
 type Node() =
     class
     end
@@ -9,6 +13,7 @@ type Identifier = string
 
 type Type() =
     class
+        interface ExpressionOrType
     end
 
 type ReferenseType(name : Identifier) =
@@ -86,16 +91,200 @@ and Block(blockStatements : BlockStatement list) =
 
 //EXPRESSION
 
+type CreatedName(identifiers: Identifier list) =
+    class
+    end
+
+type CreatorRest =
+    interface
+    end
+
+type Creator(createdName: CreatedName, creatorRest: CreatorRest) =
+    class
+    end
+
+
+type Primary =
+    interface
+    end
+
+type ThisPrimary() =
+    class
+        interface Primary
+    end
+
+type NewCreatorPrimary(creator: Creator) =
+    class
+        interface Primary
+    end
+
+
+type IdentifierSuffix =
+    interface
+    end
+
+
+type MemberCall(identifiers: Identifier list, identifierSuffix: IdentifierSuffix option) =
+    class
+        interface Primary
+    end
+
+type Literal =
+    interface
+        inherit Primary
+    end
+
+type IntegerLiteral(value: int) = 
+    class
+        interface Literal
+    end
+
+type FoatingPointLiteral(value: float) = 
+    class
+        interface Literal
+    end
+
+type CharacterLiteral(value: char) = 
+    class
+        interface Literal
+    end
+
+type StringLiteral(value: string) = 
+    class
+        interface Literal
+    end
+
+type BooleanLiteral(value: bool) = 
+    class
+        interface Literal
+    end
+
+//воспринимаем как null
+type NullLiteral() = 
+    class
+        interface Literal
+    end
+
+
+type Selector =
+    interface
+    end
+
+
+
+
+type Operation(operation: string) =
+    class
+        let operation = operation
+        member this.Operation with get() = operation
+    end
+
+type PrefixOp(operation: string) =
+    class
+        inherit Operation(operation)
+    end
+        
+type InfixOp(operation: string) =
+    class
+        inherit Operation(operation)
+    end
+
+type PostfixOp(operation: string) =
+    class
+        inherit Operation(operation)
+    end
+
+type Expression3 =
+    interface
+    end
+
+type ExpressionWithBrackets(exprOrType : ExpressionOrType, expr3 : Expression3) = 
+    class
+        interface Expression3
+    end
+
+
+
+type MemberCallExpression(primary : Primary, selectors: Selector list, postficsOp: PostfixOp list) =
+    class
+        interface Expression3
+    end
+
+type PrefixExpression(prefixOp : PrefixOp, expr3 : Expression3) =
+    class
+        interface Expression3
+    end
+
+type Expression2Rest =
+    interface
+    end
+
+type infixExpression(op : InfixOp list, exprs3 : Expression3 list) = 
+    class
+        interface Expression2Rest
+    end
+
+type instanseOf(typ : Type) = 
+    class
+        interface Expression2Rest
+    end
+
+type Expression2(expression3 : Expression3, expr2Rest: Expression2Rest option) =
+    class
+    end
+
+type Expression(expressionBeforeEqual : Expression2, expressionAfterEqual : Expression2 option) =
+    class
+        inherit VariableInitializer()
+        interface Statement
+        interface ExpressionOrType
+    end
+
+type SuperSuffix =
+    interface
+    end
+
+type OptionExpression(expression: Expression option) =
+    class
+        interface IdentifierSuffix
+        interface Selector
+    end
+
+type SuperPrimary(superSuffix: SuperSuffix) =
+    class
+        interface Primary
+    end
+
+type Arguments(arguments: Expression list option) =
+    class
+        interface SuperSuffix
+        interface IdentifierSuffix
+    end
+
+type CallIdentifierWithArguments(identifier: Identifier, arguments: Arguments) =
+    class
+        interface Selector
+    end
+
+type ArrayCreatorRest =
+    interface
+        inherit CreatorRest
+    end
 
 type ArrayInitializer(varibleInitializers : VariableInitializer list) =
     class
         inherit VariableInitializer()
+        interface ArrayCreatorRest
     end
 
-type Expression((*args*)) =
+type ListExpression(listExpression: Expression list) =
     class
-        inherit VariableInitializer()
-        interface Statement
+        interface ArrayCreatorRest
+    end
+    
+type ExpressionInBrackets(expression: Expression) =
+    class
+        interface Primary
     end
     
 type IfStatement(expression : Expression, thenStatement : Statement, elseStatement : Statement option) = 
@@ -112,6 +301,7 @@ type ForStatement(forInitExpression : Expression list, forConditionExpression : 
     class
         interface Statement
     end
+
 type BreakStatement() = 
     class
         interface Statement
@@ -127,7 +317,6 @@ type ReturnStatement(expression : Expression option) =
         interface Statement
     end
 //EXPRESSION
-
 
 //CLASS OR INTERFACE
 
@@ -169,6 +358,11 @@ type ConstructorDeclaratorRest(formalParameters : FormalParameter list, body : B
 
 type ClassBody(constructorName : Identifier, constructorDeclaratorRest : ConstructorDeclaratorRest, classBodyDeclarations : ClassBodyDeclaration list) =
     class
+    end
+
+type ClassCreatorRest(arguments: Arguments, classBody: ClassBody option) =
+    class
+        interface CreatorRest
     end
 
 type InterfaceBody() =
