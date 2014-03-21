@@ -1,80 +1,11 @@
-﻿module AST
+﻿namespace AST
+open TypesAST
+open InterfacesAST
 
-type ExpressionOrType =
-    interface
-    end
-
+[<AbstractClass>]
 type Node() =
     class
     end
-
-type Identifier = string
-
-//TYPES
-
-type Type() =
-    class
-        interface ExpressionOrType
-    end
-
-type ReferenseType(name : Identifier) =
-    class
-        inherit Type()
-        let name = name
-        member this.Name with get() = name
-    end
-
-type BasicType() =
-    class
-        inherit Type()
-    end
-
-type Int() =
-    class
-        inherit BasicType()
-    end
-
-type Byte() =
-    class
-        inherit BasicType()
-    end
-
-type Char() =
-    class
-        inherit BasicType()
-    end
-
-type Boolean() =
-    class
-        inherit BasicType()
-    end
-
-type Long() =
-    class
-        inherit BasicType()
-    end
-
-type Float() =
-    class
-        inherit BasicType()
-    end
-
-type Double() =
-    class
-        inherit BasicType()
-    end
-//TYPES
-
-//BLOCK
-
-type VariableInitializer() =
-    class
-    end
-
-type BlockStatement = 
-    interface
-    end
-
 
 type LocalVariableDeclarator(typeName : Type, name : Identifier, bracketCount : int, variableInitializer : VariableInitializer) = 
     class
@@ -91,11 +22,7 @@ type LocalVariableDeclarator(typeName : Type, name : Identifier, bracketCount : 
         interface BlockStatement
     end
     
-type Statement =
-    interface
-        inherit BlockStatement
-    end
-and Block(blockStatements : BlockStatement list) = 
+type Block(blockStatements : BlockStatement list) = 
     class
         let blockStatements = blockStatements
         
@@ -104,19 +31,11 @@ and Block(blockStatements : BlockStatement list) =
         interface Statement
     end
 
-//BLOCK
-
-//EXPRESSION
-
 type CreatedName(identifiers: Identifier list) =
     class
         let identifiers = identifiers
 
         member this.Identifiers with get() = identifiers
-    end
-
-type CreatorRest =
-    interface
     end
 
 type Creator(createdName: CreatedName, creatorRest: CreatorRest) =
@@ -126,10 +45,6 @@ type Creator(createdName: CreatedName, creatorRest: CreatorRest) =
 
         member this.CreatedName with get() = createdName
         member this.CreatorRest with get() = creatorRest
-    end
-
-type Primary =
-    interface
     end
 
 type ThisPrimary() =
@@ -145,12 +60,6 @@ type NewCreatorPrimary(creator: Creator) =
         interface Primary
     end
 
-
-type IdentifierSuffix =
-    interface
-    end
-
-
 type MemberCall(identifiers: Identifier list, identifierSuffix: IdentifierSuffix option) =
     class
         let identifiers = identifiers
@@ -160,11 +69,6 @@ type MemberCall(identifiers: Identifier list, identifierSuffix: IdentifierSuffix
         member this.IdentifierSuffix with get() = identifierSuffix
 
         interface Primary
-    end
-
-type Literal =
-    interface
-        inherit Primary
     end
 
 type IntegerLiteral(value: int) = 
@@ -218,14 +122,6 @@ type NullLiteral() =
         interface Literal
     end
 
-
-type Selector =
-    interface
-    end
-
-
-
-
 type Operation(operation: string) =
     class
         let operation = operation
@@ -256,10 +152,6 @@ type PostfixOp(operation: string) =
         member this.Operation with get() = operation
     end
 
-type Expression3 =
-    interface
-    end
-
 type ExpressionWithBrackets(exprOrType : ExpressionOrType, expr3 : Expression3) = 
     class
         let exprOrType = exprOrType
@@ -270,8 +162,6 @@ type ExpressionWithBrackets(exprOrType : ExpressionOrType, expr3 : Expression3) 
 
         interface Expression3
     end
-
-
 
 type MemberCallExpression(primary : Primary, selectors: Selector list, postfixOpList: PostfixOp list) =
     class
@@ -295,10 +185,6 @@ type PrefixExpression(prefixOp : PrefixOp, expression3 : Expression3) =
         member this.Expression3 with get() = expression3
 
         interface Expression3
-    end
-
-type Expression2Rest =
-    interface
     end
 
 type infixExpression(infixOpList : InfixOp list, expression3List : Expression3 list) = 
@@ -331,9 +217,7 @@ type Expression2(expression3 : Expression3, expr2Rest: Expression2Rest option) =
     end
 
 type Expression(expressionBeforeEqual : Expression2, expressionAfterEqual : Expression2 option) =
-    class
-        inherit VariableInitializer()
-        
+    class        
         let expressionBeforeEqual = expressionBeforeEqual 
         let expressionAfterEqual = expressionAfterEqual
 
@@ -342,10 +226,7 @@ type Expression(expressionBeforeEqual : Expression2, expressionAfterEqual : Expr
 
         interface Statement
         interface ExpressionOrType
-    end
-
-type SuperSuffix =
-    interface
+        interface VariableInitializer
     end
 
 type OptionExpression(expression: Expression option) =
@@ -388,20 +269,14 @@ type CallIdentifierWithArguments(identifier: Identifier, arguments: Arguments) =
         interface Selector
     end
 
-type ArrayCreatorRest =
-    interface
-        inherit CreatorRest
-    end
-
 type ArrayInitializer(varibleInitializerList : VariableInitializer list) =
-    class
-        inherit VariableInitializer()
-        
+    class        
         let varibleInitializerList = varibleInitializerList
 
         member this.VaribleInitializerList with get() = varibleInitializerList
         
         interface ArrayCreatorRest
+        interface VariableInitializer
     end
 
 type ListExpression(listExpression: Expression list) =
@@ -485,18 +360,8 @@ type ReturnStatement(expression : Expression option) =
 
 //CLASS OR INTERFACE
 
-type MemberDecl() =
-    class
-    end
-
-type MethodOrFieldDecl() =
-    class
-        inherit MemberDecl()
-    end
-
 type FieldDeclarator(typeName : Type, name : Identifier, bracketCount : int, variableInitializer : VariableInitializer) =
     class
-        inherit MethodOrFieldDecl()
         let typeName = typeName
         let name = name
         let bracketCount = bracketCount
@@ -506,21 +371,26 @@ type FieldDeclarator(typeName : Type, name : Identifier, bracketCount : int, var
         member this.Name with get() = name
         member this.BracketCount with get() = bracketCount
         member this.VariableInitializer with get() = variableInitializer
+
+        interface MethodOrFieldDecl
     end
 
-type FormalParameter(name : Identifier, bracketCount : int) =
+//Type Identifier (“[ ]”)* 
+type FormalParameter(parameterType: Type, name : Identifier) =
     class
-        let bracketCount = bracketCount
+        let parameterType = parameterType
         let name = name
 
         member this.Name with get() = name
-        member this.BracketCount with get() = bracketCount
+        member this.ParameterType with get() = parameterType
     end
 
-type MethodDeclarator(typeName : Type, name : Identifier, formalParameters : FormalParameter list, body : Block option) =
-    class
-        inherit MethodOrFieldDecl()
-        
+//‘(‘ (FormalParameterDecls)? ‘)’
+//FormalParameterDecls: Type Identifier (“[ ]”)* (‘,’ FormalParameterDecls)*   
+type FormalParameters = FormalParameter list option
+
+type MethodDeclarator(typeName : Type, name : Identifier, formalParameters : FormalParameters, body : Block option) =
+    class        
         let typeName = typeName
         let methodName = name
         let formalParameters = formalParameters
@@ -530,12 +400,14 @@ type MethodDeclarator(typeName : Type, name : Identifier, formalParameters : For
         member this.MethodName with get() = methodName
         member this.FormalParameters with get() = formalParameters
         member this.MethodBody with get() = methodBody
+
+        interface MethodOrFieldDecl
     end
 
-type VoidMethodDeclarator(name : Identifier, formalParameters : FormalParameter list, body : Block option) = 
-    class
-        inherit MemberDecl()
-        
+
+//“void” Identifier VoidMethodDeclaratorRest
+type VoidMethodDeclarator(name : Identifier, formalParameters : FormalParameters, body : Block option) = 
+    class   
         let voidMethodName = name
         let formalParameters = formalParameters
         let voidMethodBody = body
@@ -543,8 +415,11 @@ type VoidMethodDeclarator(name : Identifier, formalParameters : FormalParameter 
         member this.VoidMethodName with get() = voidMethodName
         member this.FormalParameters with get() = formalParameters
         member this.VoidMethodBody with get() = voidMethodBody
+        
+        interface MemberDecl
     end
 
+//‘;’ | (“static”)? MemberDecl
 type ClassBodyDeclaration(isStatic : bool, memberDecl : MemberDecl) =
     class
         let isStatic = isStatic
@@ -563,6 +438,7 @@ type ConstructorDeclaratorRest(formalParameters : FormalParameter list, body : B
         member this.ConstuctorBody with get() = constuctorBody
     end
 
+//‘{‘ Identifier ConstructorDeclaratorRest (ClassBodyDeclaration)* }’
 type ClassBody(constructorName : Identifier, constructorDeclaratorRest : ConstructorDeclaratorRest, classBodyDeclarations : ClassBodyDeclaration list) =
     class
         let constructorName = constructorName
@@ -585,25 +461,101 @@ type ClassCreatorRest(arguments: Arguments, classBody: ClassBody option) =
         interface CreatorRest
     end
 
-type InterfaceBody() =
+//-----------------------------------------------------------------------------------------------------------------
+
+//(“[ ]”)* ‘=’ VariableInitializer
+type ConstantDeclaratorRest(bracketsCount: int, variableInitializer: VariableInitializer) =
     class
+        let bracketsCount = bracketsCount
+        let variableInitializer = variableInitializer
+
+        member this.BracketsCount with get() = bracketsCount
+        member this.VariableInitializer with get() = variableInitializer
     end
 
-type InterfacesDeclaration(name : Identifier, extends : Identifier list, body : InterfaceBody) =
+//Identifier ConstantDeclaratorRest
+type ConstantDeclarator(id: Identifier , constantDeclaratorRest : ConstantDeclaratorRest) =
     class
-       let interfaceName = name
+        let identifier = id
+        let constantDeclaratorRest = constantDeclaratorRest
+        
+        member this.Identifier with get() = identifier
+        member this.ConstantDeclaratorRest with get() = constantDeclaratorRest
+    end
+
+//ConstantDeclaratorRest ( ‘,’ ConstantDeclarator )*
+type ConstantDeclaratorsRest(constantDeclaratorRest: ConstantDeclaratorRest, constantDeclarators : ConstantDeclarator list) =
+    class
+        let constantDeclaratorRest = constantDeclaratorRest
+        let constantDeclarators = constantDeclarators
+
+        member this.ConstantDeclaratorRest with get() = constantDeclaratorRest
+        member this.ConstantDeclarators with get() = constantDeclarators
+        interface InterfaceMethodOrFieldRest
+    end
+
+//FormalParameters (“[ ]”)* ‘;’
+type InterfaceMethodDeclaratorRest(formalParameters: FormalParameters, bracketsCount: int) = 
+    class
+        let formalParameters = formalParameters
+        let bracketsCount = bracketsCount
+
+        member this.FormalParameters with get() = formalParameters
+        member this.BracketsCount with get() = bracketsCount
+        interface InterfaceMethodOrFieldRest
+    end
+
+//Type Identifier InterfaceMethodOrFieldRest
+type InterfaceMemberDeclarator(methodType: Type, id: Identifier, interfaceMethodOrFieldRest: InterfaceMethodOrFieldRest) =
+    class
+        let methodType = methodType
+        let identifier = id
+
+        member this.MethodType with get() = methodType
+        member this.Identifier with get() = identifier
+        interface InterfaceMemberDecl
+    end
+
+//“void” Identifier FormalParameters;
+type VoidInterfaceMethodDeclarator(identifier : Identifier, formalParameters : FormalParameters) =
+    class
+        interface InterfaceMemberDecl
+    end
+
+//(“static”)? InterfaceMemberDecl
+type InterfaceBodyDeclaration(isStatic: bool, interfaceMemberDecl : InterfaceMemberDecl) = 
+    class
+        let isStatic = isStatic
+        let interfaceMemberDecl = interfaceMemberDecl
+
+        member this.IsStatic with get() = isStatic
+        member this.InterfaceMemberDecl with get() = interfaceMemberDecl
+    end
+
+//‘{‘ (InterfaceBodyDeclaration)* ‘}’
+type InterfaceBody(bodyDeclarations : InterfaceBodyDeclaration list) =
+    class
+        let bodyDeclarations = bodyDeclarations
+
+        member this.BodyDeclarations with get() = bodyDeclarations
+    end
+
+//“interface” Identifier (“extends” TypeList)? InterfaceBody
+type InterfacesDeclaration(identifier : Identifier, extends : Identifier list option, body : InterfaceBody) =
+    class
+       let interfaceName = identifier
        let extendsList = extends
        let interfaceBody = body
    
        member this.InterfaceName with get() = interfaceName 
        member this.ExtendsList with get() = extendsList
-       member this.InterfaceBody with get() = interfaceBody
-    
+       member this.InterfaceBody with get() = interfaceBody    
     end
 
-type ClassDeclaration(name : Identifier, extends : Identifier list, implements : Identifier list, body : ClassBody) =
+//“class” Identifier (“extends” Identifier)? (“implements” TypeList)? ClassBody
+type ClassDeclaration(identifier : Identifier, extends : Identifier option, implements : Identifier list option, body : ClassBody) =
     class
-        let className = name
+        let className = identifier
         let extendsList = extends
         let implementsList = implements
         let classBody = body
@@ -614,6 +566,7 @@ type ClassDeclaration(name : Identifier, extends : Identifier list, implements :
         member this.ClassBody with get() = classBody
     end
 
+//‘{‘(ClassDeclaration | InterfaceDeclaration)* ‘}’
 type Program(classes: ClassDeclaration list, interfaces: InterfacesDeclaration list) =
     class
         let classes = classes
