@@ -7,7 +7,7 @@ type Block(statements : Statement list) =
 type SemicolonStatement() =
     interface Statement
     
-type IfStatement(condition : Expression, trueStatement : Statement, falseStatement : Statement) =
+type IfStatement(condition : Expression, trueStatement : Statement, falseStatement : Statement option) =
     interface Statement
     member x.Condition      = condition
     member x.TrueStatement  = trueStatement
@@ -18,11 +18,12 @@ type WhileStatement(condition : Expression, body : Statement) =
     member x.Condition = condition
     member x.Body      = body
 
-type ForStatement(init : Expression list, condition : Expression option, update : Expression list) =
+type ForStatement(init : Expression list, condition : Expression option, update : Expression list, body : Statement) =
     interface Statement
     member x.Init      = init
     member x.Condition = condition
     member x.Update    = update
+    member x.Body      = body
 
 type BreakStatement() =
     interface Statement

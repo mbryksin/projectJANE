@@ -48,12 +48,14 @@
     <Compile Include="Type.fs" />
     <Compile Include="FormalParameter.fs" />
     <Compile Include="InterfaceStatement.fs" />
+    <Compile Include="ExpressionPrimitive.fs" />
     <Compile Include="Expression.fs" />
     <Compile Include="Statement.fs" />
     <Compile Include="MembersInterface.fs" />
     <Compile Include="MembersClass.fs" />
     <Compile Include="MembersProgram.fs" />
     <Compile Include="Program.fs" />
+    <None Include="App.config" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
