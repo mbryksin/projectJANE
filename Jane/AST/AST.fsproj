@@ -48,7 +48,6 @@
     <Compile Include="Type.fs" />
     <Compile Include="FormalParameter.fs" />
     <Compile Include="InterfaceStatement.fs" />
-    <Compile Include="ExpressionPrimitive.fs" />
     <Compile Include="Expression.fs" />
     <Compile Include="Statement.fs" />
     <Compile Include="MembersInterface.fs" />
