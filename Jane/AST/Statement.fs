@@ -49,5 +49,3 @@ type AssignmentStatement(name : string, body : Initializer) =
     interface Statement
     member x.Name = name
     member x.Body = body
-
-type CallStatement(
