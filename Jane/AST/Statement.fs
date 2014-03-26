@@ -34,3 +34,20 @@ type ContinueStatement() =
 type ReturnStatement(expression : Expression option) =
     interface Statement
     member x.Expression = expression
+
+type SuperStatement(arguments : Expression list) =
+    interface Statement
+    member x.Arguments = arguments
+
+type DeclarationStatement(declarationType : Type, name : string, body : Initializer) =
+    interface Statement
+    member x.Type = declarationType
+    member x.Name = name
+    member x.Body = body
+
+type AssignmentStatement(name : string, body : Initializer) =
+    interface Statement
+    member x.Name = name
+    member x.Body = body
+
+type CallStatement(
