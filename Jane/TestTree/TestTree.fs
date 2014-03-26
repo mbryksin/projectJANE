@@ -2,17 +2,21 @@
 
 open AST
 
-//class myClass
-//{
-//    myClass()
-//    {
-//    }
-//
-//    int main()
-//    {
-//        stdout.print("Hello World!");
-//    }
-//}
+(*
+
+class myClass
+{
+    myClass()
+    {
+    }
+
+    int main()
+    {
+        stdout.print("Hello World!");
+    }
+}
+
+*)
 
 
 let myExpression   = new Expression
