@@ -2,6 +2,18 @@
 
 open AST
 
+//class myClass
+//{
+//    myClass()
+//    {
+//    }
+//
+//    int main()
+//    {
+//        stdout.print("Hello World!");
+//    }
+//}
+
 
 let myExpression   = new Expression
                          (new ExpressionOR
@@ -32,6 +44,3 @@ let myConstructor  = new ClassConstructor([], new Block([]))
 let myClass        = new Class("myClass", myConstructor, myClassMembers)
 let myClasses      = List.map (fun a -> a :> ProgramMember) [myClass]
 let myProg         = new Program(myClasses)
-
-let a = 1
-
