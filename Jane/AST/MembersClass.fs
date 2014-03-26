@@ -21,3 +21,8 @@ type ClassField(isStatic : bool, isFinal : bool, fieldType : Type, name : string
     member x.Type       = fieldType
     member x.Expression = expression
     member x.IsFinal    = isFinal 
+
+
+type ClassConstructor(formalParameters : FormalParameter list, body : Block) =
+    member x.FormalParameters = formalParameters
+    member x.Body             = body
