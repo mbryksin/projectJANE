@@ -12,6 +12,9 @@ type Constructor(typeName : string, arguments : Expression list) =
     member x.TypeName  = typeName
     member x.Arguments = arguments
 
+and Identifier(id : string) =
+    interface Primary
+    member x.Id = id
 
 and Literal =
     inherit Primary
@@ -65,7 +68,7 @@ and ArrayElement(index : Expression) =
 
 and MemberCall(first : Primary, rest : (string * Suffix option) list) =
     interface PrimaryOrMemberCall
-    interface Statement;
+    interface Statement
     member x.First = first
     member x.Rest  = rest
 
