@@ -6,6 +6,17 @@ type Block(statements : Statement list) =
 
 type SemicolonStatement() =
     interface Statement
+
+type DeclarationStatement(declarationType : Type, name : string, body : Initializer) =
+    interface Statement
+    member x.Type = declarationType
+    member x.Name = name
+    member x.Body = body
+
+type AssignmentStatement(path : string list, body : Initializer) =
+    interface Statement
+    member x.Path = path
+    member x.Body = body
     
 type IfStatement(condition : Expression, trueStatement : Statement, falseStatement : Statement option) =
     interface Statement
@@ -18,7 +29,7 @@ type WhileStatement(condition : Expression, body : Statement) =
     member x.Condition = condition
     member x.Body      = body
 
-type ForStatement(init : Expression list, condition : Expression option, update : Expression list, body : Statement) =
+type ForStatement(init : DeclarationStatement list, condition : Expression option, update : AssignmentStatement list, body : Statement) =
     interface Statement
     member x.Init      = init
     member x.Condition = condition
@@ -38,14 +49,3 @@ type ReturnStatement(expression : Expression option) =
 type SuperStatement(arguments : Expression list) =
     interface Statement
     member x.Arguments = arguments
-
-type DeclarationStatement(declarationType : Type, name : string, body : Initializer) =
-    interface Statement
-    member x.Type = declarationType
-    member x.Name = name
-    member x.Body = body
-
-type AssignmentStatement(name : string, body : Initializer) =
-    interface Statement
-    member x.Name = name
-    member x.Body = body
