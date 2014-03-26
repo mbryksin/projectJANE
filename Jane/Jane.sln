@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IDE", "IDE\IDE.csproj", "{A
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "AST", "AST\AST.fsproj", "{02DAA5A7-9D06-4441-8B7E-E4D9BAF1ACFE}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "TestTree", "TestTree\TestTree.fsproj", "{566AE778-7F64-4C67-BF0E-361E5209F003}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{02DAA5A7-9D06-4441-8B7E-E4D9BAF1ACFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02DAA5A7-9D06-4441-8B7E-E4D9BAF1ACFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02DAA5A7-9D06-4441-8B7E-E4D9BAF1ACFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{566AE778-7F64-4C67-BF0E-361E5209F003}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{566AE778-7F64-4C67-BF0E-361E5209F003}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{566AE778-7F64-4C67-BF0E-361E5209F003}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{566AE778-7F64-4C67-BF0E-361E5209F003}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
