@@ -2,6 +2,18 @@
 
 open AST
 
+//class myClass
+//{
+//    myClass()
+//    {
+//    }
+//
+//    int main()
+//    {
+//        stdout.print("Hello World!");
+//    }
+//}
+
 
 let myExpression   = new Expression
                          (new ExpressionOR
@@ -29,9 +41,6 @@ let myPrint        = new MemberCall(new Identifier("stdout"), [("print", Some(ne
 let myMethod       = new ClassMethod(true, new Type("int", 0), "main", [], new Block([myPrint :> Statement]))
 let myClassMembers = List.map (fun a -> a :> ClassMember) [myMethod]
 let myConstructor  = new ClassConstructor([], new Block([]))
-let myClass        = new Class("myClass", myConstructor, myClassMembers)
+let myClass        = new Class("myClass", None, [], myConstructor, myClassMembers)
 let myClasses      = List.map (fun a -> a :> ProgramMember) [myClass]
 let myProg         = new Program(myClasses)
-
-let a = 1
-

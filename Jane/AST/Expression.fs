@@ -7,7 +7,7 @@ type PrimaryOrMemberCall =
 type Primary =
     inherit PrimaryOrMemberCall
 
-type Constructor(typeName : string, arguments : Expression list) =
+type Constructor(typeName : string, arguments : Arguments) =
     interface Primary
     member x.TypeName  = typeName
     member x.Arguments = arguments
