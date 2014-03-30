@@ -10,35 +10,29 @@ open AST
 //
 //    int main()
 //    {
-//        stdout.print("Hello World!");
+//        string helloWorld = "Hello";
+//        helloWorld = helloWorld + " World!"
+//        stdout.print(helloWorld);
 //    }
 //}
 
 
-let myExpression   = new Expression
-                         (new ExpressionOR
-                              (new ExpressionAND
-                                   (new ExpressionEQ
-                                        (new ExpressionINST
-                                             (new ExpressionCOMP
-                                                  (new ExpressionADD
-                                                       (new ExpressionMUL
-                                                            (false, 
-                                                             new ExpressionNOT
-                                                                (None, 
-                                                                 new StringLiteral("Hello World!")
-                                                                )
-                                                             ), None
-                                                       ), []
-                                                  ), None
-                                             ), None
-                                        ), None
-                                   ), []
-                              ), []
-                         )
+let myTypeString   = new Type("string", 0)
 
-let myPrint        = new MemberCall(new Identifier("stdout"), [("print", Some(new Arguments([myExpression]) :> Suffix))])
-let myMethod       = new ClassMethod(true, new Type("int", 0), "main", [], new Block([myPrint :> Statement]))
+let myHello        = new StringLiteral("Hello")
+let myDecl         = new DeclarationStatement(myTypeString, "helloWorld", myHello)
+
+let myWorld        = new StringLiteral(" World!")
+let myMemberCall1  = new BinaryOperation(new Identifier("helloWorld"), ADDITION, myWorld)
+let myAssign       = new AssignmentStatement(["helloWorld"], myMemberCall1)
+                           
+let myMember       = new Member("print", new Arguments([new Identifier("helloWorld")]))
+let myMemberCall2  = new BinaryOperation(new Identifier("stdout"), MEMBER_CELL, myMember)
+let myPrint        = new MemberCallStatement(myMemberCall2)
+
+let myBlock        = new Block([myDecl; myAssign; myPrint])
+let myMethod       = new ClassMethod(true, new Type("int", 0), "main", [], myBlock)
+
 let myClassMembers = List.map (fun a -> a :> ClassMember) [myMethod]
 let myConstructor  = new ClassConstructor([], new Block([]))
 let myClass        = new Class("myClass", None, [], myConstructor, myClassMembers)
