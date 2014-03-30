@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace IDE.Properties
+namespace JaneIDE.Properties
 {
 
 
