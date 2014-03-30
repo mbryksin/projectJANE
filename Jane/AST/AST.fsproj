@@ -47,9 +47,12 @@
   <ItemGroup>
     <Compile Include="Type.fs" />
     <Compile Include="FormalParameter.fs" />
-    <Compile Include="InterfaceStatement.fs" />
     <Compile Include="Operators.fs" />
+    <Compile Include="Initializer.fs" />
     <Compile Include="Expression.fs" />
+    <Compile Include="Suffix.fs" />
+    <Compile Include="Primary.fs" />
+    <Compile Include="Literal.fs" />
     <Compile Include="Statement.fs" />
     <Compile Include="MembersInterface.fs" />
     <Compile Include="MembersClass.fs" />
