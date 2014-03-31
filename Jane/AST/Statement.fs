@@ -1,11 +1,12 @@
 ﻿namespace AST
 
+type Statement =
+    interface 
+    end
+
 type Block(statements : Statement list) =
     interface Statement
     member x.Statements = statements
-
-type SemicolonStatement() =
-    interface Statement
 
 type DeclarationStatement(declarationType : Type, name : string, body : Initializer) =
     interface Statement
@@ -16,6 +17,10 @@ type DeclarationStatement(declarationType : Type, name : string, body : Initiali
 type AssignmentStatement(path : string list, body : Initializer) =
     interface Statement
     member x.Path = path
+    member x.Body = body
+
+type MemberCallStatement(body : Expression) =
+    interface Statement
     member x.Body = body
     
 type IfStatement(condition : Expression, trueStatement : Statement, falseStatement : Statement option) =
