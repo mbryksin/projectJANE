@@ -13,7 +13,7 @@ type BinaryOperator = OR               // ||
                     | MULTIPLICATION   // *
                     | DIVISION         // /
                     | MODULUS          // %
-                    | MEMBER_CELL      // .
+                    | MEMBER_CALL      // .
 
 type UnaryOperator  = NOT              // !
                     | PLUS             // +
