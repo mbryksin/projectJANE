@@ -3,7 +3,7 @@
 [<AbstractClass>]
 type InterfaceMember(isStatic : bool, name : string) =
     member x.Name     = name
-    member x.IsStatic = isStatic    
+    member x.IsStatic = isStatic
 
 type InterfaceMethod(isStatic : bool, returnType : Type, name : string, formalParameters : FormalParameter list) =
     inherit InterfaceMember(isStatic, name)

@@ -2,8 +2,11 @@
 
 type Initializer =
     interface
+        abstract member Interpret: unit -> Val
     end
 
 type ArrayInitializer(elements : Initializer list) =
-    interface Initializer
     member x.Elements = elements
+    interface Initializer with
+        member x.Interpret()= new Val() // later
+

@@ -15,6 +15,9 @@ type ClassVoidMethod(isStatic : bool, name : string, formalParameters : FormalPa
     inherit ClassMember(isStatic, name)
     member x.FormalParameters = formalParameters
     member x.Body             = body
+    //Interpret body of method
+    member x.Interpret() = 
+        (body :> Statement).Interpret()
 
 type ClassField(isStatic : bool, isFinal : bool, fieldType : Type, name : string, expression : Expression) =
     inherit ClassMember(isStatic, name)
