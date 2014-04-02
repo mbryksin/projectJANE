@@ -1,13 +1,13 @@
 ﻿namespace AST
 
-type Suffix =
-    interface
-    end
-
-type Arguments(arguments : Expression list) =
-    interface Suffix
+[<AbstractClass>]
+type Suffix(pos : Position) =
+    inherit Node(pos)
+    
+type Arguments(arguments : Expression list, pos : Position) =
+    inherit Suffix(pos)
     member x.Arguments = arguments
 
-type ArrayElement(index : Expression) =
-    interface Suffix
+type ArrayElement(index : Expression, pos : Position) =
+    inherit Suffix(pos)
     member x.Index = index

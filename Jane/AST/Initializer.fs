@@ -1,9 +1,9 @@
 ﻿namespace AST
 
-type Initializer =
-    interface
-    end
+[<AbstractClass>]
+type Initializer(pos : Position) =
+    inherit Node(pos)
 
-type ArrayInitializer(elements : Initializer list) =
-    interface Initializer
+type ArrayInitializer(elements : Initializer list, pos : Position) =
+    inherit Initializer(pos)
     member x.Elements = elements

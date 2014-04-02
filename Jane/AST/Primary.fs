@@ -1,18 +1,19 @@
 ﻿namespace AST
 
-type Primary =
-    inherit Expression
+[<AbstractClass>]
+type Primary(pos) =
+    inherit Expression(pos)
 
-type Constructor(typeName : string, arguments : Arguments) =
-    interface Primary
+type Constructor(typeName : string, arguments : Arguments, pos : Position) =
+    inherit Primary(pos)
     member x.TName     = typeName
     member x.Arguments = arguments
 
-type Identifier(name : string) =
-    interface Primary
+type Identifier(name : string, pos : Position) =
+    inherit Primary(pos)
     member x.Name = name
 
-type Member(name : string, suffix : Suffix) =
-    interface Primary
+type Member(name : string, suffix : Suffix, pos : Position) =
+    inherit Primary(pos)
     member x.Name   = name
     member x.Suffix = suffix
