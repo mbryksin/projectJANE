@@ -6,6 +6,7 @@ type Position(startLine : int, startSymbol : int, endLine : int, endSymbol : int
     member x.EndLine     = endLine
     member x.EndSymbol   = endSymbol
     
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 [<AbstractClass>]
 type Node(pos : Position) =
