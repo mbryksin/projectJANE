@@ -24,5 +24,10 @@ namespace JaneIDE
         {
             InitializeComponent();
         }
+
+        private void wfh_ChildChanged(object sender, System.Windows.Forms.Integration.ChildChangedEventArgs e)
+        {
+
+        }
     }
 }
