@@ -1,0 +1,60 @@
+﻿{
+module Lexer
+open System
+open Parser
+open Microsoft.FSharp.Text.Lexing
+open ParseLiteral
+}
+
+let whitespace     = [ ' ' '\t' '\r' '\n' ]
+
+let null           = "null"
+let new            = "new"
+
+let digit          = ['0'-'9']
+let int            = digit+
+
+let dot            = [ '.' ]
+let float          = int dot int
+
+let apostrophe     = [ ''' ]
+let char           = apostrophe [ ^ ''' ]+ apostrophe
+				   | apostrophe apostrophe apostrophe
+
+let boolean        = "true" | "false"
+
+let quote          = [ '"' ]  
+let string         = quote [ ^ '\n' '"' ]+ quote
+
+let letter         = ['a'-'z' 'A'-'Z' '_']
+let identifier     = letter (letter | digit)*
+
+let oSqrBracket    = [ '[' ]
+let cSqrBracket    = [ ']' ]
+
+let comma          = [ ',' ]
+let oBracket       = [ '(' ]
+let cBracket       = [ ')' ]
+ 
+rule tokenize = parse
+| whitespace				{ tokenize lexbuf }
+| null                      { NULL }
+| int       				{ INT (ParseInt(LexBuffer<_>.LexemeString lexbuf)) }
+| boolean                   { BOOLEAN (ParseBool(LexBuffer<_>.LexemeString lexbuf)) }
+| char                      { CHAR (ParseChar(LexBuffer<_>.LexemeString lexbuf)) }
+| string                    { STRING (ParseString(LexBuffer<_>.LexemeString lexbuf)) }
+| float                     { FLOAT (ParseFloat(LexBuffer<_>.LexemeString lexbuf)) }
+
+| new                       { NEW }
+
+| identifier                { ID (LexBuffer<_>.LexemeString lexbuf) }
+
+| oSqrBracket               { O_SQR_BRACKET }
+| cSqrBracket               { C_SQR_BRACKET }
+
+| oBracket                  { O_BRACKET }
+| cBracket                  { C_BRACKET }
+| comma                     { COMMA }
+| dot                       { DOT } 
+
+| eof						{ END }
