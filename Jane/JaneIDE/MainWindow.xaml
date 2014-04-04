@@ -83,7 +83,7 @@
                     <RowDefinition Height="209*"/>
                     <RowDefinition Height="70*"/>
                 </Grid.RowDefinitions>
-                <TabControl Grid.Row="0" IsEnabled="False">
+                <TabControl Grid.Row="0">
                     <TabItem Header="">
                         <Grid Background="#FFE5E5E5">
                             <WindowsFormsHost Name="wfh" ChildChanged="wfh_ChildChanged">

@@ -23,6 +23,25 @@ namespace JaneIDE
         public MainWindow()
         {
             InitializeComponent();
+            CodeBoxConf();
+        }
+        public void CodeBoxConf()
+        {
+            ScintillaNET.Scintilla CodeBox = (ScintillaNET.Scintilla)wfh.Child;
+            CodeBox.ConfigurationManager.Language = "jane";
+            CodeBox.ConfigurationManager.CustomLocation = @"JaNE.xml";
+            CodeBox.ConfigurationManager.Configure();
+            CodeBox.Margins[0].Width = 25; // String numbers
+            //CodeBox.BackColor 
+            CodeBox.CharAdded += CodeBox_CharAdded;
+            CodeBox.AutoComplete.MaxWidth = 20;
+            CodeBox.AutoComplete.MaxHeight = 10;
+        }
+
+        void CodeBox_CharAdded(object sender, ScintillaNET.CharAddedEventArgs e)
+        {
+            ((ScintillaNET.Scintilla)wfh.Child).AutoComplete.Show();
+           //throw new NotImplementedException();
         }
 
         private void wfh_ChildChanged(object sender, System.Windows.Forms.Integration.ChildChangedEventArgs e)
