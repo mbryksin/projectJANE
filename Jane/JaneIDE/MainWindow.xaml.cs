@@ -48,6 +48,8 @@ namespace JaneIDE
             CodeBox.Folding.UseCompactFolding = true;
 
             CodeBox.Selection.BackColor = System.Drawing.Color.FromArgb(190, 190, 190);
+
+            CodeBox.IsBraceMatching = true;
             
         }
 
