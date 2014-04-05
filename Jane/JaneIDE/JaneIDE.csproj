@@ -38,9 +38,8 @@
     <ApplicationIcon>JanePic.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ScintillaNET, Version=2.6.0.0, Culture=neutral, PublicKeyToken=948d6c9751444115, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Batov's libs\ScintillaNET.dll</HintPath>
+    <Reference Include="ScintillaNET">
+      <HintPath>..\..\..\..\GitHub\projectJANE\Jane\JaneIDE\Batov's libs\ScintillaNET.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
