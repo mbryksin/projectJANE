@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>BeFunky_DyNmitQRRMw.png.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="ScintillaNET">
       <HintPath>..\..\..\..\..\..\..\ScintillaNET\ScintillaNET.dll</HintPath>
@@ -120,6 +123,12 @@
     <Resource Include="Images\open.png" />
     <Resource Include="Images\run.png" />
     <Resource Include="Images\save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Jane.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="BeFunky_DyNmitQRRMw.png.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
