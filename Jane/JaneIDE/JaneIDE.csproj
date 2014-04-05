@@ -39,7 +39,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ScintillaNET">
-      <HintPath>..\..\..\..\GitHub\projectJANE\Jane\JaneIDE\Batov's libs\ScintillaNET.dll</HintPath>
+      <HintPath>CodeBoxLibs\ScintillaNET.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
