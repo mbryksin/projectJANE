@@ -87,10 +87,9 @@
                     <TabItem Header="">
                         <Grid Background="#FFE5E5E5">
                             <WindowsFormsHost Name="wfh" ChildChanged="wfh_ChildChanged">
-                                <scintilla:Scintilla Name="CodeBox"></scintilla:Scintilla>
+                                <scintilla:Scintilla Name="CodeBox"> </scintilla:Scintilla>
                             </WindowsFormsHost>
                         </Grid>
-
                     </TabItem>
                 </TabControl>
                 <TabControl Grid.Row="1">
