@@ -4,7 +4,7 @@
     <Language Name="jane">
         <Lexer LexerName="cpp"/>
         <Lexer LineCommentPrefix="//" StreamCommentPrefix="/*" StreamCommentSuffix="*/" >
-            <Keywords List="0">class public static import new interface return final for while do break continue super if else </Keywords>
+            <Keywords List="0">class static import new interface null return final for while do break continue super if else </Keywords>
             <Keywords List="1">void int string String byte</Keywords>
             <Properties>
         		<Property Name="fold.comment" Value="1" />
@@ -23,12 +23,42 @@
 
         <AutoComplete FillUpCharacters="" SingleLineAccept="True" IsCaseSensitive="False">
         <List>
-        	class public static import new interface return final for while break continue super if else void int string byte
+        	class static import new interface return final for while break continue super if else void int string byte
         </List>
         </AutoComplete>	
 
         <Indentation TabWidth="4" UseTabs="true"/>
 
+      <Snippets IsOneKeySelectionEmbedEnabled="True" IsEnabled="true">
+        <Snippet Shortcut="If" IsSurroundsWith="true">if ($true$)
+{
+  $selected$$end$
+}
+        </Snippet>
+        <Snippet Shortcut="IfElse" IsSurroundsWith="true">
+if ($true$)
+{
+  $selected$$end$
+}
+else
+{
+  
+}
+        </Snippet>
+        <Snippet Shortcut="For" IsSurroundsWith="true">for (int $i$ = $0$; $i$ &lt; $max$; $i$++)
+{
+  $selected$$end$
+}
+        </Snippet>
+        <Snippet Shortcut="While" IsSurroundsWith="true">while($true$)
+{
+  $selected$$end$
+}
+        </Snippet>
+
+        <Snippet Shortcut="YAS" IsSurroundsWith="true">YetAnotherSnippet($end$);</Snippet>
+      </Snippets>
+      
     </Language>
 
 </ScintillaNET>

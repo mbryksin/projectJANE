@@ -50,7 +50,16 @@ namespace JaneIDE
             CodeBox.Selection.BackColor = System.Drawing.Color.FromArgb(190, 190, 190);
 
             CodeBox.IsBraceMatching = true;
-            
+            CodeBox.KeyDown += CodeBox_KeyDown;
+
+        }
+
+        void CodeBox_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
+        {
+            if (e.Alt && e.KeyCode == System.Windows.Forms.Keys.Space && e.Control)
+            {
+                ((ScintillaNET.Scintilla)wfh.Child).Snippets.ShowSnippetList();
+            }
         }
 
         void CodeBox_CharAdded(object sender, ScintillaNET.CharAddedEventArgs e)
