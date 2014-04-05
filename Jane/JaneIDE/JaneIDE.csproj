@@ -38,8 +38,9 @@
     <ApplicationIcon>JanePic.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ScintillaNET">
-      <HintPath>CodeBoxLibs\ScintillaNET.dll</HintPath>
+    <Reference Include="ScintillaNET, Version=2.6.0.0, Culture=neutral, PublicKeyToken=948d6c9751444115, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>CodeBox\ScintillaNET.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -133,12 +134,12 @@
     <Resource Include="JanePic.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SciLexer.dll">
+    <EmbeddedResource Include="SciLexer.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="SciLexer64.dll">
+    </EmbeddedResource>
+    <EmbeddedResource Include="SciLexer64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
