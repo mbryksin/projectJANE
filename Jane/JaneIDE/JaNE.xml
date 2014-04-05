@@ -23,7 +23,7 @@
 
         <AutoComplete FillUpCharacters="" SingleLineAccept="True" IsCaseSensitive="False">
         <List>
-        	class static import new interface return final for while break continue super if else void int string byte
+        	class static import new interface return final break continue super void int string byte
         </List>
         </AutoComplete>	
 
@@ -57,6 +57,24 @@ else
         </Snippet>
 
         <Snippet Shortcut="YAS" IsSurroundsWith="true">YetAnotherSnippet($end$);</Snippet>
+
+      <Snippet Shortcut="NewClassWithMain" IsSurroundsWith="true">class $NewClass$
+{
+  void main(String[] args)
+    {
+      $end$
+    }
+}
+      </Snippet>
+
+<Snippet Shortcut="NewClass" IsSurroundsWith="true">class $NewClass$
+{
+  void $NewClass$()
+  {
+    $end$
+  }
+}
+        </Snippet>
       </Snippets>
       
     </Language>
