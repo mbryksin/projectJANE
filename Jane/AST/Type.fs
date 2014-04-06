@@ -1,5 +1,6 @@
 ﻿namespace AST
 
+[<AbstractClass>]
 type Type(name : string, dimension : int, pos : Position) =
     inherit Node(pos)
     member x.Name      = name
@@ -14,6 +15,7 @@ type CustomType(name : string, dimension : int, pos : Position) =
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+[<AbstractClass>]
 type BasicType(name : string, dimension : int, pos : Position) =
     inherit Type(name, dimension, pos)
 
