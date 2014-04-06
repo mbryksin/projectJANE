@@ -2,24 +2,23 @@
 
 open AST
 
-//class myClass
-//{
-//    myClass()
-//    {
+//class myClass {
+//
+//    myClass() {
 //    }
 //
-//    int main()
-//    {
+//    static int main() {
 //        string helloWorld = "Hello";
 //        helloWorld = helloWorld + " World!"
 //        stdout.print(helloWorld);
 //    }
+//
 //}
 
 /// p              - фиктивная нулевая позиция
 let p              = new Position(0, 0, 0, 0)
 
-let myTypeString   = new Type("string", 0, p)
+let myTypeString   = new StringType(0, p)
 
 let myHello        = new StringLiteral("Hello", p)
 let myDecl         = new DeclarationStatement(myTypeString, "helloWorld", myHello, p)
@@ -41,3 +40,4 @@ let myClass        = new Class("myClass", None, [], myConstructor, myClassMember
 let myClasses      = List.map (fun a -> a :> ProgramMember) [myClass]
 let myProg         = new Program(myClasses, p)
 
+printfn "%A" myProg
