@@ -5,6 +5,10 @@
         WindowStartupLocation="CenterScreen" 
         WindowState="Maximized" 
         WindowStyle="ThreeDBorderWindow">
+    <Window.Resources>
+        <ResourceDictionary Source="Resources.xaml" />
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
@@ -24,32 +28,32 @@
         <Menu Grid.Row="1">
             <MenuItem Width="24">
                 <MenuItem.Icon>
-                    <Image Source="Images/newfile.png" />
+                    <Image Source="/Images/newfile.png" />
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem Width="24">
                 <MenuItem.Icon>
-                    <Image Source="Images/open.png" />
+                    <Image Source="/Images/open.png" />
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem Height="24" Width="24">
                 <MenuItem.Icon>
-                    <Image Source="Images/save.png" />
+                    <Image Source="/Images/save.png" />
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem Width="24">
                 <MenuItem.Icon>
-                    <Image Source="Images/edit-undo.png" />
+                    <Image Source="/Images/edit-undo.png" />
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem Width="24">
                 <MenuItem.Icon>
-                    <Image Source="Images/edit-redo.png" />
+                    <Image Source="/Images/edit-redo.png" />
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem Width="24">
                 <MenuItem.Icon>
-                    <Image Source="Images/run.png" />
+                    <Image Source="/Images/run.png" />
                 </MenuItem.Icon>
             </MenuItem>
         </Menu>
@@ -80,20 +84,12 @@
                     <RowDefinition Height="209*"/>
                     <RowDefinition Height="70*"/>
                 </Grid.RowDefinitions>
-                <TabControl Grid.Row="0" IsEnabled="False">
-                    <TabItem Header="">
-                        <Grid Background="#FFE5E5E5">
-                            <RichTextBox HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible">
-                                <FlowDocument>
-                                    <Paragraph>
-                                        <Run Text=""/>
-                                    </Paragraph>
-                                </FlowDocument>
-                            </RichTextBox>
-                        </Grid>
-
-                    </TabItem>
-                </TabControl>
+                
+                <ContentControl Grid.Row="0"
+                Content="{Binding Path=Workspaces}"
+                ContentTemplate="{StaticResource WorkspacesTemplate}"
+                />
+                
                 <TabControl Grid.Row="1">
                     <TabItem Header="Problems">
                         <Grid Background="#FFE5E5E5">
