@@ -1,19 +1,44 @@
 ﻿namespace AST
 
-type Equality       = | EQUAL            // == 
-                      | NOT_EQUAL        // !=
+type BinaryOperator = OR
+                    | AND
+                    | EQUAL
+                    | NOT_EQUAL
+                    | GREATER
+                    | GREATER_OR_EQUAL
+                    | LESS
+                    | LESS_OR_EQUAL
+                    | ADDITION
+                    | SUBSTRACTION
+                    | MULTIPLICATION  
+                    | DIVISION
+                    | MODULUS         
+                    | MEMBER_CALL
 
-type Comparison     = | GREATER          // >
-                      | GERATER_OR_EQUAL // >=
-                      | LESS             // <
-                      | LESS_OR_EQUAL    // <=
+                        override x.ToString() =
+                            match x with
+                            | OR               -> "||"
+                            | AND              -> "&&"
+                            | EQUAL            -> "=="
+                            | NOT_EQUAL        -> "!="
+                            | GREATER          -> ">"
+                            | GREATER_OR_EQUAL -> ">="
+                            | LESS             -> "<"
+                            | LESS_OR_EQUAL    -> "<="
+                            | ADDITION         -> "+"
+                            | SUBSTRACTION     -> "-"
+                            | MULTIPLICATION   -> "*"
+                            | DIVISION         -> "/"
+                            | MODULUS          -> "%"
+                            | MEMBER_CALL      -> "."
 
-type Addition       = | ADDITION         // +
-                      | SUBSTRACTION     // -
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type Multiplication = | MULTIPLICATION   // *
-                      | DIVISION         // /
-                      | MODULUS          // %
+type UnaryOperator  = NOT
+                    | MINUS
 
-type UnarySign      = | UNARY_PLUS       // +
-                      | UNARY_MINUS      // -
+                        override x.ToString() =
+                            match x with
+                            | NOT   -> "!"
+                            | MINUS -> "-"
+                    
