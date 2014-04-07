@@ -36,7 +36,7 @@ let myMethod       = new ClassReturnMethod(true, new IntType(0, p), "main", [], 
 
 let myClassMembers = List.map (fun a -> a :> ClassMember) [myMethod]
 let myConstructor  = new ClassConstructor("myClass", [], new Block([], p), p)
-let myClass        = new Class("myClass", None, [], myConstructor, myClassMembers, p)
+let myClass        = new Class("myClass", None, [], Some myConstructor, myClassMembers, p)
 let myClasses      = List.map (fun a -> a :> ProgramMember) [myClass]
 let myProg         = new Program(myClasses, "MyClass", p)
 
