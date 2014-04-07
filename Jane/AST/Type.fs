@@ -5,7 +5,7 @@ type Type(name : string, dimension : int, pos : Position) =
     inherit Node(pos)
     member x.Name      = name
     member x.Dimension = dimension
-    
+
     override x.ToString() = sprintf "%s%s" name (String.replicate dimension "[]")
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -59,3 +59,7 @@ type CharType(dimension : int, pos : Position) =
 type StringType(dimension : int, pos : Position) =
     inherit BasicType("string", dimension, pos)
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+type BooleanType(dimension : int, pos : Position) =
+    inherit BasicType("boolean", dimension, pos)
