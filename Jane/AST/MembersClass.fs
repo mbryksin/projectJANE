@@ -8,7 +8,7 @@ type ClassMember(name : string, pos : Position) =
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 [<AbstractClass>]
-type ClassMemthodOrField(isStatic : bool, name : string, pos : Position) =
+type ClassMethodOrField(isStatic : bool, name : string, pos : Position) =
     inherit ClassMember(name, pos)
     member x.IsStatic = isStatic
 
@@ -16,7 +16,7 @@ type ClassMemthodOrField(isStatic : bool, name : string, pos : Position) =
 
 [<AbstractClass>]
 type ClassMethod(isStatic : bool, name : string, parameters : FormalParameter list, body : Block, pos : Position) =
-    inherit ClassMemthodOrField(isStatic, name, pos)
+    inherit ClassMethodOrField(isStatic, name, pos)
     member x.Parameters = parameters
     member x.Body       = body
 
@@ -45,7 +45,7 @@ type ClassVoidMethod(isStatic : bool, name : string, parameters : FormalParamete
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type ClassField(isStatic : bool, isFinal : bool, fieldType : Type, name : string, body : Expression, pos : Position) =
-    inherit ClassMemthodOrField(isStatic, name, pos)
+    inherit ClassMethodOrField(isStatic, name, pos)
     member x.Type    = fieldType
     member x.Body    = body
     member x.IsFinal = isFinal 
