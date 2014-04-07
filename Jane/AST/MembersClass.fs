@@ -1,18 +1,31 @@
 ﻿namespace AST
 
 [<AbstractClass>]
-type ClassMember(isStatic : bool, name : string, pos : Position) =
+type ClassMember(name : string, pos : Position) =
     inherit Node(pos)
-    member x.Name     = name
-    member x.IsStatic = isStatic    
+    member x.Name = name   
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type ClassMethod(isStatic : bool, returnType : Type, name : string, parameters : FormalParameter list, body : Block, pos : Position) =
-    inherit ClassMember(isStatic, name, pos)
-    member x.ReturnType = returnType
+[<AbstractClass>]
+type ClassMemthodOrField(isStatic : bool, name : string, pos : Position) =
+    inherit ClassMember(name, pos)
+    member x.IsStatic = isStatic
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+[<AbstractClass>]
+type ClassMethod(isStatic : bool, name : string, parameters : FormalParameter list, body : Block, pos : Position) =
+    inherit ClassMemthodOrField(isStatic, name, pos)
     member x.Parameters = parameters
     member x.Body       = body
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+type ClassReturnMethod(isStatic : bool, returnType : Type, name : string, 
+                       parameters : FormalParameter list, body : Block, pos : Position) =
+    inherit ClassMethod(isStatic, name, parameters, body, pos)
+    member x.ReturnType = returnType
 
     override x.ToString() = 
         let staticStr = if isStatic then "static " else ""
@@ -22,9 +35,7 @@ type ClassMethod(isStatic : bool, returnType : Type, name : string, parameters :
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type ClassVoidMethod(isStatic : bool, name : string, parameters : FormalParameter list, body : Block, pos : Position) =
-    inherit ClassMember(isStatic, name, pos)
-    member x.Parameters = parameters
-    member x.Body       = body
+    inherit ClassMethod(isStatic, name, parameters, body, pos)
 
     override x.ToString() = 
         let staticStr     = if isStatic then "static " else ""
@@ -34,7 +45,7 @@ type ClassVoidMethod(isStatic : bool, name : string, parameters : FormalParamete
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type ClassField(isStatic : bool, isFinal : bool, fieldType : Type, name : string, body : Expression, pos : Position) =
-    inherit ClassMember(isStatic, name, pos)
+    inherit ClassMemthodOrField(isStatic, name, pos)
     member x.Type    = fieldType
     member x.Body    = body
     member x.IsFinal = isFinal 
@@ -47,8 +58,7 @@ type ClassField(isStatic : bool, isFinal : bool, fieldType : Type, name : string
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type ClassConstructor(name : string, parameters : FormalParameter list, body : Block, pos : Position) =
-    inherit Node(pos)
-    member x.Name       = name
+    inherit ClassMember(name, pos)
     member x.Parameters = parameters
     member x.Body       = body
 
