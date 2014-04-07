@@ -1,5 +1,7 @@
 ﻿namespace AST
 
+open System
+
 [<AbstractClass>]
 type ProgramMember(name : string, pos : Position) =
     inherit Node(pos)
@@ -12,22 +14,22 @@ type Interface(name : string, ancestors : string list, members : InterfaceMember
     
     let fields        = List.fold (fun acc (m : InterfaceMember) ->
                                        try m :?> InterfaceField :: acc 
-                                       with :? System.InvalidCastException -> acc
+                                       with :? InvalidCastException -> acc
                                   ) [] members
 
     let methods       = List.fold (fun acc (m : InterfaceMember) ->
                                        try m :?> InterfaceMethod :: acc 
-                                       with :? System.InvalidCastException -> acc
+                                       with :? InvalidCastException -> acc
                                   ) [] members 
     
     let returnMethods = List.fold (fun acc (m : InterfaceMethod) ->
                                        try m :?> InterfaceReturnMethod :: acc 
-                                       with :? System.InvalidCastException -> acc
+                                       with :? InvalidCastException -> acc
                                   ) [] methods 
  
     let voidMethods   = List.fold (fun acc (m : InterfaceMethod) ->
                                        try m :?> InterfaceVoidMethod :: acc 
-                                       with :? System.InvalidCastException -> acc
+                                       with :? InvalidCastException -> acc
                                   ) [] methods 
 
     member x.Ancestors     = ancestors
@@ -51,22 +53,22 @@ type Class(name : string, ancestor : string option, interfaces : string list,
     
     let fields        = List.fold (fun acc (m : ClassMember) ->
                                        try m :?> ClassField :: acc 
-                                       with :? System.InvalidCastException -> acc
+                                       with :? InvalidCastException -> acc
                                   ) [] members
 
     let methods       = List.fold (fun acc (m : ClassMember) ->
                                        try m :?> ClassMethod :: acc 
-                                       with :? System.InvalidCastException -> acc
+                                       with :? InvalidCastException -> acc
                                   ) [] members 
     
     let returnMethods = List.fold (fun acc (m : ClassMethod) ->
                                        try m :?> ClassReturnMethod :: acc 
-                                       with :? System.InvalidCastException -> acc
+                                       with :? InvalidCastException -> acc
                                   ) [] methods 
  
     let voidMethods   = List.fold (fun acc (m : ClassMethod) ->
                                        try m :?> ClassVoidMethod :: acc 
-                                       with :? System.InvalidCastException -> acc
+                                       with :? InvalidCastException -> acc
                                   ) [] methods
                                   
     let classConstructor = match classConstructor with
