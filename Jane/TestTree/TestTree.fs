@@ -32,12 +32,12 @@ let myMemberCall2  = new BinaryOperation(new Identifier("stdout", p), MEMBER_CAL
 let myPrint        = new MemberCallStatement(myMemberCall2, p)
 
 let myBlock        = new Block([myDecl; myAssign; myPrint], p)
-let myMethod       = new ClassMethod(true, new Type("int", 0, p), "main", [], myBlock, p)
+let myMethod       = new ClassMethod(true, new IntType(0, p), "main", [], myBlock, p)
 
 let myClassMembers = List.map (fun a -> a :> ClassMember) [myMethod]
 let myConstructor  = new ClassConstructor("myClass", [], new Block([], p), p)
 let myClass        = new Class("myClass", None, [], myConstructor, myClassMembers, p)
 let myClasses      = List.map (fun a -> a :> ProgramMember) [myClass]
-let myProg         = new Program(myClasses, p)
+let myProg         = new Program(myClasses, "MyClass", p)
 
 printfn "%A" myProg
