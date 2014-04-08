@@ -9,7 +9,7 @@ type Primary(pos) =
 
 type Constructor(typeName : string, arguments : Arguments, pos : Position) =
     inherit Primary(pos)
-    member x.TName     = typeName
+    member x.Name      = typeName
     member x.Arguments = arguments
 
     override x.ToString() = sprintf "new %s%A" typeName arguments
