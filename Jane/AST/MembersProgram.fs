@@ -1,5 +1,7 @@
 ﻿namespace AST
 
+open System
+
 [<AbstractClass>]
 type ProgramMember(name : string, pos : Position) =
     inherit Node(pos)
@@ -9,8 +11,33 @@ type ProgramMember(name : string, pos : Position) =
 
 type Interface(name : string, ancestors : string list, members : InterfaceMember list, pos : Position) =
     inherit ProgramMember(name, pos)
-    member x.Ancestors = ancestors
-    member x.Members   = members
+    
+    let fields        = List.fold (fun acc (m : InterfaceMember) ->
+                                       try m :?> InterfaceField :: acc 
+                                       with :? InvalidCastException -> acc
+                                  ) [] members
+
+    let methods       = List.fold (fun acc (m : InterfaceMember) ->
+                                       try m :?> InterfaceMethod :: acc 
+                                       with :? InvalidCastException -> acc
+                                  ) [] members 
+    
+    let returnMethods = List.fold (fun acc (m : InterfaceMethod) ->
+                                       try m :?> InterfaceReturnMethod :: acc 
+                                       with :? InvalidCastException -> acc
+                                  ) [] methods 
+ 
+    let voidMethods   = List.fold (fun acc (m : InterfaceMethod) ->
+                                       try m :?> InterfaceVoidMethod :: acc 
+                                       with :? InvalidCastException -> acc
+                                  ) [] methods 
+
+    member x.Ancestors     = ancestors
+    member x.Members       = members  
+    member x.Fields        = fields
+    member x.Methods       = methods
+    member x.ReturnMethods = returnMethods
+    member x.VoidMethods   = voidMethods
 
     override x.ToString() =
         let extendsStr   = if not ancestors.IsEmpty then " extends " else ""
@@ -21,12 +48,42 @@ type Interface(name : string, ancestors : string list, members : InterfaceMember
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type Class(name : string, ancestor : string option, interfaces : string list, 
-           classConstructor : ClassConstructor, members : ClassMember list, pos : Position) =
+           classConstructor : ClassConstructor option, members : ClassMember list, pos : Position) =
     inherit ProgramMember(name, pos)
-    member x.Ancestor    = ancestor
-    member x.Interfaces  = interfaces
-    member x.Members     = members
-    member x.Constructor = classConstructor
+    
+    let fields        = List.fold (fun acc (m : ClassMember) ->
+                                       try m :?> ClassField :: acc 
+                                       with :? InvalidCastException -> acc
+                                  ) [] members
+
+    let methods       = List.fold (fun acc (m : ClassMember) ->
+                                       try m :?> ClassMethod :: acc 
+                                       with :? InvalidCastException -> acc
+                                  ) [] members 
+    
+    let returnMethods = List.fold (fun acc (m : ClassMethod) ->
+                                       try m :?> ClassReturnMethod :: acc 
+                                       with :? InvalidCastException -> acc
+                                  ) [] methods 
+ 
+    let voidMethods   = List.fold (fun acc (m : ClassMethod) ->
+                                       try m :?> ClassVoidMethod :: acc 
+                                       with :? InvalidCastException -> acc
+                                  ) [] methods
+                                  
+    let classConstructor = match classConstructor with
+                           | Some cc -> cc
+                           | None    -> let p = new Position(0,0,0,0)
+                                        new ClassConstructor(name, [], new Block([], p), p)
+    
+    member x.Ancestor      = ancestor
+    member x.Interfaces    = interfaces
+    member x.Members       = members
+    member x.Fields        = fields
+    member x.Methods       = methods
+    member x.ReturnMethods = returnMethods
+    member x.VoidMethods   = voidMethods
+    member x.Constructor   = classConstructor
 
     override x.ToString() =
         let extendsStr    = if ancestor.IsSome then sprintf " extends %s" ancestor.Value else ""

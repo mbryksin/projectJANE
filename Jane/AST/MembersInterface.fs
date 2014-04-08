@@ -8,10 +8,17 @@ type InterfaceMember(isStatic : bool, name : string, pos : Position) =
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type InterfaceMethod(isStatic : bool, returnType : Type, name : string, parameters : FormalParameter list, pos : Position) =
+[<AbstractClass>]
+type InterfaceMethod(isStatic : bool, name : string, parameters : FormalParameter list, pos : Position) =
     inherit InterfaceMember(isStatic, name, pos)
-    member x.ReturnType = returnType
     member x.Parameters = parameters
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+type InterfaceReturnMethod(isStatic : bool, returnType : Type, name : string, 
+                           parameters : FormalParameter list, pos : Position) =
+    inherit InterfaceMethod(isStatic, name, parameters, pos)
+    member x.ReturnType = returnType
 
     override x.ToString() = 
         let staticStr = if isStatic then "static " else ""
@@ -21,8 +28,7 @@ type InterfaceMethod(isStatic : bool, returnType : Type, name : string, paramete
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type InterfaceVoidMethod(isStatic : bool, name : string, parameters : FormalParameter list, pos : Position) =
-    inherit InterfaceMember(isStatic, name, pos)
-    member x.Parameters = parameters
+    inherit InterfaceMethod(isStatic, name, parameters, pos)
 
     override x.ToString() = 
         let staticStr     = if isStatic then "static " else ""

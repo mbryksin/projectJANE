@@ -2,24 +2,23 @@
 
 open AST
 
-//class myClass
-//{
-//    myClass()
-//    {
+//class myClass {
+//
+//    myClass() {
 //    }
 //
-//    int main()
-//    {
+//    static int main() {
 //        string helloWorld = "Hello";
 //        helloWorld = helloWorld + " World!"
 //        stdout.print(helloWorld);
 //    }
+//
 //}
 
 /// p              - фиктивная нулевая позиция
 let p              = new Position(0, 0, 0, 0)
 
-let myTypeString   = new Type("string", 0, p)
+let myTypeString   = new StringType(0, p)
 
 let myHello        = new StringLiteral("Hello", p)
 let myDecl         = new DeclarationStatement(myTypeString, "helloWorld", myHello, p)
@@ -33,11 +32,12 @@ let myMemberCall2  = new BinaryOperation(new Identifier("stdout", p), MEMBER_CAL
 let myPrint        = new MemberCallStatement(myMemberCall2, p)
 
 let myBlock        = new Block([myDecl; myAssign; myPrint], p)
-let myMethod       = new ClassMethod(true, new Type("int", 0, p), "main", [], myBlock, p)
+let myMethod       = new ClassReturnMethod(true, new IntType(0, p), "main", [], myBlock, p)
 
 let myClassMembers = List.map (fun a -> a :> ClassMember) [myMethod]
 let myConstructor  = new ClassConstructor("myClass", [], new Block([], p), p)
-let myClass        = new Class("myClass", None, [], myConstructor, myClassMembers, p)
+let myClass        = new Class("myClass", None, [], Some myConstructor, myClassMembers, p)
 let myClasses      = List.map (fun a -> a :> ProgramMember) [myClass]
-let myProg         = new Program(myClasses, p)
+let myProg         = new Program(myClasses, "MyClass", p)
 
+printfn "%A" myProg
