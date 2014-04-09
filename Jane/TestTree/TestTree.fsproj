@@ -53,6 +53,11 @@
       <Project>{02daa5a7-9d06-4441-8b7e-e4d9baf1acfe}</Project>
       <Private>True</Private>
     </ProjectReference>
+    <ProjectReference Include="..\StaticAnalysis\StaticAnalysis.fsproj">
+      <Name>StaticAnalysis</Name>
+      <Project>{e206246e-9751-4590-abb2-d721e556fbb4}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
