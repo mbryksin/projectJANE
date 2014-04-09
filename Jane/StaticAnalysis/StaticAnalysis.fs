@@ -28,13 +28,13 @@ let private DuplicateNode (listNodes : (string * Position) list) (kindNode : str
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Формирует ошибки некоректности идентификатора
-let IncorrectNameErrors (name : string) (p : Position) =
+let private IncorrectNameErrors (name : string) (p : Position) =
     
     // Список запрещённых идентификаторов
     let listIncorrectNames = ["class"; "interface"; "extends"; "implements"; "static"; "final"; "if"; "else"; 
                               "while"; "for"; "break"; "continue"; "return"; "super"; "this"; "null"; "new";
                               "byte"; "short"; "int"; "long"; "float"; "double"; "char"; "string"; "boolean";
-                              "false"; "true"]
+                              "false"; "true"; "instanceOf"; "void"]
 
     // Проверка на корректность
     let incorrectName = List.tryFind ((=) name) listIncorrectNames
