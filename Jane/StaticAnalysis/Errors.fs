@@ -5,7 +5,7 @@ open AST
 
 type Error private(errorMessage : string, position : Position) =
     
-    member x.Positiom     = position
+    member x.Position     = position
     member x.ErrorMessage = errorMessage
 
     static member DuplicateNode (kindNode : string) (nameNode : string) (positionNode : Position) = 
