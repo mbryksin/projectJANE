@@ -27,7 +27,7 @@ let private DuplicateNode (listNodes : (string * Position) list) (kindNode : str
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Формирует ошибки некоректности идентификатора
+// Формирует ошибки корректности идентификатора
 let private IncorrectNameErrors (name : string) (p : Position) =
     
     // Список запрещённых идентификаторов
@@ -48,11 +48,19 @@ let private IncorrectNameErrors (name : string) (p : Position) =
 /////////////////////////////////////////////// АНАЛИЗАТОРЫ //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-let SA_ProgramInterface (p : Program) (i : Interface) = []
+let SA_ProgramClass (p : Program) (c : Class) = [] // Заглушка
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-let SA_ProgramClass (p : Program) (c : Class) = []
+let SA_ProgramInterface (p : Program) (i : Interface) = 
+
+    // Ошибки о дублировании названий члена класса
+    let DuplicateClassMemberErrors = 
+        DuplicateNode (List.map (fun (im : InterfaceMember) -> im.Name.Value, im.Position) i.Members) "interface member"   
+    
+
+
+    DuplicateClassMemberErrors
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -60,7 +68,7 @@ let SA_ProgramClass (p : Program) (c : Class) = []
 let SA_ProgramMember (p : Program) (pm : ProgramMember) =
     
     // Корректное ли название
-    let incorrectNameError = IncorrectNameErrors pm.Name pm.Position
+    let incorrectNameError = IncorrectNameErrors pm.Name.Value pm.Position
 
     // Ошибки с нижних уровней
     let otherErrors = match pm with
@@ -78,17 +86,17 @@ let SA_ProgramMember (p : Program) (pm : ProgramMember) =
 let SA_Program(p : Program) = 
     
     // Ищет MainClass
-    let mainClass = List.tryFind (fun (c : Class) -> c.Name = p.NameMainClass) p.Classes
+    let mainClass = List.tryFind (fun (c : Class) -> c.Name.Value = p.NameMainClass) p.Classes
     
     // ЕслиMainClass найден, то ищет в нём main
     let mainMethod =
         match mainClass with
-        | Some mc -> List.tryFind (fun (cm : ClassMethod) -> cm.Name = "main") mc.Methods
+        | Some mc -> List.tryFind (fun (cm : ClassMethod) -> cm.Name.Value = "main") mc.Methods
         | None    -> None
 
     // Ошибки о дублировании названий классов
     let DuplicateClassErrors = 
-        DuplicateNode (List.map (fun (pm : ProgramMember) -> pm.Name, pm.Position) p.ProgramMembers) "class"   
+        DuplicateNode (List.map (fun (pm : ProgramMember) -> pm.Name.Value, pm.Position) p.ProgramMembers) "class"   
 
     // Ошибки, связанные с main
     let mainErrors =

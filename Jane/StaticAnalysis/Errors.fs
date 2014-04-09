@@ -15,7 +15,7 @@ type Error private(errorMessage : string, position : Position) =
         new Error(sprintf "Main class is \"%s\" not found." p.NameMainClass, p.Position)
 
     static member MainNotFound (c : Class) =
-        new Error(sprintf "Method \"main\" is not found in the main class \"%s\"." c.Name, c.Position)
+        new Error(sprintf "Method \"main\" is not found in the main class \"%s\"." c.Name.Value, c.Position)
 
     static member MainIsNotStatic (cn : ClassMethod) =
         new Error(sprintf "Method \"main\" must be static.", cn.Position)
