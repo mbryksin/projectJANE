@@ -1,21 +1,38 @@
 ﻿namespace AST
 
-type Primary =
-    inherit Expression
+[<AbstractClass>]
+type Primary(pos) =
+    inherit Expression(pos)
 
-type Constructor(typeName : string, arguments : Arguments) =
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+type Constructor(typeName : string, arguments : Arguments, pos : Position) =
+    inherit Primary(pos)
     member x.TName     = typeName
     member x.Arguments = arguments
-    interface Primary with
-        member this.Interpret() = new Val() // later
 
-type Identifier(name : string) =
+    override x.ToString() = sprintf "new %s%A" typeName arguments
+
+    override x.Interpret() = new Val() // later
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+type Identifier(name : string, pos : Position) =
+    inherit Primary(pos)
     member x.Name = name
-    interface Primary with
-        member this.Interpret() = new Val() // do this
 
-type Member(name : string, suffix : Suffix) =
+    override x.ToString() = name
+ 
+    override x.Interpret() = new Val() // do this
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+type Member(name : string, suffix : Suffix, pos : Position) =
+    inherit Primary(pos)
     member x.Name   = name
     member x.Suffix = suffix
-    interface Primary with
-        member this.Interpret() = new Val() // later
+
+    override x.ToString() = sprintf "%s%A" name suffix
+
+    override x.Interpret() = new Val() // do this

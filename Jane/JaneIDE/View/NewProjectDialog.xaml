@@ -1,0 +1,47 @@
+﻿<Window x:Class="JaneIDE.View.NewProjectDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        ResizeMode="CanResize"
+        Title="{Binding Path=DisplayName}" 
+        Height="192" 
+        Width="600"
+        WindowStartupLocation="CenterScreen"
+        MinWidth="400"
+        WindowStyle="ThreeDBorderWindow"
+        Loaded="window_Loaded">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="130"/>
+            <ColumnDefinition Width="100*"/>
+            <ColumnDefinition Width="60"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Grid.Column="0" Content="Name and Location" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        
+        <Separator Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Bottom" Width="200" Height="1"/>
+        <Label Grid.Row="1" Grid.Column="0" Content="Project Name:"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Text="{Binding Path=ProjectName}"/>
+
+        <Label Grid.Row="2" Grid.Column="0" Content="Project Location:"/>
+        <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Text="{Binding Path=ProjectLocation}"/>
+        <Button Grid.Row="2" Grid.Column="2" Content="Browse..." HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Command="{Binding Path=BrowseCommand}"/>
+
+        <Label Grid.Row="3" Grid.Column="0" Content="Project Folder:"/>
+        <TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="1" IsReadOnly="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Text="{Binding Path=ProjectFolder}" Background="#FFE4E3E3"/>
+
+        <Label Grid.Row="4" Grid.Column="0" Content="Main Class:"/>
+        <TextBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Text=""/>
+
+        <Separator Grid.Row="5" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="1"/>
+        <Button Grid.Row="5" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Stretch" Content="Finish" Width="60"/>
+        <Button Grid.Row="5" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Stretch" Content="Cancel" Width="60" Command="{Binding Path=CloseCommand}"/>
+        
+    </Grid>
+</Window>

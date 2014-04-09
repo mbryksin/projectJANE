@@ -1,13 +1,24 @@
 ﻿namespace AST
 
-type Suffix =
-    interface
-    end
+[<AbstractClass>]
+type Suffix(pos : Position) =
+    inherit Node(pos)
 
-type Arguments(arguments : Expression list) =
-    interface Suffix
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+type Arguments(arguments : Expression list, pos : Position) =
+    inherit Suffix(pos)
     member x.Arguments = arguments
 
-type ArrayElement(index : Expression) =
-    interface Suffix
+    override x.ToString() = arguments
+                            |> List.map string
+                            |> String.concat ", "
+                            |> sprintf "(%s)"
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+type ArrayElement(index : Expression, pos : Position) =
+    inherit Suffix(pos)
     member x.Index = index
+
+    override x.ToString() = sprintf "[%A]" index

@@ -5,9 +5,11 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
-using JaneIDE.ViewModel;
 using System.Windows.Markup;
 using System.Globalization;
+
+using JaneIDE.View;
+using JaneIDE.ViewModel;
 
 namespace JaneIDE
 {
@@ -35,8 +37,19 @@ namespace JaneIDE
 
         static void c_NewProject(object sender, EventArgs e)
         {
-            NewProjectDialog newProjectDialog = new NewProjectDialog();
-            newProjectDialog.Show();
+            NewProjectDialog newProjectDialogWindow = new NewProjectDialog();
+            var viewModel = new NewProjectViewModel();
+
+            EventHandler handler = null;
+            handler = delegate
+            {
+                viewModel.RequestClose -= handler;
+                newProjectDialogWindow.Close();
+            };
+            viewModel.RequestClose += handler;
+
+            newProjectDialogWindow.DataContext = viewModel;
+            newProjectDialogWindow.Show();
         }
 
         protected override void OnStartup(StartupEventArgs e)
