@@ -1,5 +1,6 @@
 ﻿namespace AST
 
+[<AbstractClass>]
 type ClassMember(name : string, pos : Position) =
     inherit Node(pos)
     member x.Name = name   
