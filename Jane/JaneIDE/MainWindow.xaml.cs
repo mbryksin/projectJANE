@@ -25,8 +25,9 @@ namespace JaneIDE
         public MainWindow()
         {
             InitializeComponent();
-            CodeBoxConf();
+            //CodeBoxConf();
         }
+        /*
         public void CodeBoxConf()
         {
             ScintillaNET.Scintilla CodeBox = (ScintillaNET.Scintilla)wfh.Child;
@@ -77,5 +78,6 @@ namespace JaneIDE
         {
 
         }
+        */
     }
 }

@@ -49,7 +49,8 @@ namespace JaneIDE
             viewModel.RequestClose += handler;
 
             newProjectDialogWindow.DataContext = viewModel;
-            newProjectDialogWindow.Show();
+            //newProjectDialogWindow.Show();
+            newProjectDialogWindow.ShowDialog();
         }
 
         protected override void OnStartup(StartupEventArgs e)

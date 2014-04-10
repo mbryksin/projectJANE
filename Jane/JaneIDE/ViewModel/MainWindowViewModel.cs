@@ -17,8 +17,8 @@ namespace JaneIDE.ViewModel
 
         public MainWindowViewModel()
         {
-            //CustomerViewModel workspace = new CustomerViewModel(newCustomer, _customerRepository);
-            //this.Workspaces.Add(workspace);
+            this.CreateNewFile("test1.jane");
+            this.CreateNewFile("test2.jane");
         }
 
         public ICommand NewProjectCommand
@@ -79,6 +79,13 @@ namespace JaneIDE.ViewModel
             ICollectionView collectionView = CollectionViewSource.GetDefaultView(this.Workspaces);
             if (collectionView != null)
                 collectionView.MoveCurrentTo(workspace);
+        }
+
+        void CreateNewFile(string filename)
+        {
+            CodeBoxViewModel workspace = new CodeBoxViewModel(filename);
+            this.Workspaces.Add(workspace);
+            this.SetActiveWorkspace(workspace);
         }
     }
 }

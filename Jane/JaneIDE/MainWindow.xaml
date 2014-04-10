@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
         xmlns:scintilla="clr-namespace:ScintillaNET;assembly=ScintillaNET"
-        Title="JANE Studio" Height="350" Width="525"
+        Title="JANE Studio" MinHeight="480" MinWidth="640"
         Icon="/Images/JanePic.ico"
         WindowStartupLocation="CenterScreen" 
         WindowState="Maximized" 
@@ -87,19 +87,17 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="209*"/>
                     <RowDefinition Height="70*"/>
-                </Grid.RowDefinitions>	
-		
-		<!-- <ContentControl Grid.Row="0" Content="{Binding Path=Workspaces}" ContentTemplate="{StaticResource WorkspacesTemplate}"/> -->
+                </Grid.RowDefinitions>
 
-                <TabControl Grid.Row="0">
-                    <TabItem Header="">
-                        <Grid Background="#FFE5E5E5">
-                            <WindowsFormsHost Name="wfh" ChildChanged="wfh_ChildChanged">
-                                <scintilla:Scintilla Name="CodeBox"> </scintilla:Scintilla>
-                            </WindowsFormsHost>
-                        </Grid>
-                    </TabItem>
-                </TabControl>
+                <!--<WindowsFormsHost Name="wfh" ChildChanged="wfh_ChildChanged">
+                    <scintilla:Scintilla Name="CodeBox"></scintilla:Scintilla>
+                </WindowsFormsHost>-->
+
+                <ContentControl 
+                    Grid.Row="0" 
+                    Content="{Binding Path=Workspaces}" 
+                    ContentTemplate="{StaticResource WorkspacesTemplate}"
+                />
 
                 <TabControl Grid.Row="1">
                     <TabItem Header="Problems">

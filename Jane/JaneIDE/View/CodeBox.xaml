@@ -1,0 +1,20 @@
+﻿<UserControl x:Class="JaneIDE.View.CodeBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vw="clr-namespace:JaneIDE.View"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch"  
+             >
+    <Grid>
+        <RichTextBox>
+            <FlowDocument>
+                <Paragraph>
+                    <Run>Paragraph 1</Run>
+               </Paragraph>
+                <Paragraph>
+                    <Run>Paragraph 2</Run>
+                </Paragraph>
+            </FlowDocument>
+        </RichTextBox>
+    </Grid>
+</UserControl>

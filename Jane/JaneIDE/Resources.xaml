@@ -1,5 +1,12 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:vm="clr-namespace:JaneIDE.ViewModel"
+                    xmlns:vw="clr-namespace:JaneIDE.View"
+>
+    
+    <DataTemplate DataType="{x:Type vm:CodeBoxViewModel}">
+        <vw:CodeBox />
+    </DataTemplate>
 
     <DataTemplate x:Key="ClosableTabItemTemplate">
         <DockPanel Width="120">
@@ -17,7 +24,7 @@
         VerticalContentAlignment="Bottom"
         Width="16" Height="16" 
         />
-            <ContentPresenter 
+        <ContentPresenter 
         Content="{Binding Path=DisplayName}" 
         VerticalAlignment="Center" 
         />
