@@ -4,7 +4,7 @@
 type InterfaceMember(isStatic : bool, name : ID, pos : Position) =
     inherit Node(pos)
     member x.Name     = name
-    member x.IsStatic = isStatic    
+    member x.IsStatic = isStatic
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -46,4 +46,4 @@ type InterfaceField(isStatic : bool, isFinal : bool, fieldType : Type, name : ID
     override x.ToString() = 
         let staticStr = if isStatic then "static " else ""
         let finalStr  = if isStatic then "final "  else ""
-        sprintf "%s%s%A %A = %A;" staticStr finalStr fieldType name body
+        sprintf "%s%s%A %s = %A;" staticStr finalStr fieldType name body

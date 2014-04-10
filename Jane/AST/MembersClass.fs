@@ -42,6 +42,10 @@ type ClassVoidMethod(isStatic : bool, name : ID, parameters : FormalParameter li
         let parametersStr = parameters |> List.map string |> String.concat ", " |> sprintf "(%s)"
         sprintf "%svoid %A%s %A" staticStr name parametersStr body
 
+    //Interpret body of method
+    member x.Interpret() = 
+        (body :> Statement).Interpret()
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type ClassField(isStatic : bool, isFinal : bool, fieldType : Type, name : ID, body : Expression, pos : Position) =
@@ -64,4 +68,5 @@ type ClassConstructor(name : ID, parameters : FormalParameter list, body : Block
 
     override x.ToString() = 
         let parametersStr = parameters |> List.map string |> String.concat ", " |> sprintf "(%s)"
-        sprintf "%A %s %A" name parametersStr body
+
+        sprintf "%s %s %A" name parametersStr body

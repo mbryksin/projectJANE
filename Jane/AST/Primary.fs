@@ -14,13 +14,17 @@ type Constructor(typeName : ID, arguments : Arguments, pos : Position) =
 
     override x.ToString() = sprintf "new %A%A" typeName arguments
 
+    override x.Interpret() = new Val() // later
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type Identifier(name : ID) =
     inherit Primary(name.Position)
     member x.Name = name
 
-    override x.ToString() = name.Value
+    override x.ToString() = name
+ 
+    override x.Interpret() = new Val() // do this
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -29,4 +33,6 @@ type Member(name : ID, suffix : Suffix, pos : Position) =
     member x.Name   = name
     member x.Suffix = suffix
 
-    override x.ToString() = sprintf "%A%A" name suffix
+    override x.ToString() = sprintf "%s%A" name suffix
+
+    override x.Interpret() = new Val() // do this
