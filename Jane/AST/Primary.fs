@@ -22,7 +22,7 @@ type Identifier(name : ID) =
     inherit Primary(name.Position)
     member x.Name = name
 
-    override x.ToString() = name
+    override x.ToString() = name.ToString()
  
     override x.Interpret() = new Val() // do this
 
@@ -33,6 +33,6 @@ type Member(name : ID, suffix : Suffix, pos : Position) =
     member x.Name   = name
     member x.Suffix = suffix
 
-    override x.ToString() = sprintf "%s%A" name suffix
+    override x.ToString() = sprintf "%s%A" name.Value suffix
 
     override x.Interpret() = new Val() // do this
