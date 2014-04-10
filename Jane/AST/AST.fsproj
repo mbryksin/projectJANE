@@ -49,6 +49,7 @@
     <Compile Include="Node.fs" />
     <Compile Include="Type.fs" />
     <Compile Include="ValStruct.fs" />
+    <Compile Include="Variable.fs" />
     <Compile Include="FormalParameter.fs" />
     <Compile Include="Operators.fs" />
     <Compile Include="Initializer.fs" />

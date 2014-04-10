@@ -1,54 +1,81 @@
 ﻿namespace AST
 
 [<AbstractClass>]
-type Statement(pos : Position) =
+type Statement(pos : Position, parent : Block option) =
     inherit Node(pos)
+    let mutable parent = parent
+    member x.Parent
+        with get() = parent
+        and  set(value) = parent <- value
+
     abstract member Interpret: unit -> unit
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-type Block(statements : Statement list, pos : Position) =
-    inherit Statement(pos)
+and Block(statements : Statement list, pos : Position, context : Variable list, parent : Block option) =
+    inherit Statement(pos, parent)
+    let mutable context = context
+
     member x.Statements = statements
-    //Interpret all statement in block
+    member x.Context 
+        with get () = context
+        and  set (value) = context <- value
 
     override x.ToString() = statements
                             |> List.map string
                             |> String.concat ""
                             |> sprintf "{\n%s}\n" 
 
-    override x.Interpret() = List.iter (fun (s : Statement) -> s.Interpret()) statements
+    //Interpret all statement in block
+    override x.Interpret() =
+         
+        List.iter (fun (s : Statement) -> 
+                      s.Parent <- Some x
+                      // if statenemt is block, copy content from parent
+                      match s with
+                          | :? Block as block -> block.Context <- x.Context
+                          | _ -> ()
+                      s.Interpret()
+                  ) statements
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type DeclarationStatement(declarationType : Type, name : string, body : Initializer, pos : Position) =
-    inherit Statement(pos)
+type DeclarationStatement(declarationType : Type, name : string, body : Initializer, pos : Position, parent : Block option) =
+    inherit Statement(pos, parent)
     member x.Type = declarationType
     member x.Name = name
     member x.Body = body
-    //add variable to the context
-
+   
     override x.ToString() = sprintf "%A %s = %A;\n" declarationType name body
 
-    override x.Interpret() = () // do this
+    //add variable to the context
+    override x.Interpret() = 
+        let parentBlock = parent.Value
+        parentBlock.Context <- Variable(name, declarationType, body.Interpret()) :: parentBlock.Context
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type AssignmentStatement(path : string list, body : Initializer, pos : Position) =
-    inherit Statement(pos)
+type AssignmentStatement(path : string list, body : Initializer, pos : Position, parent : Block option) =
+    inherit Statement(pos, parent)
     member x.Path = path
     member x.Body = body
-    //find variable in context and change value
 
     override x.ToString() = sprintf "%s = %A;\n" (String.concat "." path) body
 
-    override x.Interpret() = () // do this
+    //find variable in context and change value
+    override x.Interpret() = 
+        let parentBlockContent = parent.Value.Context
+        let AssignVarName = path.Head             //using for simply imperative tests
+        let valOfInitializer = body.Interpret()
+        let currentVariable = List.find (fun (v: Variable) -> v.Name = AssignVarName) parentBlockContent
+        currentVariable.Assign(valOfInitializer)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type MemberCallStatement(body : Expression, pos : Position) =
-    inherit Statement(pos)
+type MemberCallStatement(body : Expression, pos : Position, parent : Block option) =
+    inherit Statement(pos, parent)
     member x.Body = body
     
     override x.ToString() = sprintf "%A;\n" body
@@ -57,8 +84,9 @@ type MemberCallStatement(body : Expression, pos : Position) =
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type IfStatement(condition : Expression, trueStatement : Statement, falseStatement : Statement option, pos : Position) =
-    inherit Statement(pos)
+type IfStatement(condition : Expression, trueStatement : Statement, 
+                 falseStatement : Statement option, pos : Position, parent : Block option) =
+    inherit Statement(pos, parent)
     member x.Condition      = condition
     member x.TrueStatement  = trueStatement
     member x.FalseStatement = falseStatement
@@ -78,8 +106,8 @@ type IfStatement(condition : Expression, trueStatement : Statement, falseStateme
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type WhileStatement(condition : Expression, body : Statement, pos : Position) =
-    inherit Statement(pos)
+type WhileStatement(condition : Expression, body : Statement, pos : Position, parent : Block option) =
+    inherit Statement(pos, parent)
     member x.Condition = condition
     member x.Body      = body
 
@@ -94,8 +122,8 @@ type WhileStatement(condition : Expression, body : Statement, pos : Position) =
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type ForStatement(init : DeclarationStatement, condition : Expression, 
-                  update : AssignmentStatement, body : Statement, pos : Position) =
-    inherit Statement(pos)
+                  update : AssignmentStatement, body : Statement, pos : Position, parent : Block option) =
+    inherit Statement(pos, parent)
     member x.Init      = init
     member x.Condition = condition
     member x.Update    = update
@@ -114,8 +142,8 @@ type ForStatement(init : DeclarationStatement, condition : Expression,
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type BreakStatement(pos : Position) =
-    inherit Statement(pos)
+type BreakStatement(pos : Position, parent : Block option) =
+    inherit Statement(pos, parent)
 
     override x.ToString() = "break;"
 
@@ -123,8 +151,8 @@ type BreakStatement(pos : Position) =
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type ContinueStatement(pos : Position) =
-    inherit Statement(pos)
+type ContinueStatement(pos : Position, parent : Block option) =
+    inherit Statement(pos, parent)
 
     override x.ToString() = "continue;"
 
@@ -132,8 +160,8 @@ type ContinueStatement(pos : Position) =
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type ReturnStatement(expression : Expression option, pos : Position) =
-    inherit Statement(pos)
+type ReturnStatement(expression : Expression option, pos : Position, parent : Block option) =
+    inherit Statement(pos, parent)
     member x.Expression = expression
 
     override x.ToString() = sprintf "return %A;" expression
@@ -142,10 +170,10 @@ type ReturnStatement(expression : Expression option, pos : Position) =
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type SuperStatement(arguments : Arguments, pos : Position) =
-    inherit Statement(pos)
+type SuperStatement(arguments : Arguments, pos : Position, parent : Block option) =
+    inherit Statement(pos, parent)
     member x.Arguments = arguments
 
     override x.ToString() = sprintf "super%A;" arguments
 
-    override x.Interpret() = () // later
+    override x.Interpret() = () //later
