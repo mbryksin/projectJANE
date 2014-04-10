@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScintillaNET>
+    <Language Name="jane">
+        <Lexer LexerName="cpp"/>
+        <Lexer LineCommentPrefix="//" StreamCommentPrefix="/*" StreamCommentSuffix="*/" >
+            <Keywords List="0">class static import new interface null return final for while do break continue super if else </Keywords>
+            <Keywords List="1">void int string String byte</Keywords>
+            <Properties>
+        		<Property Name="fold.comment" Value="1" />
+      		</Properties>
+        </Lexer>
+        <Styles>
+        	<Style Name="DEFAULT" FontName="Consolas" Size="10" Bold="Yes"/>
+            <Style Name="NUMBER" ForeColor="#590CE8" />
+            <Style Name="COMMENT" ForeColor="Green"/>
+            <Style Name="STRING" ForeColor="#943E14" />
+            <Style Name="WORD" ForeColor="#AB2778" />
+            <Style Name="WORD2" ForeColor="#019966" Italic="Yes"/>
+            <Style Name="WORD5" ForeColor="#FF0000" Italic="Yes"/>
+            <Style Name="OPERATOR" ForeColor="#000000" Bold="Yes"/>
+        </Styles>
+
+        <AutoComplete FillUpCharacters="" SingleLineAccept="True" IsCaseSensitive="False">
+        <List>
+        	class static import new interface return final break continue super void int string byte
+        </List>
+        </AutoComplete>	
+
+        <Indentation TabWidth="4" UseTabs="true"/>
+
+      <Snippets IsOneKeySelectionEmbedEnabled="True" IsEnabled="true">
+        <Snippet Shortcut="If" IsSurroundsWith="true">if ($true$)
+{
+  $selected$$end$
+}
+        </Snippet>
+        <Snippet Shortcut="IfElse" IsSurroundsWith="true">
+if ($true$)
+{
+  $selected$$end$
+}
+else
+{
+  
+}
+        </Snippet>
+        <Snippet Shortcut="For" IsSurroundsWith="true">for (int $i$ = $0$; $i$ &lt; $max$; $i$++)
+{
+  $selected$$end$
+}
+        </Snippet>
+        <Snippet Shortcut="While" IsSurroundsWith="true">while($true$)
+{
+  $selected$$end$
+}
+        </Snippet>
+
+        <Snippet Shortcut="YAS" IsSurroundsWith="true">YetAnotherSnippet($end$);</Snippet>
+
+      <Snippet Shortcut="NewClassWithMain" IsSurroundsWith="true">class $NewClass$
+{
+  void main(String[] args)
+    {
+      $end$
+    }
+}
+      </Snippet>
+
+<Snippet Shortcut="NewClass" IsSurroundsWith="true">class $NewClass$
+{
+  void $NewClass$()
+  {
+    $end$
+  }
+}
+        </Snippet>
+      </Snippets>
+      
+    </Language>
+
+</ScintillaNET>

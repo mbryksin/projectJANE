@@ -4,16 +4,29 @@
 type Primary(pos) =
     inherit Expression(pos)
 
-type Constructor(typeName : string, arguments : Arguments, pos : Position) =
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+type Constructor(typeName : ID, arguments : Arguments, pos : Position) =
     inherit Primary(pos)
-    member x.TName     = typeName
+    member x.Name      = typeName
     member x.Arguments = arguments
 
-type Identifier(name : string, pos : Position) =
-    inherit Primary(pos)
+    override x.ToString() = sprintf "new %A%A" typeName arguments
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+type Identifier(name : ID) =
+    inherit Primary(name.Position)
     member x.Name = name
 
-type Member(name : string, suffix : Suffix, pos : Position) =
+    override x.ToString() = name.Value
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+type Member(name : ID, suffix : Suffix, pos : Position) =
     inherit Primary(pos)
     member x.Name   = name
     member x.Suffix = suffix
+
+    override x.ToString() = sprintf "%A%A" name suffix
