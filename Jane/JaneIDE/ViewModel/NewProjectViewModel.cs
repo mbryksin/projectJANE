@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 using System.Windows.Input;
 using System.Windows.Forms;
 using System.Threading.Tasks;
+
 using JaneIDE.Model;
 
 namespace JaneIDE.ViewModel
@@ -12,7 +14,7 @@ namespace JaneIDE.ViewModel
     class NewProjectViewModel : WorkspaceViewModel
     {
         private FolderBrowserDialog folderBrowserDialog;
-
+        Project newProject;
         RelayCommand _browseCommand;
         RelayCommand _saveCommand;
 
@@ -21,16 +23,15 @@ namespace JaneIDE.ViewModel
         string projectFolder;
         string mainClass;
 
-        public NewProjectViewModel()
+        public NewProjectViewModel(Project project)
         {
+            newProject = project;
             projectFolder = "";
             projectName = "";
             folderName = "";
             mainClass = "";
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.folderBrowserDialog.Description = "Select the Jane project directory";
-            //this.folderBrowserDialog.ShowNewFolderButton = true;
-            // Default to the My Documents folder.
             this.folderBrowserDialog.RootFolder = Environment.SpecialFolder.Personal;
         }
 
@@ -59,7 +60,7 @@ namespace JaneIDE.ViewModel
 
                 base.OnPropertyChanged("ProjectName");
 
-                this.ProjectFolder = this.ProjectLocation + "\\" + this.ProjectName;
+                this.ProjectFolder = System.IO.Path.Combine(this.ProjectLocation, this.ProjectName);
             }
         }
         public string ProjectLocation
@@ -70,11 +71,19 @@ namespace JaneIDE.ViewModel
                 if (value.Trim() == folderName)
                     return;
 
+                /*
+                if (!Directory.Exists(value.Trim()))
+                {
+                    folderName = "";
+                    return;
+                }
+                */
+
                 folderName = value.Trim();
 
                 base.OnPropertyChanged("ProjectLocation");
 
-                this.ProjectFolder = this.ProjectLocation + "\\" + this.ProjectName;
+                this.ProjectFolder = System.IO.Path.Combine(this.ProjectLocation, this.ProjectName);
             }
         }
         public string ProjectFolder
@@ -136,16 +145,18 @@ namespace JaneIDE.ViewModel
             }
         }
 
-        private bool CanSave
+        public bool CanSave
         {
-            get { return String.IsNullOrEmpty(this.ProjectFolder) && String.IsNullOrEmpty(this.ProjectName) && String.IsNullOrEmpty(this.MainClass); }
+            get { return !(String.IsNullOrEmpty(this.ProjectFolder) || String.IsNullOrEmpty(this.ProjectName) || String.IsNullOrEmpty(this.MainClass)); }
         }
 
         public void Save()
         {
             if (this.CanSave)
             {
-
+                newProject = new Project(this.ProjectName, this.ProjectFolder, this.MainClass);
+                newProject.SaveProject();
+                this.CloseCommand.Execute(null);
             }
         }
 
@@ -157,6 +168,5 @@ namespace JaneIDE.ViewModel
                 this.ProjectLocation = folderBrowserDialog.SelectedPath;
             }
         }
-
     }
 }

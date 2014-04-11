@@ -8,17 +8,21 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 
+using JaneIDE.Model;
+
 namespace JaneIDE.ViewModel
 {
     public class MainWindowViewModel : WorkspaceViewModel
     {
+        Project project;        
         ObservableCollection<WorkspaceViewModel> _workspaces;
         RelayCommand _newProjectCommand;
 
         public MainWindowViewModel()
         {
-            this.CreateNewFile("test1.jane");
-            this.CreateNewFile("test2.jane");
+            project = null;
+
+            this.CreateNewFile("Program.jane");
         }
 
         public ICommand NewProjectCommand
@@ -38,7 +42,8 @@ namespace JaneIDE.ViewModel
         {
             EventHandler handler = this.NewProjectEvent;
             if (handler != null)
-                handler(this, EventArgs.Empty);
+                handler(this, new NewProjectEventArgs(project));
+
         }
 
         public ObservableCollection<WorkspaceViewModel> Workspaces

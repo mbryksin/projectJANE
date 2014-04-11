@@ -8,35 +8,47 @@ namespace JaneIDE.Model
 {
     class Project
     {
-        string projectName;
-        string projectFolderPath;
-        string authorName;
-        int projectVersion;
-        List<string> projectSources;
+        private string projectName;
+        private string projectFolderPath;
+        private string authorName;
+        private int projectVersion;
+        private List<string> projectSources;
 
         public Project(string name, string path, string mainClass)
         {
             authorName = Environment.UserName;
             projectName = name;
             projectFolderPath = path;
-            projectSources.Add(mainClass);
             projectVersion = 100;
+
+            projectSources = new List<string>();
+            projectSources.Add(mainClass);
         }
 
-        public void AddSource(string file)
+        public string ProjectName
         {
-            if (!projectSources.Contains(file))
-                projectSources.Add(file);
+            get { return projectName; }
         }
 
-        public void SaveProject()
+        public string Author
         {
-
+            get { return authorName; }
         }
 
-        public void RunProject()
+        public int ProjectVersion
         {
+            get { return projectVersion; }
+            set
+            {
+                if (value == projectVersion)
+                    return;
+                projectVersion = value;
+            }
+        }
 
+        public string MainClass
+        {
+            get { return projectSources.First<string>(); }
         }
 
         public List<string> Sources
@@ -44,5 +56,23 @@ namespace JaneIDE.Model
             get { return projectSources; }
         }
 
+        public void AddSource(string file)
+        {
+            if (projectSources.Contains(file))
+                return;
+            
+            projectSources.Add(file);
+        }
+
+        public void SaveProject()
+        {
+            projectVersion += 1;
+            Console.WriteLine("%s %s", this.ProjectName, this.MainClass);
+        }
+
+        public void RunProject()
+        {
+
+        }
     }
 }

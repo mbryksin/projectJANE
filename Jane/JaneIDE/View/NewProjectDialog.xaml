@@ -40,7 +40,7 @@
         <TextBox Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Text="{Binding Path=MainClass}"/>
 
         <Separator Grid.Row="5" Grid.ColumnSpan="2" HorizontalAlignment="Left" VerticalAlignment="Top" Width="200" Height="1"/>
-        <Button Grid.Row="5" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Stretch" Content="Finish" Width="60"/>
+        <Button Grid.Row="5" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Stretch" Content="Finish" Width="60" Command="{Binding Path=SaveCommand}"/>
         <Button Grid.Row="5" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Stretch" Content="Cancel" Width="60" Command="{Binding Path=CloseCommand}"/>
         
     </Grid>
