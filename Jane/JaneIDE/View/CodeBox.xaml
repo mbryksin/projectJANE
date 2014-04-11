@@ -10,5 +10,5 @@
     <WindowsFormsHost Name="wfh">
         <scintilla:Scintilla Name="CodeBox"> </scintilla:Scintilla> 
     </WindowsFormsHost>
-    <!--So, have not ideas about the warning =( BUT it is working! -->
+    <!--So,  do not have ideas about the warning =( BUT it is working! -->
 </UserControl>
