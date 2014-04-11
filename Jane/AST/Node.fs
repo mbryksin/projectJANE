@@ -34,3 +34,9 @@ type ID(id : string, p : Position) =
     member x.Value = id
 
     override x.ToString() = id
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+type Error(errorMessage : string, position : Position) =
+    member x.Position     = position
+    member x.ErrorMessage = errorMessage
