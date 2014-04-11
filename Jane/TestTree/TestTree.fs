@@ -42,6 +42,6 @@ let myClass        = new Class(new ID("myClass", p), None, [], Some myConstructo
 let myClasses      = List.map (fun a -> a :> ProgramMember) [myClass]
 let myProg         = new Program(myClasses, "myClass", p)
 
-let err, main = SA_Program myProg
+SA_Program myProg
 
 printfn "%A" myProg
