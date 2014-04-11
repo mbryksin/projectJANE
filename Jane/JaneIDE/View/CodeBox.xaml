@@ -2,19 +2,13 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vw="clr-namespace:JaneIDE.View"
+             xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
+             xmlns:scintilla="clr-namespace:ScintillaNET;assembly=ScintillaNET"
              HorizontalAlignment="Stretch"
              VerticalAlignment="Stretch"  
              >
-    <Grid>
-        <RichTextBox>
-            <FlowDocument>
-                <Paragraph>
-                    <Run>Paragraph 1</Run>
-               </Paragraph>
-                <Paragraph>
-                    <Run>Paragraph 2</Run>
-                </Paragraph>
-            </FlowDocument>
-        </RichTextBox>
-    </Grid>
+    <WindowsFormsHost Name="wfh">
+        <scintilla:Scintilla Name="CodeBox"> </scintilla:Scintilla> 
+    </WindowsFormsHost>
+    <!--So,  do not have ideas about the warning =( BUT it is working! -->
 </UserControl>

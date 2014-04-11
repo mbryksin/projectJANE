@@ -1,8 +1,6 @@
 ﻿<Window x:Class="JaneIDE.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
-        xmlns:scintilla="clr-namespace:ScintillaNET;assembly=ScintillaNET"
         Title="JANE Studio" MinHeight="480" MinWidth="640"
         Icon="/Images/JanePic.ico"
         WindowStartupLocation="CenterScreen" 
@@ -88,11 +86,7 @@
                     <RowDefinition Height="209*"/>
                     <RowDefinition Height="70*"/>
                 </Grid.RowDefinitions>
-
-                <!--<WindowsFormsHost Name="wfh" ChildChanged="wfh_ChildChanged">
-                    <scintilla:Scintilla Name="CodeBox"></scintilla:Scintilla>
-                </WindowsFormsHost>-->
-
+                
                 <ContentControl 
                     Grid.Row="0" 
                     Content="{Binding Path=Workspaces}" 
