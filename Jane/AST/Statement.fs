@@ -29,7 +29,6 @@ and Block(statements : Statement list, pos : Position, context : Variable list, 
 
     //Interpret all statement in block
     override x.Interpret() =
-         
         List.iter (fun (s : Statement) -> 
                       s.Parent <- Some x
                       // if statenemt is block, copy content from parent
@@ -41,18 +40,20 @@ and Block(statements : Statement list, pos : Position, context : Variable list, 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type DeclarationStatement(declarationType : Type, name : string, body : Initializer, pos : Position, parent : Block option) =
+
+type DeclarationStatement(declarationType : Type, name : ID, body : Initializer, pos : Position, parent : Block option) =
     inherit Statement(pos, parent)
     member x.Type = declarationType
     member x.Name = name
     member x.Body = body
-   
-    override x.ToString() = sprintf "%A %s = %A;\n" declarationType name body
+
+    override x.ToString() = sprintf "%A %A = %A;\n" declarationType name body
 
     //add variable to the context
     override x.Interpret() = 
-        let parentBlock = parent.Value
-        parentBlock.Context <- Variable(name, declarationType, body.Interpret()) :: parentBlock.Context
+        let parentBlock = x.Parent.Value
+        let context = x.Parent.Value.Context
+        parentBlock.Context <- Variable(name.Value, declarationType, body.Interpret(context)) :: parentBlock.Context
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,11 +67,13 @@ type AssignmentStatement(path : string list, body : Initializer, pos : Position,
 
     //find variable in context and change value
     override x.Interpret() = 
-        let parentBlockContent = parent.Value.Context
+        let parentBlockContext = x.Parent.Value.Context
         let AssignVarName = path.Head             //using for simply imperative tests
-        let valOfInitializer = body.Interpret()
-        let currentVariable = List.find (fun (v: Variable) -> v.Name = AssignVarName) parentBlockContent
+        let valOfInitializer = body.Interpret(parentBlockContext)
+        let currentVariable = List.find (fun (v: Variable) -> v.Name = AssignVarName) parentBlockContext
+        printfn "%s" <| "beforeAssign " + currentVariable.ToString() //for debugging
         currentVariable.Assign(valOfInitializer)
+        printfn "%s" <| "AfterAssign " + currentVariable.ToString()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -98,7 +101,8 @@ type IfStatement(condition : Expression, trueStatement : Statement,
 
     //if condition is true - interpret trueStatement, else - falseStatement if it present
     override x.Interpret() =
-        if condition.Interpret().Bool.Value 
+        let context = x.Parent.Value.Context
+        if condition.Interpret(context).Bool.Value 
             then trueStatement.Interpret()
             else 
                  if falseStatement.IsSome 
@@ -116,7 +120,8 @@ type WhileStatement(condition : Expression, body : Statement, pos : Position, pa
     override x.ToString() = sprintf "while (%A) %A" condition body
 
     override x.Interpret() =
-        while condition.Interpret().Bool.Value do
+        let context = x.Parent.Value.Context
+        while condition.Interpret(context).Bool.Value do
             body.Interpret()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -129,13 +134,17 @@ type ForStatement(init : DeclarationStatement, condition : Expression,
     member x.Update    = update
     member x.Body      = body
 
-    override x.ToString() = sprintf "for (%A %s = %A; %A; %s = %A) %A" init.Type init.Name init.Body 
+    override x.ToString() = sprintf "for (%A %A = %A; %A; %s = %A) %A" init.Type init.Name init.Body 
                                     condition (String.concat "." update.Path) update.Body body
 
     //interpret init, while condition is true interpret body and interpret update
     override x.Interpret() =   
+        init.Parent <- x.Parent
+        update.Parent <- x.Parent
+
+        let context = x.Parent.Value.Context
         init.Interpret()    
-        while condition.Interpret().Bool.Value do
+        while condition.Interpret(context).Bool.Value do
             body.Interpret()
             update.Interpret()
                             

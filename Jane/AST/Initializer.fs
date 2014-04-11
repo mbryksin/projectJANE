@@ -3,7 +3,7 @@
 [<AbstractClass>]
 type Initializer(pos : Position) =
     inherit Node(pos)  
-    abstract member Interpret: unit -> Val
+    abstract member Interpret: Variable list -> Val
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -16,4 +16,4 @@ type ArrayInitializer(elements : Initializer list, pos : Position) =
                             |> String.concat ", "
                             |> sprintf "{ %s }"
 
-    override x.Interpret()= new Val() // later
+    override x.Interpret(context : Variable list)= new Val() // later

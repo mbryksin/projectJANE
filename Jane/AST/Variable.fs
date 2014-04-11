@@ -11,6 +11,7 @@ type Variable(name : string, varType : Type, value : Val) =
 
     member x.Assign(assignValue : Val) = 
         value <- assignValue
-        
-        
+
+    override x.ToString() = name + "=" + value.Int.Value.ToString()  //for test
+
 

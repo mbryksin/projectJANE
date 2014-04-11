@@ -7,32 +7,36 @@ type Primary(pos) =
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-type Constructor(typeName : string, arguments : Arguments, pos : Position) =
+type Constructor(typeName : ID, arguments : Arguments, pos : Position) =
     inherit Primary(pos)
-    member x.TName     = typeName
+    member x.Name      = typeName
     member x.Arguments = arguments
 
-    override x.ToString() = sprintf "new %s%A" typeName arguments
+    override x.ToString() = sprintf "new %A%A" typeName arguments
 
-    override x.Interpret() = new Val() // later
+    override x.Interpret(context : Variable list) = new Val() // later
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type Identifier(name : string, pos : Position) =
-    inherit Primary(pos)
+type Identifier(name : ID) =
+    inherit Primary(name.Position)
     member x.Name = name
 
-    override x.ToString() = name
+    override x.ToString() = name.Value
  
-    override x.Interpret() = new Val() // do this
+    override x.Interpret(context : Variable list) = 
+        let currVar = List.find (fun (var: Variable) -> var.Name = x.Name.Value) context
+        currVar.Val
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type Member(name : string, suffix : Suffix, pos : Position) =
+type Member(name : ID, suffix : Suffix, pos : Position) =
     inherit Primary(pos)
     member x.Name   = name
     member x.Suffix = suffix
 
-    override x.ToString() = sprintf "%s%A" name suffix
+    override x.ToString() = sprintf "%A%A" name suffix
 
-    override x.Interpret() = new Val() // do this
+    override x.Interpret(context : Variable list) = new Val() // do this
+
