@@ -102,11 +102,19 @@ type IfStatement(condition : Expression, trueStatement : Statement,
     //if condition is true - interpret trueStatement, else - falseStatement if it present
     override x.Interpret() =
         let context = x.Parent.Value.Context
-        if condition.Interpret(context).Bool.Value 
-            then trueStatement.Interpret()
+        if condition.Interpret(context).Bool.Value
+            then trueStatement.Parent <- x.Parent
+                 match trueStatement with
+                 | :? Block as block -> block.Context <- x.Parent.Value.Context
+                 | _ -> ()
+                 trueStatement.Interpret()          
             else 
                  if falseStatement.IsSome 
-                 then falseStatement.Value.Interpret()
+                 then falseStatement.Value.Parent <- x.Parent
+                      match falseStatement.Value with
+                      | :? Block as block -> block.Context <- x.Parent.Value.Context
+                      | _ -> ()
+                      falseStatement.Value.Interpret()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -121,6 +129,10 @@ type WhileStatement(condition : Expression, body : Statement, pos : Position, pa
 
     override x.Interpret() =
         let context = x.Parent.Value.Context
+        body.Parent <- x.Parent
+        match body with
+        | :? Block as block -> block.Context <- x.Parent.Value.Context
+        | _ -> ()
         while condition.Interpret(context).Bool.Value do
             body.Interpret()
 
@@ -142,8 +154,12 @@ type ForStatement(init : DeclarationStatement, condition : Expression,
         init.Parent <- x.Parent
         update.Parent <- x.Parent
 
+        init.Interpret()  
         let context = x.Parent.Value.Context
-        init.Interpret()    
+        body.Parent <- x.Parent
+        match body with
+        | :? Block as block -> block.Context <- x.Parent.Value.Context
+        | _ -> ()    
         while condition.Interpret(context).Bool.Value do
             body.Interpret()
             update.Interpret()

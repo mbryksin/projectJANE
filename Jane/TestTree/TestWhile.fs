@@ -1,4 +1,4 @@
-﻿module TestFor
+﻿module TestWhile
 
 open AST
 open StaticAnalysis
@@ -11,7 +11,7 @@ open Errors
 //
 //    static int main() {
 //        int a = 1;
-//        for (int i = 1; i < 5; i++)
+//        while (a < 5)
 //        {
 //            a = a + 2;
 //        }
@@ -30,18 +30,15 @@ let two            = new IntegerLiteral(2L, p)
 
 let myDecl         = new DeclarationStatement(myInt, new ID("a", p), one, p, None)
 
-let binOpPlus      = new BinaryOperation(new Identifier(new ID("a", p)), ADDITION, two, p)
+let binOpPlus      = new BinaryOperation(new Identifier(new ID("a", p)), ADDITION, one, p)
 let myAssign       = new AssignmentStatement(["a"], binOpPlus, p, None)
 
 //for
-let myDeclFor      = new DeclarationStatement(myInt, new ID("i", p), one, p, None)
-let myBlockFor     = new Block([myAssign], p, [], None)
-let binOpPlusFor   = new BinaryOperation(new Identifier(new ID("i", p)), ADDITION, one, p)
-let myAssignFor    = new AssignmentStatement(["i"], binOpPlusFor, p, None)
-let myCondition    = new BinaryOperation (new Identifier(new ID("i", p)), LESS, five, p)
-let myFor          = new ForStatement(myDeclFor, myCondition , myAssignFor, myBlockFor, p, None)
+let myCondition    = new BinaryOperation (new Identifier(new ID("a", p)), LESS, five, p)
+let WhileBlock     = new Block([myAssign], p, [], None)
+let myWhile        = new WhileStatement(myCondition, WhileBlock, p, None)
 
-let myBlock        = new Block([myDecl; myFor; myAssign], p, [], None)
+let myBlock        = new Block([myDecl; myWhile ; myAssign], p, [], None)
 let myMethod       = new ClassVoidMethod(true, new ID("main", p),[], myBlock, p)
 
 let myClassMembers = List.map (fun a -> a :> ClassMember) [myMethod]

@@ -49,6 +49,8 @@
     <Compile Include="TestExpr.fs" />
     <Compile Include="TestTree.fs" />
     <Compile Include="TestFor.fs" />
+    <Compile Include="TestIf.fs" />
+    <Compile Include="TestWhile.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AST\AST.fsproj">
