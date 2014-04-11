@@ -9,7 +9,7 @@ type ProgramMember(name : ID, pos : Position) =
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type Interface(name : ID, ancestors : ID list, members : InterfaceMember list, pos : Position) =
+type Interface(name : ID, ancestorsNames : ID list, members : InterfaceMember list, pos : Position) =
     inherit ProgramMember(name, pos)
     
     let fields        = List.fold (fun acc (m : InterfaceMember) ->
@@ -32,18 +32,23 @@ type Interface(name : ID, ancestors : ID list, members : InterfaceMember list, p
                                        with :? InvalidCastException -> acc
                                   ) [] methods 
 
-    member x.Ancestors     = ancestors
-    member x.Members       = members  
-    member x.Fields        = fields
-    member x.Methods       = methods
-    member x.ReturnMethods = returnMethods
-    member x.VoidMethods   = voidMethods
+    let mutable ancestors : Interface list = []
+
+    member x.AncestorsNames = ancestorsNames
+    member x.Members        = members  
+    member x.Fields         = fields
+    member x.Methods        = methods
+    member x.ReturnMethods  = returnMethods
+    member x.VoidMethods    = voidMethods
+
+    member x.Ancestors with get()             = ancestors
+                       and  set(newAncestors) = ancestors <- newAncestors
 
     override x.ToString() =
-        let extendsStr   = if not ancestors.IsEmpty then " extends " else ""
-        let ancestorsStr = ancestors |> List.map string |> String.concat ", "
+        let extendsStr   = if not ancestorsNames.IsEmpty then " extends " else ""
+        let ancestorsStr = ancestorsNames |> List.map string |> String.concat ", "
         let membersStr   = members |> List.map string |> String.concat "\n\n"
-        sprintf "interface %A%s%s {\n\n%s\n\n}\n" name extendsStr ancestorsStr membersStr
+        sprintf "interface %A%s%s {\n\n%s}\n" name extendsStr ancestorsStr membersStr
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
