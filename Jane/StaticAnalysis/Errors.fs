@@ -3,10 +3,7 @@
 open AST
     
 
-type Error private(errorMessage : string, position : Position) =
-    
-    member x.Position     = position
-    member x.ErrorMessage = errorMessage
+type Error with
 
     static member DuplicateNode (kindNode : string) (nameNode : string) (positionNode : Position) = 
         new Error(sprintf "Duplicate %s: %s." kindNode nameNode, positionNode)
@@ -26,5 +23,11 @@ type Error private(errorMessage : string, position : Position) =
     static member MainIsNotVoid (cn : ClassMethod) =
         new Error(sprintf "Method \"main\" must be void method.", cn.Position)
 
-    static member IncorrectName (name : string, position : Position) =
+    static member IncorrectName (name : string) (position : Position) =
         new Error(sprintf "Incorrect identifier: %s." name, position)
+
+    static member ObjectIsNotExist (name : string) (position : Position) (typeObject : string) =
+        new Error (sprintf "%s with name %s not exists." typeObject name, position)
+
+    static member CycleInheritIinterface (id : ID)=
+        new Error(sprintf "Interface %s iherits in cycle." id.Value, id.Position)
