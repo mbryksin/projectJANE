@@ -12,6 +12,17 @@ type Variable(name : string, varType : Type, value : Val) =
     member x.Assign(assignValue : Val) = 
         value <- assignValue
 
-    override x.ToString() = name + "=" + value.Int.Value.ToString()  //for test
+    override x.ToString() = 
+        let start = name + "="
+        let value =
+            match x.Val with
+            | Int content   -> content.ToString()
+            | Bool content  -> content.ToString()
+            | Str content   -> content.ToString()
+            | Char content  -> content.ToString()
+            | Float content -> content.ToString()
+            | _        -> "error"
+        start + value
+
 
 

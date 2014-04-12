@@ -16,4 +16,4 @@ type ArrayInitializer(elements : Initializer list, pos : Position) =
                             |> String.concat ", "
                             |> sprintf "{ %s }"
 
-    override x.Interpret(context : Variable list)= new Val() // later
+    override x.Interpret(context : Variable list)= Empty // later

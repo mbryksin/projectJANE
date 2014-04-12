@@ -32,11 +32,11 @@ let myWorld        = new StringLiteral(" World!", p)
 let myMemberCall1  = new BinaryOperation(new Identifier(new ID("helloWorld", p)), ADDITION, myWorld, p)
 let myAssign       = new AssignmentStatement(["helloWorld"], myMemberCall1, p, None)
                            
-let myMember       = new Member(new ID("print", p), new Arguments([new Identifier(new ID("helloWorld", p))], p), p)
-let myMemberCall2  = new BinaryOperation(new Identifier(new ID("stdout", p)), MEMBER_CALL, myMember, p)
-let myPrint        = new MemberCallStatement(myMemberCall2, p, None)
+//let myMember       = new Member(new ID("print", p), new Arguments([new Identifier(new ID("helloWorld", p))], p), p)
+//let myMemberCall2  = new BinaryOperation(new Identifier(new ID("stdout", p)), MEMBER_CALL, myMember, p)
+//let myPrint        = new MemberCallStatement(myMemberCall2, p, None)
 
-let myBlock        = new Block([myDecl; myAssign; myPrint], p, [], None)
+let myBlock        = new Block([myDecl; myAssign; (*myPrint*)], p, [], None)
 let myMethod       = new ClassVoidMethod(true, new ID("main", p),[], myBlock, p)
 
 let myClassMembers = List.map (fun a -> a :> ClassMember) [myMethod]
@@ -48,3 +48,4 @@ let myProg         = new Program(myClasses, "myClass", p)
 let err, main = SA_Program myProg
 
 printfn "%A" myProg
+myProg.Interpret()

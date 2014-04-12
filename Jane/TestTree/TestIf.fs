@@ -33,7 +33,7 @@ let myDecl         = new DeclarationStatement(myInt, new ID("a", p), one, p, Non
 let binOpPlus      = new BinaryOperation(new Identifier(new ID("a", p)), ADDITION, two, p)
 let myAssign       = new AssignmentStatement(["a"], binOpPlus, p, None)
 
-//for
+//If
 let myCondition    = new BinaryOperation (new Identifier(new ID("a", p)), LESS, one, p)
 let IfBlock        = new Block([myAssign], p, [], None)
 let myIf           = new IfStatement(myCondition, IfBlock, None, p, None)

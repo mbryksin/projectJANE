@@ -102,7 +102,12 @@ type IfStatement(condition : Expression, trueStatement : Statement,
     //if condition is true - interpret trueStatement, else - falseStatement if it present
     override x.Interpret() =
         let context = x.Parent.Value.Context
-        if condition.Interpret(context).Bool.Value
+        let isTrueCondition (cond : Val) =
+            match cond with
+            | Bool true -> true
+            | Int n when n <> 0L -> true
+            | _ -> false
+        if isTrueCondition(condition.Interpret(context)) = true
             then trueStatement.Parent <- x.Parent
                  match trueStatement with
                  | :? Block as block -> block.Context <- x.Parent.Value.Context
@@ -133,7 +138,14 @@ type WhileStatement(condition : Expression, body : Statement, pos : Position, pa
         match body with
         | :? Block as block -> block.Context <- x.Parent.Value.Context
         | _ -> ()
-        while condition.Interpret(context).Bool.Value do
+
+        let isTrueCondition (cond : Val) =
+            match cond with
+            | Bool true -> true
+            | Int n when n <> 0L -> true
+            | _ -> false
+
+        while isTrueCondition(condition.Interpret(context)) do
             body.Interpret()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -160,7 +172,14 @@ type ForStatement(init : DeclarationStatement, condition : Expression,
         match body with
         | :? Block as block -> block.Context <- x.Parent.Value.Context
         | _ -> ()    
-        while condition.Interpret(context).Bool.Value do
+
+        let isTrueCondition (cond : Val) =
+            match cond with
+            | Bool true -> true
+            | Int n when n <> 0L -> true
+            | _ -> false
+
+        while isTrueCondition(condition.Interpret(context)) do
             body.Interpret()
             update.Interpret()
                             

@@ -14,7 +14,7 @@ type Constructor(typeName : ID, arguments : Arguments, pos : Position) =
 
     override x.ToString() = sprintf "new %A%A" typeName arguments
 
-    override x.Interpret(context : Variable list) = new Val() // later
+    override x.Interpret(context : Variable list) = Empty // later
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,5 +38,5 @@ type Member(name : ID, suffix : Suffix, pos : Position) =
 
     override x.ToString() = sprintf "%A%A" name suffix
 
-    override x.Interpret(context : Variable list) = new Val() // do this
+    override x.Interpret(context : Variable list) = Empty // do this
 
