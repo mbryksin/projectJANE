@@ -14,5 +14,7 @@ namespace JaneIDE.ViewModel
         {
             base.DisplayName = displayName;
         }
+        
+        
     }
 }
