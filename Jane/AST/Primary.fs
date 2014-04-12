@@ -29,6 +29,7 @@ type Identifier(name : ID) =
         currVar.Val
 
 
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type Member(name : ID, suffix : Suffix, pos : Position) =
@@ -39,4 +40,5 @@ type Member(name : ID, suffix : Suffix, pos : Position) =
     override x.ToString() = sprintf "%A%A" name suffix
 
     override x.Interpret(context : Variable list) = Empty // do this
+
 

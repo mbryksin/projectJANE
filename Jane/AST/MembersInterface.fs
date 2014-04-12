@@ -47,3 +47,4 @@ type InterfaceField(isStatic : bool, isFinal : bool, fieldType : Type, name : ID
         let staticStr = if isStatic then "static " else ""
         let finalStr  = if isStatic then "final "  else ""
         sprintf "%s%s%A %A = %A;" staticStr finalStr fieldType name body
+
