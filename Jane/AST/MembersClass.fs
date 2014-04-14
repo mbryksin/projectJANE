@@ -30,7 +30,7 @@ type ClassReturnMethod(isStatic : bool, returnType : Type, name : ID,
     override x.ToString() = 
         let staticStr = if isStatic then "static " else ""
         let parametersStr = parameters |> List.map string |> String.concat ", " |> sprintf "(%s)"
-        sprintf "%s%A %A%s %A" staticStr returnType name parametersStr body
+        sprintf "%s%A %s%s %A" staticStr returnType name.Value parametersStr body
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -40,7 +40,11 @@ type ClassVoidMethod(isStatic : bool, name : ID, parameters : FormalParameter li
     override x.ToString() = 
         let staticStr     = if isStatic then "static " else ""
         let parametersStr = parameters |> List.map string |> String.concat ", " |> sprintf "(%s)"
-        sprintf "%svoid %A%s %A" staticStr name parametersStr body
+        sprintf "%svoid %s%s %A" staticStr name.Value parametersStr body
+
+    //Interpret body of method
+    member x.Interpret() = 
+        (body :> Statement).Interpret()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -53,7 +57,7 @@ type ClassField(isStatic : bool, isFinal : bool, fieldType : Type, name : ID, bo
     override x.ToString() = 
         let staticStr = if isStatic then "static " else ""
         let finalStr  = if isStatic then "final "  else ""
-        sprintf "%s%s%A %A = %A;" staticStr finalStr fieldType name body
+        sprintf "%s%s%A %s = %A;" staticStr finalStr fieldType name.Value body
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -65,3 +69,4 @@ type ClassConstructor(name : ID, parameters : FormalParameter list, body : Block
     override x.ToString() = 
         let parametersStr = parameters |> List.map string |> String.concat ", " |> sprintf "(%s)"
         sprintf "%A %s %A" name parametersStr body
+
