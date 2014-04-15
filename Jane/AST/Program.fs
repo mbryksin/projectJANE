@@ -23,3 +23,10 @@ type Program(programMembers : ProgramMember list, nameMainClass : string, pos : 
     override x.ToString() = programMembers
                             |> List.map string
                             |> String.concat "\n\n" 
+
+    //interpret the main method in the class that contains it
+    //mainclass sholud be in head of ProgramMembers, mainMethod sholud be in head of Members.
+    member x.Interpret() =
+        let classWithMain = classes.Head
+        let mainMethod = classWithMain.VoidMethods.Head
+        mainMethod.Interpret()
