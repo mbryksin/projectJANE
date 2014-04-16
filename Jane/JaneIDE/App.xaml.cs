@@ -52,6 +52,7 @@ namespace JaneIDE
 
             newProjectDialogWindow.DataContext = viewModel;
             newProjectDialogWindow.ShowDialog();
+            
         }
 
         protected override void OnStartup(StartupEventArgs e)

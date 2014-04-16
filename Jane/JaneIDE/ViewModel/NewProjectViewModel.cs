@@ -30,7 +30,7 @@ namespace JaneIDE.ViewModel
             projectName = "";
             folderName = "";
             mainClass = "";
-            this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
+            this.folderBrowserDialog = new FolderBrowserDialog();
             this.folderBrowserDialog.Description = "Select the Jane project directory";
             this.folderBrowserDialog.RootFolder = Environment.SpecialFolder.Personal;
         }

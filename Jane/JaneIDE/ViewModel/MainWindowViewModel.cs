@@ -8,6 +8,9 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 
+using System.IO;
+using System.Windows.Forms;
+
 using JaneIDE.Model;
 
 namespace JaneIDE.ViewModel
@@ -17,12 +20,28 @@ namespace JaneIDE.ViewModel
         Project project;        
         ObservableCollection<WorkspaceViewModel> _workspaces;
         RelayCommand _newProjectCommand;
+        RelayCommand _openProjectCommand;
+        private OpenFileDialog openFileDialog;
 
         public MainWindowViewModel()
         {
-            project = null;
+            project = new Project();
+            openFileDialog = new OpenFileDialog();
+            openFileDialog.InitialDirectory = Environment.SpecialFolder.Personal.ToString();
+            openFileDialog.Filter = "Project file (*.pro)|*.pro";
+            openFileDialog.RestoreDirectory = true;
+        }
 
-            this.CreateNewFile("Program.jane");
+        public ICommand OpenProjectCommand
+        {
+            get
+            {
+                if (_openProjectCommand == null)
+                    _openProjectCommand = new RelayCommand(param => this.OpenProject(),
+                                                           param => true);
+
+                return _openProjectCommand;
+            }
         }
 
         public ICommand NewProjectCommand
@@ -55,6 +74,7 @@ namespace JaneIDE.ViewModel
                     _workspaces = new ObservableCollection<WorkspaceViewModel>();
                     _workspaces.CollectionChanged += this.OnWorkspacesChanged;
                 }
+
                 return _workspaces;
             }
         }
@@ -92,5 +112,36 @@ namespace JaneIDE.ViewModel
             this.Workspaces.Add(workspace);
             this.SetActiveWorkspace(workspace);
         }
+
+        void OpenProject()
+        {
+            string path = String.Empty;
+            Stream myStream = null;
+            DialogResult result = openFileDialog.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                try
+                {
+                    if ((myStream = openFileDialog.OpenFile()) != null)
+                    {
+                        using (myStream)
+                        {
+                            using (StreamReader reader = new StreamReader(myStream))
+                            {
+                                path = reader.ReadLine();
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
+                }
+
+                project.OpenProject(openFileDialog.FileName, path);
+            }
+        }
+
     }
 }
