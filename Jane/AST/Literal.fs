@@ -12,6 +12,8 @@ type NullLiteral(pos : Position) =
     
     override x.ToString() = "null"
 
+    override x.Interpret(context : Variable list) = Null
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type CharLiteral(content : char, pos : Position) =
@@ -19,6 +21,8 @@ type CharLiteral(content : char, pos : Position) =
     member x.Get = content
 
     override x.ToString() = sprintf "%A" content
+
+    override x.Interpret(context : Variable list) = Char content
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -28,6 +32,8 @@ type StringLiteral(content : string, pos : Position) =
 
     override x.ToString() = sprintf "%A" content
 
+    override x.Interpret(context : Variable list) = Str content
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type IntegerLiteral(content : int64, pos : Position) =
@@ -35,6 +41,8 @@ type IntegerLiteral(content : int64, pos : Position) =
     member x.Get = content
 
     override x.ToString() = sprintf "%d" content
+
+    override x.Interpret(context : Variable list) = Int content
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -44,6 +52,8 @@ type BooleanLiteral(content : bool, pos : Position) =
 
     override x.ToString() = sprintf "%A" content
 
+    override x.Interpret(context : Variable list) = Bool content
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type FloatLiteral(content : float,pos : Position) =
@@ -51,3 +61,5 @@ type FloatLiteral(content : float,pos : Position) =
     member x.Get = content
 
     override x.ToString() = sprintf "%A" content
+
+    override x.Interpret(context : Variable list) = Float content
