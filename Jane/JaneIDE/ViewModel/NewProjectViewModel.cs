@@ -60,7 +60,7 @@ namespace JaneIDE.ViewModel
 
                 base.OnPropertyChanged("ProjectName");
 
-                this.ProjectFolder = System.IO.Path.Combine(this.ProjectLocation, this.ProjectName);
+                this.ProjectFolder = System.IO.Path.Combine(this.ProjectLocation, projectName);
             }
         }
         public string ProjectLocation
@@ -83,7 +83,7 @@ namespace JaneIDE.ViewModel
 
                 base.OnPropertyChanged("ProjectLocation");
 
-                this.ProjectFolder = System.IO.Path.Combine(this.ProjectLocation, this.ProjectName);
+                this.ProjectFolder = System.IO.Path.Combine(folderName, this.ProjectName);
             }
         }
         public string ProjectFolder

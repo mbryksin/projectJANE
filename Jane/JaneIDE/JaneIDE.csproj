@@ -82,6 +82,7 @@
     </ApplicationDefinition>
     <Compile Include="Model\NewProjectEventArgs.cs" />
     <Compile Include="Model\Project.cs" />
+    <Compile Include="Model\Source.cs" />
     <Compile Include="ViewModel\CodeBoxViewModel.cs" />
     <Compile Include="View\CodeBox.xaml.cs">
       <DependentUpon>CodeBox.xaml</DependentUpon>

@@ -10,15 +10,20 @@ namespace JaneIDE.Model
 {
     class Project
     {
+        private const int DEFAULT_VERSION = 100;
+        private const string SOURCE_FORMAT = ".jane";
+        private const string PROJECT_FORMAT = ".pro";
+        private const string MANIFEST_FILENAME = "MANIFEST.MF";
+
         private string projectName;
         private string projectFolderPath;
         private string authorName;
         private int projectVersion;
-        private List<string> projectSources;
+        private List<Source> projectSources;
 
         public Project()
         {
-            projectSources = new List<string>();
+            projectSources = new List<Source>();
         }
 
         public Project(string name, string path, string mainClass): this()
@@ -26,9 +31,17 @@ namespace JaneIDE.Model
             this.Author = Environment.UserName;
             this.ProjectName = name;
             this.ProjectFolder = path;
-            this.Version = 100;
+            this.Version = DEFAULT_VERSION;
 
-            this.Sources.Add(mainClass);
+            this.AddSource(new Source(mainClass));
+        }
+
+        private void CleanProject()
+        {
+            this.ProjectName = String.Empty;
+            this.ProjectFolder = String.Empty;
+            projectSources.Clear();
+            this.Version = DEFAULT_VERSION;
         }
 
         public string Author
@@ -60,39 +73,40 @@ namespace JaneIDE.Model
             }
         }
 
-        public string MainClass
+        public Source MainClass
         {
-            get { return projectSources.First<string>(); }
+            get { return projectSources.First<Source>(); }
         }
 
-        public List<string> Sources
+        public List<Source> Sources
         {
             get { return projectSources; }
         }
 
-        public void AddSource(string file)
+        public void AddSource(Source src)
         {
-            if (projectSources.Contains(file))
+            if (projectSources.Contains(src))
                 return;
-            
-            projectSources.Add(file);
+
+            projectSources.Add(src);
         }
 
         public void SaveProject()
         {
             projectVersion += 1;
+
             if (!Directory.Exists(this.ProjectFolder))
                 Directory.CreateDirectory(this.ProjectFolder);
 
             string projectFilePath = Path.Combine(this.ProjectFolder, this.ProjectName);
-            if (!projectFilePath.EndsWith(".pro"))
-                projectFilePath += ".pro";
-            
-            string manifestPath = Path.Combine(this.ProjectFolder, "MANIFEST.MF");
+            if (!projectFilePath.EndsWith(PROJECT_FORMAT))
+                projectFilePath += PROJECT_FORMAT;
+
+            string manifestPath = Path.Combine(this.ProjectFolder, MANIFEST_FILENAME);
 
             try
             {
-                //.pro
+                //*.pro
 
                 if (File.Exists(projectFilePath))
                 {
@@ -105,7 +119,7 @@ namespace JaneIDE.Model
                     fs.Write(info, 0, info.Length);
                 }
 
-                //.MF
+                //MANIFEST.MF
 
                 if (File.Exists(manifestPath))
                 {
@@ -114,37 +128,43 @@ namespace JaneIDE.Model
 
                 using (FileStream fs = File.Create(manifestPath))
                 {
-                    string manifestText = System.String.Empty;
+                    string manifestText = String.Empty;
                     manifestText += "Author: " + this.Author + "\r\n";
                     manifestText += "Version: " + this.Version.ToString() + "\r\n";
-                    manifestText += "Main-Class: " + this.MainClass + "\r\n";
+                    manifestText += "Main-Class: " + this.MainClass.FileName + "\r\n";
                     manifestText += "Sources:\r\n";
-                    foreach (string source in this.Sources)
+
+                    foreach (Source source in this.Sources)
                     {
-                        if (source.EndsWith(".jane"))
-                            manifestText += source + "\r\n";
+                        if (source.FileName.EndsWith(SOURCE_FORMAT))
+                            manifestText += source.FileName + "\r\n";
                         else
-                            manifestText += source + ".jane\r\n";
+                            manifestText += source.FileName + SOURCE_FORMAT + "\r\n";
                     }
 
                     Byte[] info = new UTF8Encoding(true).GetBytes(manifestText);
                     fs.Write(info, 0, info.Length);
                 }
 
-                //.jane
+                //*.jane
 
-                foreach (string source in this.Sources)
+                foreach (Source source in this.Sources)
                 {
-                    string sourcePath = Path.Combine(this.ProjectFolder, source);
-                    if (!sourcePath.EndsWith(".jane"))
-                        sourcePath += ".jane";
+                    string sourcePath = Path.Combine(this.ProjectFolder, source.FileName);
+                    if (!sourcePath.EndsWith(SOURCE_FORMAT))
+                        sourcePath += SOURCE_FORMAT;
 
                     if (File.Exists(sourcePath))
                     {
                         File.Delete(sourcePath);
                     }
 
-                    File.Create(sourcePath);
+                    using (FileStream fs = File.Create(sourcePath))
+                    {
+                        Byte[] info = new UTF8Encoding(true).GetBytes(source.Content);
+                        fs.Write(info, 0, info.Length);
+                    }
+                    
                 }
             }
 
@@ -157,9 +177,11 @@ namespace JaneIDE.Model
 
         public void OpenProject(string openedProjectName, string openedProjectPath)
         {
+            this.CleanProject();
+
             string[] split = openedProjectName.Split(new Char[] { '\\', '\t', '\n' });
             string pro = split.Last<string>();
-            if (!pro.EndsWith(".pro"))
+            if (!pro.EndsWith(PROJECT_FORMAT))
             {
                 return;
             }
@@ -168,7 +190,7 @@ namespace JaneIDE.Model
             this.ProjectName = namesplit.First<string>();
             this.ProjectFolder = openedProjectPath;
 
-            string manifestPath = Path.Combine(openedProjectPath, "MANIFEST.MF");
+            string manifestPath = Path.Combine(openedProjectPath, MANIFEST_FILENAME);
 
             try
             {
@@ -179,7 +201,41 @@ namespace JaneIDE.Model
                 {
                     using (StreamReader sr = new StreamReader(fs))
                     {
-                        string line;
+                        //Author
+                        string line = sr.ReadLine();
+                        string[] linesplit = line.Split(new Char[] { ' ', ':', '\t', '\n' });
+                        this.Author = linesplit.Last<string>().Trim();
+                        
+                        //Version
+                        line = sr.ReadLine();
+                        linesplit = line.Split(new Char[] { ' ', ':', '\t', '\n' });
+                        this.Version = Convert.ToInt32(linesplit.Last<string>().Trim());
+                        
+                        //Main-Class
+                        line = sr.ReadLine();
+                        linesplit = line.Split(new Char[] { ' ', ':', '\t', '\n' });
+                        string mainClassFileName = linesplit.Last<string>().Trim();
+                        
+                        Source mainClassSource = new Source(mainClassFileName);
+
+                        string mainClassFilePath = Path.Combine(this.ProjectFolder, mainClassFileName);
+                        if (!mainClassFilePath.EndsWith(SOURCE_FORMAT))
+                            mainClassFilePath += SOURCE_FORMAT;
+
+                        if (File.Exists(mainClassFilePath))
+                        {
+                            File.Delete(mainClassFilePath);
+                        }
+
+                        using (FileStream fstream = File.Open(mainClassFilePath, FileMode.Open))
+                        {
+                            using (StreamReader sreader = new StreamReader(fstream))
+                            {
+                                mainClassSource.Content = sreader.ReadToEnd().Trim();
+                            }
+                        }
+                        //Sources
+                        sr.ReadLine();
                         while ((line = sr.ReadLine()) != null)
                         {
                             Debug.WriteLine(line);

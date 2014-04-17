@@ -30,11 +30,29 @@ namespace JaneIDE.View
             this.MaxHeight = this.ActualHeight;
         }
 
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void TextBox1_TextChanged(object sender, TextChangedEventArgs e)
         {
-            NewProjectViewModel viewModel = (NewProjectViewModel) this.DataContext;
-            viewModel.MainClass = e.Source.ToString();
+            var viewModel = (NewProjectViewModel)this.DataContext;
+            var textbox = sender as TextBox;
+            string projectname = textbox.Text;
+            viewModel.ProjectName = projectname;
+        }
 
+        private void TextBox2_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var viewModel = (NewProjectViewModel)this.DataContext;
+            var textbox = sender as TextBox;
+            string folder = textbox.Text;
+            viewModel.ProjectLocation = folder;
+        }
+
+        private void TextBox4_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var viewModel = (NewProjectViewModel) this.DataContext;
+            var textbox = sender as TextBox;
+            string mainclass = textbox.Text;
+            //TODO: BALLOON with ' '
+            viewModel.MainClass = mainclass;
         }
     }
 }
