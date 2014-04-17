@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using JaneIDE.ViewModel;
 
 namespace JaneIDE.View
 {
@@ -27,6 +28,13 @@ namespace JaneIDE.View
         {
             this.MinHeight = this.ActualHeight;
             this.MaxHeight = this.ActualHeight;
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            NewProjectViewModel viewModel = (NewProjectViewModel) this.DataContext;
+            viewModel.MainClass = e.Source.ToString();
+
         }
     }
 }
