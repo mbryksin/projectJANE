@@ -37,14 +37,13 @@ type InterfaceVoidMethod(isStatic : bool, name : ID, parameters : FormalParamete
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type InterfaceField(isStatic : bool, isFinal : bool, fieldType : Type, name : ID, body : Expression, pos : Position) =
+type InterfaceField(isStatic : bool, isFinal : bool, fieldType : Type, name : ID, pos : Position) =
     inherit InterfaceMember(isStatic, name, pos)
     member x.Type    = fieldType
     member x.IsFinal = isFinal
-    member x.Body    = body
     
     override x.ToString() = 
         let staticStr = if isStatic then "static " else ""
         let finalStr  = if isStatic then "final "  else ""
-        sprintf "%s%s%A %A = %A;" staticStr finalStr fieldType name body
+        sprintf "%s%s%A %A;" staticStr finalStr fieldType name
 
