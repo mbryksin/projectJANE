@@ -74,7 +74,7 @@ type Class(name : ID, ancestor : ID option, interfaces : ID list,
     let classConstructor = match classConstructor with
                            | Some cc -> cc
                            | None    -> let p = new Position(0,0,0,0)
-                                        new ClassConstructor(name, [], new Block([], p, [], None), p)
+                                        new ClassConstructor(name, [], new Block([], p), p)
     
     member x.Ancestor      = ancestor
     member x.Interfaces    = interfaces

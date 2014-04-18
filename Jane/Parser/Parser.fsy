@@ -1,0 +1,228 @@
+﻿%{
+open System
+open Microsoft.FSharp.Collections
+open AST
+open SupportingFunctions
+%}
+
+%start start
+%type  <AST.Program> start
+%token <AST.ID> IDENT
+%token <AST.StringLiteral> STRING 
+%token <AST.IntegerLiteral> INT
+%token <AST.FloatLiteral> FLOAT
+%token <AST.BooleanLiteral> BOOLEAN
+%token <AST.CharLiteral> CHAR
+%token <AST.NullLiteral> NULL
+%token <AST.BinaryOperator> FACTOR COMPARE LOGICAL
+%token <AST.Position> O_SQR_BRACKET C_SQR_BRACKET O_CUR_BRACKET C_CUR_BRACKET O_BRACKET C_BRACKET COMMA SEMICOLON NEW SUPER RETURN CONTINUE BREAK WHILE FOR IF ELSE STATIC FINAL VOID CLASS INTERFACE EXTENDS IMPLEMENTS EXCL_MARK HYPHEN
+%token PLUS DOT LOG_OR LOG_AND INSTANCE_OF EQUAL_SIGN END 
+
+%%
+
+start : Program END { $1 }
+
+Program : ProgramMembers { new Program($1, ($1.Head).Position) }
+
+ProgramMembers :                              { [] }
+		       | ProgramMember ProgramMembers { $1 :: $2 }
+
+ProgramMember : Class     { $1 :> ProgramMember }
+			  | Interface { $1 :> ProgramMember }
+
+Class : CLASS IDENT ExtendsOrNot ImplementsOrNot O_CUR_BRACKET ClassMembers C_CUR_BRACKET                  { new Class($2, $3, $4, None, $6, commonPosition $1 $7) }
+	  | CLASS IDENT ExtendsOrNot ImplementsOrNot O_CUR_BRACKET ClassConstructor ClassMembers C_CUR_BRACKET { new Class($2, $3, $4, Some $6, $7, commonPosition $1 $8) }
+
+ExtendsOrNot :               { None }
+		     | EXTENDS IDENT { Some $2 }
+
+ImplementsOrNot :                            { [] }  
+				| IMPLEMENTS IDENT IDENTRest { $2 :: $3 }
+
+ClassMembers :                          { [] }
+		     | ClassMember ClassMembers { $1 :: $2 }
+
+Interface : INTERFACE IDENT O_CUR_BRACKET InterfaceMembers C_CUR_BRACKET                         { new Interface($2, [], $4, commonPosition $1 $5) }
+		  | INTERFACE IDENT EXTENDS IDENT IDENTRest O_CUR_BRACKET InterfaceMembers C_CUR_BRACKET { new Interface($2, $4 :: $5, $7, commonPosition $1 $8) }
+
+InterfaceMembers :                                  { [] }
+				 | InterfaceMember InterfaceMembers { $1 :: $2 }
+
+IDENTRest :                       { [] }
+		  | COMMA IDENT IDENTRest { $2 :: $3 }
+
+ClassConstructor : IDENT FormalParameters Block { new ClassConstructor($1, $2, $3, commonPosition $1.Position $3.Position) }
+
+ClassMember : ClassMethod { $1 :> ClassMember }
+			| ClassField  { $1 :> ClassMember }
+
+ClassField : Type IDENT EQUAL_SIGN Expression SEMICOLON              { new ClassField(false, false, $1, $2, $4, commonPosition $1.Position $5) }
+		   | STATIC Type IDENT EQUAL_SIGN Expression SEMICOLON       { new ClassField(true, false, $2, $3, $5, commonPosition $1 $6) }
+		   | FINAL Type IDENT EQUAL_SIGN Expression SEMICOLON        { new ClassField(false, true, $2, $3, $5, commonPosition $1 $6) }
+		   | STATIC FINAL Type IDENT EQUAL_SIGN Expression SEMICOLON { new ClassField(true, true, $3, $4, $6, commonPosition $1 $7) }
+
+ClassMethod : ClassReturnMethod { $1 :> ClassMethod }
+			| ClassVoidMethod   { $1 :> ClassMethod }
+
+ClassReturnMethod : Type IDENT FormalParameters Block        { new ClassReturnMethod(false, $1, $2, $3, $4, commonPosition $1.Position $4.Position) }
+				  | STATIC Type IDENT FormalParameters Block { new ClassReturnMethod(true, $2, $3, $4, $5, commonPosition $1 $5.Position) }
+
+ClassVoidMethod : VOID IDENT FormalParameters Block        { new ClassVoidMethod(false, $2, $3, $4, commonPosition $1 $4.Position) }
+				| STATIC VOID IDENT FormalParameters Block { new ClassVoidMethod(true, $3, $4, $5, commonPosition $1 $5.Position) }
+
+InterfaceMember : InterfaceMethod { $1 :> InterfaceMember }
+				| InterfaceField  { $1 :> InterfaceMember }
+
+InterfaceField : Type IDENT SEMICOLON              { new InterfaceField(false, false, $1, $2, commonPosition $1.Position $3) }
+			   | STATIC Type IDENT SEMICOLON       { new InterfaceField(true, false, $2, $3, commonPosition $1 $4) }
+			   | FINAL Type IDENT SEMICOLON        { new InterfaceField(false, true, $2, $3, commonPosition $1 $4) }
+			   | STATIC FINAL Type IDENT SEMICOLON { new InterfaceField(true, true, $3, $4, commonPosition $1 $5) }
+
+InterfaceMethod : InterfaceReturnMethod { $1 :> InterfaceMethod }
+				| InterfaceVoidMethod   { $1 :> InterfaceMethod }
+
+InterfaceReturnMethod : Type IDENT FormalParameters SEMICOLON        { new InterfaceReturnMethod(false, $1, $2, $3, commonPosition $1.Position $4) }
+					  | STATIC Type IDENT FormalParameters SEMICOLON { new InterfaceReturnMethod(true, $2, $3, $4, commonPosition $1 $5) }
+
+InterfaceVoidMethod : VOID IDENT FormalParameters SEMICOLON        { new InterfaceVoidMethod(false, $2, $3, commonPosition $1 $4) }
+					| STATIC VOID IDENT FormalParameters SEMICOLON { new InterfaceVoidMethod(true, $3, $4, commonPosition $1 $5) }
+
+FormalParameters : O_BRACKET C_BRACKET                                      { [] }
+				 | O_BRACKET FormalParameter C_BRACKET                      { [$2] }
+				 | O_BRACKET FormalParameter FormalParametersRest C_BRACKET { $2 :: $3 }
+
+FormalParametersRest : COMMA FormalParameter                      { [$2] }
+					 | COMMA FormalParameter FormalParametersRest { $2 :: $3 }
+
+FormalParameter : Type IDENT { new FormalParameter($1, $2, commonPosition $1.Position $2.Position) }
+
+Statement : MemberCallStatement   { $1 :> Statement }
+		  | Block                 { $1 :> Statement }
+		  | ForStatement          { $1 :> Statement }
+		  | WhileStatement        { $1 :> Statement }
+		  | IfStatement           { $1 :> Statement }
+		  | BreakStatement        { $1 :> Statement }
+		  | ContinueStatement     { $1 :> Statement }
+		  | ReturnStatement       { $1 :> Statement }
+		  | SuperStatement        { $1 :> Statement }
+		  | Declaration SEMICOLON { $1 :> Statement }
+		  | Assignment SEMICOLON  { $1 :> Statement }
+
+MemberCallStatement : Expression SEMICOLON { new MemberCallStatement($1, commonPosition $1.Position $2) }
+
+Assignment : IDENT EQUAL_SIGN Initializer { new AssignmentStatement($1, $3, commonPosition $1.Position $3.Position) }
+
+Declaration : Type IDENT Initializer { new DeclarationStatement($1, $2, $3, commonPosition $1.Position $3.Position) }
+
+Block : O_CUR_BRACKET C_CUR_BRACKET            { new Block([], commonPosition $1 $2) }
+	  | O_CUR_BRACKET Statements C_CUR_BRACKET { new Block($2, commonPosition $1 $3) }
+
+Statements : Statement            { [$1] }
+		   | Statement Statements { $1 :: $2 }
+
+ForStatement : FOR O_BRACKET Declaration SEMICOLON Expression SEMICOLON Assignment C_BRACKET Statement { new ForStatement($3, $5, $7, $9, commonPosition $1 $9.Position) }
+
+WhileStatement : WHILE O_BRACKET Expression C_BRACKET Statement { new WhileStatement($3, $5, commonPosition $1 $5.Position) }
+
+IfStatement : IF O_BRACKET Expression C_BRACKET Statement { new IfStatement($3, $5, None, commonPosition $1 $5.Position) }
+			| IF O_BRACKET Expression C_BRACKET Statement ELSE Statement { new IfStatement($3, $5, Some $7, commonPosition $1 $7.Position) }
+
+BreakStatement : BREAK SEMICOLON { new BreakStatement(commonPosition $1 $2) }
+
+ContinueStatement : CONTINUE SEMICOLON { new ContinueStatement(commonPosition $1 $2) }
+
+ReturnStatement : RETURN SEMICOLON { new ReturnStatement(None, commonPosition $1 $2) }
+				| RETURN Expression SEMICOLON { new ReturnStatement(Some $2, commonPosition $1 $3) }
+
+SuperStatement : SUPER Arguments SEMICOLON { new SuperStatement($2, commonPosition $1 $3) }
+
+Initializer : Expression       { $1 :> Initializer }
+			| ArrayInitializer { $1 :> Initializer }
+
+ArrayInitializer : O_CUR_BRACKET C_CUR_BRACKET             { new ArrayInitializer([], commonPosition $1 $2) :> Initializer }
+				 | O_CUR_BRACKET Initializer C_CUR_BRACKET { new ArrayInitializer([$2], commonPosition $1 $3) :> Initializer }
+				 | O_CUR_BRACKET Initializer ArrayInitializerRest C_CUR_BRACKET { new ArrayInitializer($2 :: $3, commonPosition $1 $4) :> Initializer }
+
+ArrayInitializerRest : COMMA Initializer ArrayInitializerRest  { $2 :: $3 }
+		             | COMMA Initializer                       { [$2] }
+
+Expression : ExprOr { $1 }
+
+ExprOr : ExprAnd LOG_OR ExprOr { new BinaryOperation($1, OR, $3, commonPosition $1.Position $3.Position) :> Expression }
+	   | ExprAnd               { $1 }
+
+ExprAnd : ExprInstanceOf LOG_AND ExprAnd { new BinaryOperation($1, AND, $3, commonPosition $1.Position $3.Position) :> Expression }
+		| ExprInstanceOf                 { $1 }
+
+ExprInstanceOf : ExprCompareOp INSTANCE_OF Type { new InstanceOf($1, $3, commonPosition $1.Position $3.Position) :> Expression}
+			   | ExprCompareOp                  { $1 }
+
+Type : IDENT           { createType $1.Value 0 $1.Position }
+	 | IDENT Dimension { createType $1.Value (fst $2) (commonPosition $1.Position (snd $2)) }
+
+Dimension : O_SQR_BRACKET C_SQR_BRACKET           { 1, $2 }
+		  | O_SQR_BRACKET C_SQR_BRACKET Dimension { fst $3 + 1, snd $3}
+
+ExprCompareOp : ExprTermOp COMPARE ExprTermOp { new BinaryOperation($1, $2, $3, commonPosition $1.Position $3.Position) :> Expression }
+			  | ExprTermOp                    { $1 }
+
+ExprTermRest : ExprAddOrSubOp ExprFactorOp ExprTermRest { ($1, $2) :: $3 }
+			 | ExprAddOrSubOp ExprFactorOp              { [($1, $2)] }
+
+ExprAddOrSubOp : PLUS   { ADDITION }
+               | HYPHEN { SUBSTRACTION }
+
+ExprTermOp : ExprFactorOp ExprTermRest { List.fold (fun acc (op, x) -> new BinaryOperation(acc, op, x, commonPosition acc.Position x.Position) :> Expression) $1 $2 }
+		   | ExprFactorOp { $1 }
+
+ExprFactorRest : FACTOR ExprUnaryOp ExprFactorRest { ($1, $2) :: $3 }
+			   | FACTOR ExprUnaryOp { [($1, $2)] }
+
+ExprFactorOp : ExprUnaryOp ExprFactorRest { List.fold (fun acc (op, x) -> new BinaryOperation(acc, op, x, commonPosition acc.Position x.Position) :> Expression) $1 $2 }
+			 | ExprUnaryOp { $1 }
+
+ExprUnaryOp : EXCL_MARK ExprMemberCall { new UnaryOperation(NOT, $2, commonPosition $1 $2.Position) :> Expression }
+			| HYPHEN ExprMemberCall    { new UnaryOperation(MINUS, $2, commonPosition $1 $2.Position) :> Expression }
+		    | ExprMemberCall           { $1 }
+
+IdOrMember : Identifier { $1 :> Expression }
+		   | Member     { $1 :> Expression }
+
+ExprMemberCallRest : DOT IdOrMember ExprMemberCallRest { $2 :: $3 }
+				   | DOT IdOrMember                    { [$2] }
+
+ExprMemberCall : PrimaryExpr ExprMemberCallRest { List.fold (fun acc x -> new BinaryOperation(acc, MEMBER_CALL, x, commonPosition acc.Position x.Position) :> Expression) $1 $2 }
+			   | PrimaryExpr                    { $1 } 
+
+PrimaryExpr : Primary                        { $1 :> Expression}
+		    | O_BRACKET Expression C_BRACKET { $2.Position <- commonPosition $1 $3; $2 }
+
+Primary : Literal                        { $1 :> Primary }
+		| Constructor                    { $1 :> Primary }
+		| Member                         { $1 :> Primary }
+		| Identifier                     { $1 :> Primary }
+
+Identifier : IDENT { new Identifier($1) }
+
+Constructor : NEW IDENT Arguments { new Constructor($2, $3, commonPosition $1 $3.Position) }
+
+Member : IDENT Suffix { new Member($1, $2, commonPosition $1.Position $2.Position) }
+
+Suffix : ArrayElement { $1 :> Suffix }
+	   | Arguments    { $1 :> Suffix }
+
+ArrayElement : O_SQR_BRACKET Expression C_SQR_BRACKET { new ArrayElement($2, commonPosition $1 $3) }
+
+Arguments : O_BRACKET C_BRACKET            { new Arguments([], commonPosition $1 $2) }
+		  | O_BRACKET Expression C_BRACKET { new Arguments([$2], commonPosition $1 $3) }
+		  | O_BRACKET Expression ArgsRest C_BRACKET { new Arguments($2 :: $3, commonPosition $1 $4) }
+
+ArgsRest : COMMA Expression ArgsRest  { $2 :: $3 }
+		 | COMMA Expression { [$2] }
+
+Literal : INT     { $1 :> Literal }
+	    | FLOAT   { $1 :> Literal } 
+	    | NULL    { $1 :> Literal }
+	    | CHAR    { $1 :> Literal }
+	    | BOOLEAN { $1 :> Literal }
+	    | STRING  { $1 :> Literal }
