@@ -9,7 +9,7 @@ type Expression(pos : Position) =
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type InstanceOf(expression : Expression, controlType : Type, pos : Position) =
+type InstanceOf(expression : Expression, controlType : AST.Type, pos : Position) =
     inherit Expression(pos)
     member x.Expression  = expression
     member x.ControlType = controlType
@@ -83,7 +83,7 @@ type BinaryOperation(firstOperand : Expression, operator : BinaryOperator, secon
                               | Float floatnum1, Float floatnum2 -> Float(floatnum1 % floatnum2)
                               | _                                -> Empty
 
-        | MEMBER_CELL      -> Empty //later
+        | MEMBER_CALL      -> Empty //later
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
