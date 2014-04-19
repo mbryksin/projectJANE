@@ -1,0 +1,123 @@
+﻿{
+module Lexer
+open System
+open Parser
+open Microsoft.FSharp.Text.Lexing
+open ParseLiteral
+open SupportingFunctions
+open AST
+}
+
+let whitespace     = [ ' ' '\t' '\r' '\n' ]
+
+let null           = "null"
+let new            = "new"
+let super          = "super"
+let return         = "return"
+let continue       = "continue"
+let break          = "break"
+let while          = "while"
+let for            = "for"
+let if             = "if"
+let else           = "else"
+let static         = "static"
+let final          = "final"
+let void           = "void"
+let class          = "class"
+let interface      = "interface"
+let extends        = "extends"
+let implements     = "implements"
+
+let digit          = ['0'-'9']
+let int            = digit+
+
+let float          = int '.' int
+
+let apostrophe     = [ ''' ]
+let char           = apostrophe [ ^ ''' ]+ apostrophe
+				   | apostrophe apostrophe apostrophe
+
+let boolean        = "true" | "false"
+
+let quote          = [ '"' ]  
+let string         = quote [ ^ '\n' '"' ]+ quote
+
+let letter         = ['a'-'z' 'A'-'Z' '_']
+let identifier     = letter (letter | digit)*
+
+let oSqrBracket    = [ '[' ]
+let cSqrBracket    = [ ']' ]
+
+let comma          = [ ',' ]
+let oBracket       = [ '(' ]
+let cBracket       = [ ')' ]
+
+let exclMark       = [ '!' ]
+let plus           = [ '+' ]
+let hyphen         = [ '-' ]
+let dot            = [ '.' ]
+let factor         = [ '*' '/' '%' ]
+let compare        = [ '>' '<' ] | ">=" | "<=" | "==" | "!="
+let logOr          = "||"
+let logAnd         = "&&"
+
+let instanceOf     = "instanceOf"
+
+let oCurBracket    = [ '{' ]
+let cCurBracket    = [ '}' ]
+
+let semicolon      = [ ';' ]
+let equalSign      = [ '=' ]
+
+ 
+rule tokenize = parse
+| whitespace				{ tokenize lexbuf }
+| null                      { NULL (getNullLiteral lexbuf) }
+| int       				{ INT (getIntegerLiteral lexbuf) }
+| boolean                   { BOOLEAN (getBooleanLiteral lexbuf) }
+| char                      { CHAR (getCharLiteral lexbuf) }
+| string                    { STRING (getStringLiteral lexbuf) }
+| float                     { FLOAT (getFloatLiteral lexbuf) }
+
+| new                       { NEW (getPos lexbuf) }
+| instanceOf                { INSTANCE_OF }
+| super                     { SUPER (getPos lexbuf) } 
+| return                    { RETURN (getPos lexbuf) }
+| continue                  { CONTINUE (getPos lexbuf) }
+| break                     { BREAK (getPos lexbuf) }
+| while                     { WHILE (getPos lexbuf) }
+| for                       { FOR (getPos lexbuf) }
+| if                        { IF (getPos lexbuf) }
+| else                      { ELSE (getPos lexbuf) }
+| static                    { STATIC (getPos lexbuf) }
+| final                     { FINAL (getPos lexbuf) }
+| void                      { VOID (getPos lexbuf) }
+| class                     { CLASS (getPos lexbuf) }
+| interface                 { INTERFACE (getPos lexbuf) }
+| extends                   { EXTENDS (getPos lexbuf) }
+| implements                { IMPLEMENTS (getPos lexbuf) }
+
+| identifier                { IDENT (getId lexbuf) }
+
+| oSqrBracket               { O_SQR_BRACKET (getPos lexbuf) }
+| cSqrBracket               { C_SQR_BRACKET (getPos lexbuf) }
+
+| oBracket                  { O_BRACKET (getPos lexbuf) }
+| cBracket                  { C_BRACKET (getPos lexbuf) }
+| comma                     { COMMA (getPos lexbuf) } 
+| semicolon                 { SEMICOLON (getPos lexbuf) }
+| equalSign                 { EQUAL_SIGN }
+
+| exclMark                  { EXCL_MARK (getPos lexbuf) }
+| hyphen                    { HYPHEN (getPos lexbuf) }
+| plus                      { PLUS }
+| dot                       { DOT }
+| factor                    { FACTOR (lexemeToBinaryOperator lexbuf) }
+| compare                   { COMPARE (lexemeToBinaryOperator lexbuf) }
+| logOr                     { LOG_OR }
+| logAnd                    { LOG_AND } 
+
+| oCurBracket               { O_CUR_BRACKET (getPos lexbuf) }
+| cCurBracket               { C_CUR_BRACKET (getPos lexbuf) }
+
+| eof						{ END }

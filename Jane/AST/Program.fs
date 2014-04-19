@@ -2,9 +2,9 @@
 
 open System 
 
-type Program(programMembers : ProgramMember list, nameMainClass : string, pos : Position) =
+type Program(programMembers : ProgramMember list, pos : Position) =
     inherit Node(pos)
-    
+
     let classes    = List.fold (fun acc (m : ProgramMember) -> 
                                     try m :?> Class :: acc 
                                     with :? InvalidCastException -> acc
@@ -15,12 +15,14 @@ type Program(programMembers : ProgramMember list, nameMainClass : string, pos : 
                                     with :? InvalidCastException -> acc
                                ) [] programMembers
 
-    let mutable mainClass  : Class option       = None
-    let mutable mainMethod : ClassMethod option = None
-    let mutable errors     : Error list         = []
+    let mutable mainClass     : Class option       = None
+    let mutable mainMethod    : ClassMethod option = None
+    let mutable errors        : Error list         = []
+    let mutable nameMainClass : string             = ""
 
     member x.ProgramMembers = programMembers
-    member x.NameMainClass  = nameMainClass
+    member x.NameMainClass with get() = nameMainClass
+                           and set(s) = nameMainClass <- s 
     member x.Classes        = classes
     member x.Interfaces     = interfaces
     
@@ -32,6 +34,7 @@ type Program(programMembers : ProgramMember list, nameMainClass : string, pos : 
 
     member x.AddErrors newErrors = errors <- newErrors @ errors
     member x.AddError  newError  = errors <- newError :: errors
+    member x.Errors              = errors
 
     override x.ToString() = programMembers
                             |> List.map string
