@@ -39,6 +39,19 @@ type Member(name : ID, suffix : Suffix, pos : Position) =
 
     override x.ToString() = sprintf "%A%A" name suffix
 
-    override x.Interpret(context : Variable list) = Empty // do this
+    override x.Interpret(context : Variable list) =
+        let currentVariable = List.find (fun (v: Variable) -> v.Name = x.Name.Value) context
+        let ValOfIndex = 
+            match x.Suffix with
+            | :? ArrayElement  as arrayElem -> arrayElem.Index.Interpret(context)
+            | _ -> Empty
+
+        let IntValOfIndex = 
+            match ValOfIndex with
+            | Int num -> (int) num
+
+        match currentVariable.Val with
+        | Array array -> array.[IntValOfIndex]
+        | _           -> Empty
 
 

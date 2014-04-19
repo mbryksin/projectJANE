@@ -7,4 +7,5 @@ type Val =
     | Str   of string
     | Char  of char
     | Bool  of bool
+    | Array of Val array
     | Null

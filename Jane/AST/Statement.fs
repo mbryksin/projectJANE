@@ -54,6 +54,7 @@ type DeclarationStatement(declarationType : Type, name : ID, body : Initializer,
         let parentBlock = x.Parent.Value
         let context = x.Parent.Value.Context
         parentBlock.Context <- Variable(name.Value, declarationType, body.Interpret(context)) :: parentBlock.Context
+        printfn "%s" <|  "declaration" + name.Value + parentBlock.Context.Head.Val.ToString()
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

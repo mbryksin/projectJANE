@@ -16,4 +16,6 @@ type ArrayInitializer(elements : Initializer list, pos : Position) =
                             |> String.concat ", "
                             |> sprintf "{ %s }"
 
-    override x.Interpret(context : Variable list)= Empty // later
+    override x.Interpret(context : Variable list)= 
+        let elemsVal = List.map (fun (i : Initializer) -> i.Interpret(context)) x.Elements 
+        Array (List.toArray elemsVal)
