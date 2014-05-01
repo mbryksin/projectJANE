@@ -58,6 +58,16 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Interpret\Interpreter.fsproj">
+      <Name>Interpreter</Name>
+      <Project>{28993e8c-9a09-4056-933c-a66fb2bf5e5a}</Project>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\StaticAnalysis\StaticAnalysis.fsproj">
+      <Name>StaticAnalysis</Name>
+      <Project>{e206246e-9751-4590-abb2-d721e556fbb4}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>True</Private>
     </Reference>
