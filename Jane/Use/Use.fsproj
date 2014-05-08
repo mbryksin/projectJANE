@@ -58,6 +58,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Parser\Parser.fsproj">
+      <Name>Parser</Name>
+      <Project>{23ed62fb-8fc8-44e9-95a6-159ca36c247b}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>True</Private>
     </Reference>
@@ -84,11 +89,6 @@
     <ProjectReference Include="..\AST\AST.fsproj">
       <Name>AST</Name>
       <Project>{02daa5a7-9d06-4441-8b7e-e4d9baf1acfe}</Project>
-      <Private>True</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Parser\Parser.fsproj">
-      <Name>Parser</Name>
-      <Project>{23ed62fb-8fc8-44e9-95a6-159ca36c247b}</Project>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>

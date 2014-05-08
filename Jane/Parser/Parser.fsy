@@ -112,7 +112,7 @@ MemberCallStatement : Expression SEMICOLON { new MemberCallStatement($1, commonP
 
 Assignment : IDENT EQUAL_SIGN Initializer { new AssignmentStatement($1, $3, commonPosition $1.Position $3.Position) }
 
-Declaration : Type IDENT Initializer { new DeclarationStatement($1, $2, $3, commonPosition $1.Position $3.Position) }
+Declaration : Type IDENT EQUAL_SIGN Initializer { new DeclarationStatement($1, $2, $4, commonPosition $1.Position $4.Position) }
 
 Block : O_CUR_BRACKET C_CUR_BRACKET            { new Block([], commonPosition $1 $2) }
 	  | O_CUR_BRACKET Statements C_CUR_BRACKET { new Block($2, commonPosition $1 $3) }
