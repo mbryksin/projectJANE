@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ScintillaNET;
+using JaneIDE.ViewModel;
 
 namespace JaneIDE.View
 {
@@ -79,6 +80,14 @@ namespace JaneIDE.View
            
             if (Char.IsLetter(e.Ch))
             ((ScintillaNET.Scintilla)wfh.Child).AutoComplete.Show();
+        }
+
+        private void CodeBox_TextChanged(object sender, EventArgs e)
+        {
+            var viewModel = (CodeBoxViewModel)this.DataContext;
+            ScintillaNET.Scintilla CodeBox = sender as ScintillaNET.Scintilla;
+            string codeboxtext = CodeBox.Text;
+            //TODO: BALLOON with ' '
         }
 
     

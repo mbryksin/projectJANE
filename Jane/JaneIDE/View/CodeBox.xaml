@@ -8,7 +8,7 @@
              VerticalAlignment="Stretch"  
              >
     <WindowsFormsHost Name="wfh">
-        <scintilla:Scintilla Name="CodeBox"> </scintilla:Scintilla> 
+        <scintilla:Scintilla Name="CodeBox" TextChanged="CodeBox_TextChanged"> </scintilla:Scintilla> 
     </WindowsFormsHost>
     <!--So,  do not have ideas about the warning =( BUT it is working! -->
 </UserControl>

@@ -30,6 +30,7 @@ namespace JaneIDE.ViewModel
             openFileDialog.InitialDirectory = Environment.SpecialFolder.Personal.ToString();
             openFileDialog.Filter = "Project file (*.pro)|*.pro";
             openFileDialog.RestoreDirectory = true;
+            CreateNewFile("test.jane");
         }
 
         public ICommand OpenProjectCommand
