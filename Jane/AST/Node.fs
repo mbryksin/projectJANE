@@ -3,8 +3,7 @@
 open System
 
 type Position(startLine : int, startSymbol : int, endLine : int, endSymbol : int) =
-    new((sLine, sSymbol), (eLine, eSymbol)) = 
-        new Position(sLine, sSymbol, eLine, eSymbol)
+    new((sLine, sSymbol), (eLine, eSymbol)) = new Position(sLine, sSymbol, eLine, eSymbol)
 
     member x.StartLine   = startLine
     member x.StartSymbol = startSymbol
@@ -34,3 +33,9 @@ type ID(id : string, p : Position) =
     member x.Value = id
 
     override x.ToString() = id
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
+
+type Error(errorMessage : string, position : Position) =
+    member x.Position     = position
+    member x.ErrorMessage = errorMessage

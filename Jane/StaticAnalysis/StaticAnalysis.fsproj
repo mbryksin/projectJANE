@@ -43,7 +43,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Errors.fs" />
-    <Compile Include="StaticAnalysis.fs" />
+    <Compile Include="HelperFunctions.fs" />
+    <Compile Include="Dictionary.fs" />
+    <Compile Include="Interface.fs" />
+    <Compile Include="Class.fs" />
+    <Compile Include="ProgramMember.fs" />
+    <Compile Include="Program.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AST\AST.fsproj">
