@@ -1,48 +1,38 @@
 ﻿namespace AST
 
-open System 
+open System
+open System.Collections.Generic 
 
-type Program(programMembers : ProgramMember list, pos : Position) =
+type Program(programMemberList : ProgramMember list, pos : Position) =
     inherit Node(pos)
 
-    let classes    = List.fold (fun acc (m : ProgramMember) -> 
-                                    try m :?> Class :: acc 
-                                    with :? InvalidCastException -> acc
-                               ) [] programMembers
-
-    let interfaces = List.fold (fun acc (m : ProgramMember) -> 
-                                    try m :?> Interface :: acc 
-                                    with :? InvalidCastException -> acc
-                               ) [] programMembers
+    let members    = new Dictionary<string, ProgramMember>()
+    let classes    = new Dictionary<string, Class>()
+    let interfaces = new Dictionary<string, Interface>()
 
     let mutable mainClass     : Class option       = None
     let mutable mainMethod    : ClassMethod option = None
     let mutable errors        : Error list         = []
     let mutable nameMainClass : string             = ""
-
-    member x.ProgramMembers = programMembers
-    member x.NameMainClass with get() = nameMainClass
-                           and set(s) = nameMainClass <- s 
+    
+    member x.MemberList     = programMemberList
+    member x.Members        = members
     member x.Classes        = classes
     member x.Interfaces     = interfaces
     
-    member x.MainClass with get()         = mainClass
-                       and  set(newClass) = mainClass <- newClass
+    member x.NameMainClass with get()    = nameMainClass
+                            and set(str) = nameMainClass <- str
+    
+    member x.MainClass    with get()         = mainClass
+                           and set(newClass) = mainClass <- newClass
 
-    member x.MainMethod  with get()          = mainMethod
-                         and  set(newMethod) = mainMethod <- newMethod
+    member x.MainMethod   with get()          = mainMethod
+                           and set(newMethod) = mainMethod <- newMethod
 
     member x.AddErrors newErrors = errors <- newErrors @ errors
     member x.AddError  newError  = errors <- newError :: errors
     member x.Errors              = errors
 
-    override x.ToString() = programMembers
+    override x.ToString() = programMemberList
                             |> List.map string
                             |> String.concat "\n\n" 
-
-    //interpret the main method in the class that contains it
-    //mainclass sholud be in head of ProgramMembers, mainMethod sholud be in head of Members.
-    member x.Interpret() =
-        let classWithMain = classes.Head
-        let mainMethod = classWithMain.VoidMethods.Head
-        mainMethod.Interpret()

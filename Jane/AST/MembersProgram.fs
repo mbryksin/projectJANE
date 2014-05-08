@@ -1,6 +1,7 @@
 ﻿namespace AST
 
 open System
+open System.Collections.Generic
 
 [<AbstractClass>]
 type ProgramMember(name : ID, pos : Position) =
@@ -9,90 +10,68 @@ type ProgramMember(name : ID, pos : Position) =
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type Interface(name : ID, ancestorsNames : ID list, members : InterfaceMember list, pos : Position) =
+type Interface(name : ID, ancestorNames : ID list, memberList : InterfaceMember list, pos : Position) =
     inherit ProgramMember(name, pos)
+
+    let members          = new Dictionary<string, InterfaceMember>()
+    let fields           = new Dictionary<string, InterfaceField>()
+    let methods          = new Dictionary<string, InterfaceMethod>()
+    let returnMethods    = new Dictionary<string, InterfaceReturnMethod>()
+    let voidMethods      = new Dictionary<string, InterfaceVoidMethod>()
+    let nearestAncestors = new Dictionary<string, Interface>()
+    let allAncestors     = new Dictionary<string, Interface>()
     
-    let fields        = List.fold (fun acc (m : InterfaceMember) ->
-                                       try m :?> InterfaceField :: acc 
-                                       with :? InvalidCastException -> acc
-                                  ) [] members
+    let mutable allancestorNames : ID list = []
 
-    let methods       = List.fold (fun acc (m : InterfaceMember) ->
-                                       try m :?> InterfaceMethod :: acc 
-                                       with :? InvalidCastException -> acc
-                                  ) [] members 
-    
-    let returnMethods = List.fold (fun acc (m : InterfaceMethod) ->
-                                       try m :?> InterfaceReturnMethod :: acc 
-                                       with :? InvalidCastException -> acc
-                                  ) [] methods 
- 
-    let voidMethods   = List.fold (fun acc (m : InterfaceMethod) ->
-                                       try m :?> InterfaceVoidMethod :: acc 
-                                       with :? InvalidCastException -> acc
-                                  ) [] methods 
+    member x.MemberList       = memberList
+    member x.AncestorNames    = ancestorNames
+    member x.Members          = members  
+    member x.Fields           = fields
+    member x.Methods          = methods
+    member x.ReturnMethods    = returnMethods
+    member x.VoidMethods      = voidMethods
+    member x.NearestAncestors = nearestAncestors
+    member x.AllAncestors     = allAncestors
 
-    let mutable ancestors : Interface list = []
-
-    member x.AncestorsNames = ancestorsNames
-    member x.Members        = members  
-    member x.Fields         = fields
-    member x.Methods        = methods
-    member x.ReturnMethods  = returnMethods
-    member x.VoidMethods    = voidMethods
-
-    member x.Ancestors with get()             = ancestors
-                       and  set(newAncestors) = ancestors <- newAncestors
+    member x.AllAncestorNames with get()     = allancestorNames
+                               and set(list) = allancestorNames <- list
 
     override x.ToString() =
-        let extendsStr   = if not ancestorsNames.IsEmpty then " extends " else ""
-        let ancestorsStr = ancestorsNames |> List.map string |> String.concat ", "
-        let membersStr   = members |> List.map string |> String.concat "\n\n"
+        let extendsStr   = if not ancestorNames.IsEmpty then " extends " else ""
+        let ancestorsStr = ancestorNames |> List.map string |> String.concat ", "
+        let membersStr   = memberList |> List.map string |> String.concat "\n\n"
         sprintf "interface %A%s%s {\n\n%s}\n" name extendsStr ancestorsStr membersStr
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type Class(name : ID, ancestor : ID option, interfaces : ID list, 
-           classConstructor : ClassConstructor option, members : ClassMember list, pos : Position) =
+type Class(name : ID, ancestorName : ID option, implementInterfacesName : ID list, 
+           classConstructor : ClassConstructor option, memberList : ClassMember list, pos : Position) =
     inherit ProgramMember(name, pos)
     
-    let fields        = List.fold (fun acc (m : ClassMember) ->
-                                       try m :?> ClassField :: acc 
-                                       with :? InvalidCastException -> acc
-                                  ) [] members
-
-    let methods       = List.fold (fun acc (m : ClassMember) ->
-                                       try m :?> ClassMethod :: acc 
-                                       with :? InvalidCastException -> acc
-                                  ) [] members 
-    
-    let returnMethods = List.fold (fun acc (m : ClassMethod) ->
-                                       try m :?> ClassReturnMethod :: acc 
-                                       with :? InvalidCastException -> acc
-                                  ) [] methods 
- 
-    let voidMethods   = List.fold (fun acc (m : ClassMethod) ->
-                                       try m :?> ClassVoidMethod :: acc 
-                                       with :? InvalidCastException -> acc
-                                  ) [] methods
-                                  
+    let members       = new Dictionary<string, ClassMember>()
+    let fields        = new Dictionary<string, ClassField>()
+    let methods       = new Dictionary<string, ClassMethod>()
+    let returnMethods = new Dictionary<string, ClassReturnMethod>()
+    let voidMethods   = new Dictionary<string, ClassVoidMethod>()
+                       
     let classConstructor = match classConstructor with
                            | Some cc -> cc
-                           | None    -> let p = new Position(0,0,0,0)
+                           | None    -> let p = new Position(-1, -1, -1, -1)
                                         new ClassConstructor(name, [], new Block([], p), p)
     
-    member x.Ancestor      = ancestor
-    member x.Interfaces    = interfaces
-    member x.Members       = members
-    member x.Fields        = fields
-    member x.Methods       = methods
-    member x.ReturnMethods = returnMethods
-    member x.VoidMethods   = voidMethods
-    member x.Constructor   = classConstructor
+    member x.MemberList              = memberList
+    member x.AncestorName            = ancestorName
+    member x.ImplementInterfacesName = implementInterfacesName
+    member x.Members                 = members
+    member x.Fields                  = fields
+    member x.Methods                 = methods
+    member x.ReturnMethods           = returnMethods
+    member x.VoidMethods             = voidMethods
+    member x.Constructor             = classConstructor
 
     override x.ToString() =
-        let extendsStr    = if ancestor.IsSome then sprintf " extends %A" ancestor.Value else ""
-        let implementsStr = if not interfaces.IsEmpty then " implements " else ""
-        let interfacesStr = interfaces |> List.map string |>  String.concat ", "
-        let membersStr    = members |> List.map string |> String.concat "\n"
+        let extendsStr    = if ancestorName.IsSome then sprintf " extends %A" ancestorName.Value else ""
+        let implementsStr = if not implementInterfacesName.IsEmpty then " implements " else ""
+        let interfacesStr = implementInterfacesName |> List.map string |>  String.concat ", "
+        let membersStr    = memberList |> List.map string |> String.concat "\n"
         sprintf "class %A%s%s%s {\n\n%A\n%s\n}\n" name extendsStr implementsStr interfacesStr classConstructor membersStr
