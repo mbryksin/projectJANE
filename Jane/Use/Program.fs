@@ -1,11 +1,10 @@
 ﻿open LanguageParser
 open AST
 
-let a = ParseProgram "interface a {} class MyClass extends a {}"
-//printfn "%A" a
-
-let textTest = @"
-    interface ISummator { }
+let test = @"
+    interface ISummator {
+        void incr();
+    }
     
     class Incrementer extends ISummator 
     {
@@ -14,30 +13,7 @@ let textTest = @"
             x = startValue;    
         }
 
-        int x = 0; 
-
-    }
-    
-    class MainClass
-    {
-	    static void main(String[][] args)
-	    {
-            Incrementer i = new Incrementer(1);
-	    }
-    }
-"
-
-let text = @"
-    interface ISummator { }
-    
-    class Incrementer extends ISummator 
-    {
         int x = 0;
-
-        Incrementer(int startValue)
-        {
-            x = startValue;    
-        }
 
         int getValue()
         {
@@ -48,21 +24,18 @@ let text = @"
         {
             x = x + 1;
         }
-
     }
     
     class MainClass
     {
-
-	    static void main(String[][] args)
+	    static void main(String[] args)
 	    {
-			Incrementer i = new Incrementer(0);
+            Incrementer i = new Incrementer(1);
             i.incr();
             i.getValue();
 	    }
-
     }
 "
 
-let b = ParseProgram textTest
+let b = ParseProgram test
 printfn "%A" b
