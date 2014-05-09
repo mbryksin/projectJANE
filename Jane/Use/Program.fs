@@ -22,7 +22,7 @@ let textTest = @"
     {
 	    static void main(String[][] args)
 	    {
-            Incrementer i = new Incrementer(1);
+            int x = 0;
 	    }
     }
 "
@@ -64,5 +64,13 @@ let text = @"
     }
 "
 
-let b = ParseProgram textTest
+let test = @"
+    class MainClass
+    {
+	    static void main()
+	    {
+            x = 1;
+	    }
+    }"
+let b = ParseProgram test
 printfn "%A" b

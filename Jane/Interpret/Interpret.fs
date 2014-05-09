@@ -1,31 +1,13 @@
 ﻿module Interpret
 
 open AST
+open ServiceFunction
 open StaticAnalysis
 open Errors
 
 let mutable (currentProgram : Program option) = None
 
-//***************************************************ServiceFunction***************************************************//
-let isTrueCondition (cond : Val) =
-        match cond with
-        | Bool true -> true
-        | Int n when n <> 0L -> true
-        | _ -> false
 
-//take name and Type of Variable from Parameters and Value from Arguments
-let rec addArgsToMethodContent (arguments : Val list) (parameters : FormalParameter list) (body : Block) =
-    match arguments, parameters with
-    | a :: args, p :: ps -> 
-        let arg = arguments.Head
-        let param = parameters.Head
-        
-        let VarName = param.Name.Value
-        let VarType = param.Type
-        let VarVal  = arg
-        body.Context <- Variable(VarName, VarType, VarVal) :: body.Context
-        addArgsToMethodContent arguments.Tail parameters.Tail body
-    | _ -> () 
 //***************************************************Program***************************************************//
 //Find mainClass, find mainMethod and interpret it
 let rec interpretProgram(program: Program) =
@@ -38,7 +20,8 @@ let rec interpretProgram(program: Program) =
 
 and interpretClassConstructor (cons : ClassConstructor) = ()
 
-and interpretClassField (field : ClassField) = ()
+
+and interpretClassField (field : ClassField) = ()                            //DO IT
 
 and interpretClassReturnMethod (returnmethod : ClassReturnMethod) (args : Val list) = 
     let body = returnmethod.Body
@@ -149,17 +132,16 @@ and interpretForStatement (forstatement : ForStatement) =
         interpretAssignmentStatement update |> ignore
     Empty
 
-//to do
-and interpretSuperStatement (ss : SuperStatement) = Empty
+and interpretSuperStatement (ss : SuperStatement) = Empty             //DO IT
 
 and interpretReturnStatement (rs : ReturnStatement) = 
     let expressionReturn = rs.Expression.Value
     let context = rs.Parent.Value.Context
     interpretExpression expressionReturn context
 
-and interpretBreakStatement (bs : BreakStatement) = Empty
+and interpretBreakStatement (bs : BreakStatement) = Empty              //DO IT
 
-and interpretContinueStatement (cs : ContinueStatement) = Empty
+and interpretContinueStatement (cs : ContinueStatement) = Empty        //DO IT
 
 // Interpret body of method
 and interpretMemberCallStatement (mc : MemberCallStatement) = 
@@ -213,7 +195,7 @@ and interpretExpression (expression : Expression) (context : Variable list) =
         | :? UnaryOperation  as unOp     -> interpretUnaryOperation unOp  context
         | _                              -> Empty
 
-and interpretInstanceOf (instance: InstanceOf) (context : Variable list) = Empty
+and interpretInstanceOf (instance: InstanceOf) (context : Variable list) = Empty //DO IT
 
 
 and interpretBinaryOperation (binOp: BinaryOperation) (context : Variable list) =
@@ -311,7 +293,32 @@ and interpretPrimary (primary : Primary) (context : Variable list) =
         | _                       -> Empty
 
 
-and interpretConstructor (cons : Constructor) (context : Variable list) = Empty
+and interpretConstructor (cons : Constructor) (context : Variable list) = 
+    let args = cons.Arguments.Arguments
+    let name = cons.Name.Value
+    let interpretArgs = List.map (fun (expr : Expression) -> interpretExpression expr context) args
+    let classforObject = List.find (fun (cl : Class) -> cl.Name.Value = name) currentProgram.Value.Classes
+    
+
+    let classConstructor = classforObject.Constructor;
+    let classConstructorBody = classConstructor.Body
+    let Fields = classforObject.Fields
+
+    classConstructorBody.Context <- [] //clearOldContext
+    let fieldsAsVar = List.map (fun (f : ClassField) -> 
+                                  let varName = f.Name.Value
+                                  let varType = f.Type
+                                  let varVal = interpretExpression f.Body context
+                                  let var = new Variable(varName, varType, varVal)
+                                  var
+                                  ) Fields
+    classConstructor.Body.Context <- fieldsAsVar @ classConstructor.Body.Context
+
+    let parametersConstructor = classConstructor.Parameters;
+    addArgsToMethodContent interpretArgs parametersConstructor classConstructorBody
+    interpretBlock classConstructorBody |> ignore 
+    Object (fieldsAsVar, name)
+    
 
 //find var in context and return value
 and interpretIdentifier (ident : Identifier ) (context : Variable list) =
@@ -326,23 +333,26 @@ and interpretMember (memb : Member) (context : Variable list) =
     let memberName = memb.Name.Value
     let currentVariable = List.find (fun (v: Variable) -> v.Name = memberName) context
 
-    let ValOfIndex = 
+    let MemberVal = 
         match memb.Suffix with
-        | :? ArrayElement  as arrayElem -> interpretExpression arrayElem.Index context
+        //Достаем элемент по индексу из массива
+        | :? ArrayElement  as arrayElem -> 
+                                        let ValOfIndex =  interpretExpression arrayElem.Index context
+                                        let IntValOfIndex = 
+                                            match ValOfIndex with
+                                            | Int num -> (int) num
+                                            | _       -> -1 //Error index
+                                        match currentVariable.Val with
+                                            | Array array -> array.[IntValOfIndex]
+                                            | Str str     -> Char str.[IntValOfIndex]
+                                            | _           -> Empty
+        //Получаем как значение MethodVal с аргументами и именем
         | :? Arguments     as args      -> 
                                         let arguments = List.map (fun (a : Expression) -> interpretExpression a context) args.Arguments
                                         MethodVal (memberName, arguments)
         | _ -> Empty
 
-    let IntValOfIndex = 
-        match ValOfIndex with
-        | Int num -> (int) num
-
-    match currentVariable.Val with
-    | Array array -> array.[IntValOfIndex]
-    | Str str     -> Char str.[IntValOfIndex]
-    | _           -> Empty
-
+    MemberVal
 
 //***************************************************Literals***************************************************//
 
@@ -357,5 +367,75 @@ and interpretLiteral (literal : Literal) (context : Variable list) =
         | _                                  -> Empty
 
 
+
+
+
+
+
+//***************************************************TEST***************************************************//
+
+//class myClass {
+//
+//    myClass() {
+//    }
+//
+//    static int main() {
+//        int a = 1;
+//        if (a < 2)
+//        {
+//          int b = 1;
+//          while (b < 5)
+//          {
+//              a = a + 1;
+//              b = b + 1;
+//          }
+//        }
+//        a = a + 2;
+//    }
+//
+//}
+
+let p              = new Position(0, 0, 0, 0)
+
+let myInt          = new IntType(0, p)
+
+let one            = new IntegerLiteral(1L, p)
+let five           = new IntegerLiteral(5L, p)
+let two            = new IntegerLiteral(2L, p)
+
+///////////////////////////////////////////////////////////////Main
+let myDecl         = new DeclarationStatement(myInt, new ID("a", p), one, p)
+let myDeclB         = new DeclarationStatement(myInt, new ID("b", p), one, p)
+
+
+let binOpPlus      = new BinaryOperation(new Identifier(new ID("a", p)), ADDITION, five, p)
+let myAssign       = new AssignmentStatement(ID("a",p), binOpPlus, p)
+
+//while
+let myCondition    = new BinaryOperation (new Identifier(new ID("b", p)), LESS, five, p)
+let binOpPlusB      = new BinaryOperation(new Identifier(new ID("b", p)), ADDITION, one, p)
+let myAssignB       = new AssignmentStatement(ID("b",p), binOpPlusB, p)
+let WhileBlock     = new Block([myAssign; myAssignB], p)
+let myWhile        = new WhileStatement(myCondition, WhileBlock, p)
+
+//if
+let myConditionIF  = new BinaryOperation (new Identifier(new ID("a", p)), LESS, two, p)
+let IfBlock        = new Block([myDeclB; myWhile], p)
+let myIf           = new IfStatement(myConditionIF, IfBlock, None, p)
+
+let myBlock        = new Block([myDecl; myIf ; myAssign], p)
+let myMethod       = new ClassVoidMethod(true, new ID("main", p),[], myBlock, p)
+///////////////////////////////////////////////////////////////Main
+
+let myClassMembers = List.map (fun a -> a :> ClassMember) [myMethod]
+let myConstructor  = new ClassConstructor(new ID("myClass", p), [], new Block([], p), p)
+let myClass        = new Class(new ID("myClass", p), None, [], Some myConstructor, myClassMembers, p)
+let myClasses      = List.map (fun a -> a :> ProgramMember) [myClass]
+let myProg         = new Program(myClasses, p)
+
+let err, main = SA_Program myProg
+
+printfn "%A" myProg
+interpretProgram myProg
 
      

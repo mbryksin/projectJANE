@@ -47,6 +47,7 @@
     <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ServiceFunction.fs" />
     <Compile Include="Interpret.fs" />
     <None Include="App.config" />
   </ItemGroup>
