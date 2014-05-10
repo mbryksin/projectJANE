@@ -14,6 +14,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Parser", "Parser\Parser.fsp
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "UnitTesting", "UnitTesting\UnitTesting.fsproj", "{ADCC7110-2A73-4AF4-8C23-AFE1CC9357DB}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "JaneRuntime", "JaneRuntime\JaneRuntime.fsproj", "{87A2A46A-EDF0-4FAE-A006-0205D3E4C7BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{ADCC7110-2A73-4AF4-8C23-AFE1CC9357DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ADCC7110-2A73-4AF4-8C23-AFE1CC9357DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ADCC7110-2A73-4AF4-8C23-AFE1CC9357DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87A2A46A-EDF0-4FAE-A006-0205D3E4C7BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87A2A46A-EDF0-4FAE-A006-0205D3E4C7BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87A2A46A-EDF0-4FAE-A006-0205D3E4C7BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87A2A46A-EDF0-4FAE-A006-0205D3E4C7BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
