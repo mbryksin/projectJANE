@@ -1,9 +1,7 @@
 ﻿<Window x:Class="JaneIDE.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:wf="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms"
-        xmlns:scintilla="clr-namespace:ScintillaNET;assembly=ScintillaNET"
-        Title="JANE Studio" Height="350" Width="525"
+        Title="JANE Studio" MinHeight="480" MinWidth="640"
         Icon="/Images/JanePic.ico"
         WindowStartupLocation="CenterScreen" 
         WindowState="Maximized" 
@@ -22,7 +20,8 @@
         <Menu Grid.Row="0">
             <MenuItem Header="File">
                 <MenuItem Header="New project" Command="{Binding Path=NewProjectCommand}" />
-                <MenuItem Header="E_xit" Command="{Binding Path=CloseCommand}" />
+                <MenuItem Header="Open project" Command="{Binding Path=OpenProjectCommand}" />
+                <MenuItem Header="Exit" Command="{Binding Path=CloseCommand}" />
             </MenuItem>
             <MenuItem Header="Edit"/>
             <MenuItem Header="Run"/>
@@ -87,19 +86,13 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="209*"/>
                     <RowDefinition Height="70*"/>
-                </Grid.RowDefinitions>	
-		
-		<!-- <ContentControl Grid.Row="0" Content="{Binding Path=Workspaces}" ContentTemplate="{StaticResource WorkspacesTemplate}"/> -->
-
-                <TabControl Grid.Row="0">
-                    <TabItem Header="">
-                        <Grid Background="#FFE5E5E5">
-                            <WindowsFormsHost Name="wfh" ChildChanged="wfh_ChildChanged">
-                                <scintilla:Scintilla Name="CodeBox"> </scintilla:Scintilla>
-                            </WindowsFormsHost>
-                        </Grid>
-                    </TabItem>
-                </TabControl>
+                </Grid.RowDefinitions>
+                
+                <ContentControl 
+                    Grid.Row="0" 
+                    Content="{Binding Path=Workspaces}" 
+                    ContentTemplate="{StaticResource WorkspacesTemplate}"
+                />
 
                 <TabControl Grid.Row="1">
                     <TabItem Header="Problems">

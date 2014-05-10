@@ -8,7 +8,7 @@ let isTrueCondition (cond : Val) =
         | _ -> false
 
 //take name and Type of Variable from Parameters and Value from Arguments
-let rec addArgsToMethodContent (arguments : Val list) (parameters : FormalParameter list) (body : Block) =
+let rec addArgsToMethodContext (arguments : Val list) (parameters : FormalParameter list) (body : Block) =
     match arguments, parameters with
     | a :: args, p :: ps -> 
         let arg = arguments.Head
@@ -18,5 +18,10 @@ let rec addArgsToMethodContent (arguments : Val list) (parameters : FormalParame
         let VarType = param.Type
         let VarVal  = arg
         body.Context <- Variable(VarName, VarType, VarVal) :: body.Context
-        addArgsToMethodContent arguments.Tail parameters.Tail body
+        addArgsToMethodContext args ps body
     | _ -> () 
+
+let addToBlockContext (block : Statement) context = 
+    match block with
+    | :? Block as bl -> bl.Context <- context
+    | _ -> ()    

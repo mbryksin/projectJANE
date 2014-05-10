@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Markup;
 using System.Globalization;
 
+using JaneIDE.Model;
 using JaneIDE.View;
 using JaneIDE.ViewModel;
 
@@ -38,7 +39,8 @@ namespace JaneIDE
         static void c_NewProject(object sender, EventArgs e)
         {
             NewProjectDialog newProjectDialogWindow = new NewProjectDialog();
-            var viewModel = new NewProjectViewModel();
+            NewProjectEventArgs args = (NewProjectEventArgs)e;
+            var viewModel = new NewProjectViewModel(args.Project);
 
             EventHandler handler = null;
             handler = delegate
@@ -49,7 +51,8 @@ namespace JaneIDE
             viewModel.RequestClose += handler;
 
             newProjectDialogWindow.DataContext = viewModel;
-            newProjectDialogWindow.Show();
+            newProjectDialogWindow.ShowDialog();
+            
         }
 
         protected override void OnStartup(StartupEventArgs e)

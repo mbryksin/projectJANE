@@ -8,17 +8,41 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 
+using System.IO;
+using System.Windows.Forms;
+
+using JaneIDE.Model;
+
 namespace JaneIDE.ViewModel
 {
     public class MainWindowViewModel : WorkspaceViewModel
     {
+        Project project;        
         ObservableCollection<WorkspaceViewModel> _workspaces;
         RelayCommand _newProjectCommand;
+        RelayCommand _openProjectCommand;
+        private OpenFileDialog openFileDialog;
 
         public MainWindowViewModel()
         {
-            //CustomerViewModel workspace = new CustomerViewModel(newCustomer, _customerRepository);
-            //this.Workspaces.Add(workspace);
+            project = new Project();
+            openFileDialog = new OpenFileDialog();
+            openFileDialog.InitialDirectory = Environment.SpecialFolder.Personal.ToString();
+            openFileDialog.Filter = "Project file (*.pro)|*.pro";
+            openFileDialog.RestoreDirectory = true;
+            CreateNewFile("test.jane");
+        }
+
+        public ICommand OpenProjectCommand
+        {
+            get
+            {
+                if (_openProjectCommand == null)
+                    _openProjectCommand = new RelayCommand(param => this.OpenProject(),
+                                                           param => true);
+
+                return _openProjectCommand;
+            }
         }
 
         public ICommand NewProjectCommand
@@ -38,7 +62,8 @@ namespace JaneIDE.ViewModel
         {
             EventHandler handler = this.NewProjectEvent;
             if (handler != null)
-                handler(this, EventArgs.Empty);
+                handler(this, new NewProjectEventArgs(project));
+
         }
 
         public ObservableCollection<WorkspaceViewModel> Workspaces
@@ -50,6 +75,7 @@ namespace JaneIDE.ViewModel
                     _workspaces = new ObservableCollection<WorkspaceViewModel>();
                     _workspaces.CollectionChanged += this.OnWorkspacesChanged;
                 }
+
                 return _workspaces;
             }
         }
@@ -80,5 +106,43 @@ namespace JaneIDE.ViewModel
             if (collectionView != null)
                 collectionView.MoveCurrentTo(workspace);
         }
+
+        void CreateNewFile(string filename)
+        {
+            CodeBoxViewModel workspace = new CodeBoxViewModel(filename);
+            this.Workspaces.Add(workspace);
+            this.SetActiveWorkspace(workspace);
+        }
+
+        void OpenProject()
+        {
+            string path = String.Empty;
+            Stream myStream = null;
+            DialogResult result = openFileDialog.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                try
+                {
+                    if ((myStream = openFileDialog.OpenFile()) != null)
+                    {
+                        using (myStream)
+                        {
+                            using (StreamReader reader = new StreamReader(myStream))
+                            {
+                                path = reader.ReadLine();
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
+                }
+
+                project.OpenProject(openFileDialog.FileName, path);
+            }
+        }
+
     }
 }
