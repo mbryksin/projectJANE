@@ -25,7 +25,10 @@ and interpretMethod (classMethod : ClassMethod) (args : Val list) =
     let parameters = classMethod.Parameters
     //add arguments to method body context
     addArgsToMethodContext args parameters body    
-    interpretStatement (classMethod.Body :> Statement)
+    let statementVal = interpretStatement (classMethod.Body :> Statement)
+    match statementVal with
+    | Return value -> value
+    | _            -> Empty
 
 //***************************************************Statements***************************************************//
 
@@ -55,11 +58,22 @@ and interpretBlock (block : Block) =
              match currStatement with
              | :? Block as bl -> 
                     bl.Context <- block.Context
+                    let mutable returnVal = None
+                    interpretStatement currStatement         
+             | :? ReturnStatement as rs -> interpretReturnStatement rs   
+//                    let ret = interpretReturnStatement rs     
+//                    match ret with
+//                    | Return v -> v
+//                    | _        -> Empty           
+             | _ -> let mutable returnVal = None
                     let valueInterpret = interpretStatement currStatement 
-                    statementsInterpret statements
-             | :? ReturnStatement as rs -> interpretReturnStatement rs                              
-             | _ -> interpretStatement currStatement |> ignore
-                    statementsInterpret statements
+                    match valueInterpret with
+                    | Return v -> 
+                        returnVal <- Some valueInterpret
+                    | _        -> ()
+                    if returnVal.IsSome 
+                        then  returnVal.Value
+                        else  statementsInterpret statements
         | [] -> Empty
     statementsInterpret statements
 
@@ -353,7 +367,6 @@ let programText = "
     }
 
     class Ariphmetic {
-        static int factor = 1;
             
         static int increment(int arg)
         {
@@ -369,24 +382,8 @@ let programText = "
 
         static int sum(int a, int b)
         {
-            if (0==0)
-            {
             int s = a + b;
             return (s);
-            }
-        }
-
-        static int fact(int n)
-        {
-            if (n < 2)
-            {
-                return 1;
-            }
-            else
-            {
-                int fact = Ariphmetic.fact(n-1) * n;
-                return fact;
-            }
         }
 
     }
@@ -396,18 +393,21 @@ let programText = "
         }
 
         static void main() {
-            Man x = null;
-            if (x == null)
-            {
-                x = new Man(1,2,3);
-            }
-            else
-            {
-                x = new Man(3,2,1);
-            }
-            x.work();
-            int age = x.getAge();
-            int age2 = x.Age;
+            Man teenager = new Man(13,98,150);
+            int age = teenager.getAge();
+            teenager.work();
+            teenager.work();
+            int energy = teenager.getEnergy();
+            Man ded = new Man(100,0,100);
+            Man son = Man.reproduct(ded, teenager);
+            int a = 5;
+            int[] array = {{1,2,3}, {3,2,3}};
+            int b = array[0];
+            int s = Ariphmetic.sum(a,a);
+            string str = \"lalka\";
+            char c = str[0];
+            int inc = Ariphmetic.increment(a);
+            int dec = Ariphmetic.decrement(a);
         }
     }"
 
@@ -416,6 +416,3 @@ myProg.NameMainClass <- "myClass"
 SA_Program myProg
 printfn "%A" myProg
 interpretProgram myProg 
-
-
-     
