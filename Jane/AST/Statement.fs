@@ -4,9 +4,15 @@
 type Statement(pos : Position) =
     inherit Node(pos)
     let mutable parent = None
+    let mutable context = []
+
     member x.Parent
         with get() = parent
         and  set(value) = parent <- value
+
+    member x.Context 
+        with get () = context
+        and  set (value) = context <- value
 
     abstract member Interpret: unit -> unit
 
@@ -18,9 +24,6 @@ and Block(statements : Statement list, pos : Position) =
     let mutable context = []
 
     member x.Statements = statements
-    member x.Context 
-        with get () = context
-        and  set (value) = context <- value
 
     override x.ToString() = statements
                             |> List.map string
@@ -128,9 +131,9 @@ type WhileStatement(condition : Expression, body : Statement, pos : Position) =
     member x.Condition = condition
     member x.Body      = body
 
-    //while condition is true - interpret body
-
     override x.ToString() = sprintf "while (%A) %A" condition body
+
+    //while condition is true - interpret body
 
     override x.Interpret() =
         let context = x.Parent.Value.Context

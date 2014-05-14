@@ -29,9 +29,11 @@ type Program(programMemberList : ProgramMember list, pos : Position) =
     member x.MainMethod   with get()          = mainMethod
                            and set(newMethod) = mainMethod <- newMethod
 
+    member x.Errors       with get()          = errors
+                           and set(newErrors) = errors <- newErrors
+
     member x.AddErrors newErrors = errors <- newErrors @ errors
     member x.AddError  newError  = errors <- newError :: errors
-    member x.Errors              = errors
 
     override x.ToString() = programMemberList
                             |> List.map string

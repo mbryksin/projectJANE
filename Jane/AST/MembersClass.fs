@@ -50,10 +50,14 @@ type ClassVoidMethod(isStatic : bool, name : ID, parameters : FormalParameter li
 
 type ClassField(isStatic : bool, isFinal : bool, fieldType : Type, name : ID, body : Expression, pos : Position) =
     inherit ClassMethodOrField(isStatic, name, pos)
-    member x.Type    = fieldType
-    member x.Body    = body
-    member x.IsFinal = isFinal 
-   
+    
+    let variable = new Variable(name.Value, fieldType, Empty)
+    
+    member x.Type     = fieldType
+    member x.Body     = body
+    member x.IsFinal  = isFinal 
+    member x.Variable = variable
+  
     override x.ToString() = 
         let staticStr = if isStatic then "static " else ""
         let finalStr  = if isStatic then "final "  else ""
