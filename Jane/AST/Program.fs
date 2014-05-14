@@ -6,6 +6,8 @@ open System.Collections.Generic
 type Program(programMemberList : ProgramMember list, pos : Position) =
     inherit Node(pos)
 
+    let mutable returnString = ""
+
     let members    = new Dictionary<string, ProgramMember>()
     let classes    = new Dictionary<string, Class>()
     let interfaces = new Dictionary<string, Interface>()
@@ -15,6 +17,7 @@ type Program(programMemberList : ProgramMember list, pos : Position) =
     let mutable errors        : Error list         = []
     let mutable nameMainClass : string             = ""
     
+
     member x.MemberList     = programMemberList
     member x.Members        = members
     member x.Classes        = classes
@@ -28,6 +31,9 @@ type Program(programMemberList : ProgramMember list, pos : Position) =
 
     member x.MainMethod   with get()          = mainMethod
                            and set(newMethod) = mainMethod <- newMethod
+
+    member x.ReturnString with get()    = returnString
+                           and set(str) = returnString <- returnString + str
 
     member x.AddErrors newErrors = errors <- newErrors @ errors
     member x.AddError  newError  = errors <- newError :: errors
