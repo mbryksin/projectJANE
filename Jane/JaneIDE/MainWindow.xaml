@@ -29,7 +29,7 @@
             <MenuItem Header="Help"/>
         </Menu>
         <Menu Grid.Row="1">
-            <MenuItem Width="24">
+            <MenuItem Width="24" Command="{Binding Path=NewFileCommand}">
                 <MenuItem.Icon>
                     <Image Source="/Images/newfile.png" />
                 </MenuItem.Icon>
@@ -39,9 +39,9 @@
                     <Image Source="/Images/open.png" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Height="24" Width="24">
+            <MenuItem Height="24" Width="24" Command="{Binding Path=SaveProjectCommand}">
                 <MenuItem.Icon>
-                    <Image Source="/Images/save.png" />
+                    <Image Source="/Images/save.png"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem Width="24">

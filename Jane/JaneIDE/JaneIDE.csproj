@@ -80,12 +80,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Model\NewFileEventArgs.cs" />
     <Compile Include="Model\NewProjectEventArgs.cs" />
     <Compile Include="Model\Project.cs" />
     <Compile Include="Model\Source.cs" />
     <Compile Include="ViewModel\CodeBoxViewModel.cs" />
+    <Compile Include="ViewModel\NewFileViewModel.cs" />
     <Compile Include="View\CodeBox.xaml.cs">
       <DependentUpon>CodeBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\NewFileDialog.xaml.cs">
+      <DependentUpon>NewFileDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\NewProjectDialog.xaml.cs">
       <DependentUpon>NewProjectDialog.xaml</DependentUpon>
@@ -110,6 +115,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="View\CodeBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\NewFileDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -26,7 +26,7 @@ namespace JaneIDE.Model
             projectSources = new List<Source>();
         }
 
-        public Project(string name, string path, string mainClass): this()
+        public void SetProject(string name, string path, string mainClass)
         {
             this.Author = Environment.UserName;
             this.ProjectName = name;

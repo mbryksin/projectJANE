@@ -87,6 +87,7 @@ namespace JaneIDE.View
             var viewModel = (CodeBoxViewModel)this.DataContext;
             ScintillaNET.Scintilla CodeBox = sender as ScintillaNET.Scintilla;
             string codeboxtext = CodeBox.Text;
+            viewModel.CodeboxText = codeboxtext;
             //TODO: BALLOON with ' '
         }
 
