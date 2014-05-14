@@ -3,7 +3,6 @@
 [<AbstractClass>]
 type Statement(pos : Position) =
     inherit Node(pos)
-    let nutable iReturn = false
     let mutable parent : Block option = None
     member x.Parent
         with get() = parent
