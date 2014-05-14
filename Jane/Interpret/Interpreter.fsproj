@@ -52,7 +52,6 @@
     <Compile Include="ServiceFunction.fs" />
     <Compile Include="ArrayFunctions.fs" />
     <Compile Include="Interpret.fs" />
-    <Compile Include="Test.fs" />
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>

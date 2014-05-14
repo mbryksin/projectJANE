@@ -53,11 +53,16 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
   <ItemGroup>
-    <Compile Include="Interpret.fs" />
     <Compile Include="Parser.fs" />
     <Compile Include="StaticAnalysis.fs" />
     <None Include="app.config" />
     <None Include="packages.config" />
+    <Compile Include="Interpret\SupportFunction.fs" />
+    <Compile Include="Interpret\StatementsTests.fs" />
+    <Compile Include="Interpret\ArraysTest.fs" />
+    <Compile Include="Interpret\ExpressionTest.fs" />
+    <Compile Include="Interpret\ObjectTests.fs" />
+    <Compile Include="Interpret\FullProgramsTest.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interpret\Interpreter.fsproj">

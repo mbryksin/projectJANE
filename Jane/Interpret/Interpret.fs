@@ -8,7 +8,6 @@ open InterpretErrors
 open AST
 
 let mutable (currentProgram : Program option) = None
-let mutable returnString = ""
 
 //***************************************************Program***************************************************//
 
@@ -17,7 +16,7 @@ let rec interpretProgram (program: Program) =
     let mainMethod = program.MainMethod.Value
     currentProgram <- Some program
     interpretMethod mainMethod [] |> ignore
-    returnString
+    currentProgram.Value.ReturnString
 
 //***************************************************ClassMembers***************************************************//
 
@@ -127,9 +126,16 @@ and interpretWhileStatement (whileStatement : WhileStatement) =
     //add context if statement is block
     addToBlockContext body context
 
-    while isTrueCondition(interpretExpression condition context) do
-        interpretStatement body |> ignore
-    Empty
+    let rec startWhile () =
+        let isTrueCond = isTrueCondition(interpretExpression condition context)
+        match isTrueCond with
+        | true  -> 
+            let bodyVal = interpretStatement body
+            match bodyVal with
+            | Return v -> Return v
+            | _        -> startWhile ()
+        | false -> Empty
+    startWhile ()
 
 //interpret init. if condition is true, interpret body and update
 and interpretForStatement (forstatement : ForStatement) =   
@@ -161,7 +167,7 @@ and interpretReturnStatement (rs : ReturnStatement) =
     let returnValue = interpretExpression expressionReturn context
     Return returnValue
 
-and interpretBreakStatement (bs : BreakStatement) = Empty              //DO IT
+and interpretBreakStatement (bs : BreakStatement) = Return Empty   
 
 and interpretContinueStatement (cs : ContinueStatement) = Empty        //DO IT
 
@@ -261,7 +267,7 @@ and staticMethodCall className methodName args context =
     let progListClasses = currentProgram.Value.Classes
     match className, methodName with
         // костыль, жду пока Саша нормальный Console.Writeline сделает
-        | "Console", "Writeline" -> returnString <- returnString + writeValue args.Head
+        | "Console", "Writeline" -> currentProgram.Value.ReturnString <- writeValue args.Head
                                     Empty
 //        | LibruaryClassName, _ when progListClasses.ContainsKey(LibruaryClassName) = false ->
 //            RunTimeMemberCall className methodName args          
