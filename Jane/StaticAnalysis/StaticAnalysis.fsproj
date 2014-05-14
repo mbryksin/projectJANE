@@ -49,6 +49,7 @@
     <Compile Include="Class.fs" />
     <Compile Include="ProgramMember.fs" />
     <Compile Include="Program.fs" />
+    <Compile Include="StaticAnalysis.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AST\AST.fsproj">
