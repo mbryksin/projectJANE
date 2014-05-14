@@ -80,7 +80,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Model\NewFileEventArgs.cs" />
     <Compile Include="Model\NewProjectEventArgs.cs" />
     <Compile Include="Model\Project.cs" />
     <Compile Include="Model\Source.cs" />

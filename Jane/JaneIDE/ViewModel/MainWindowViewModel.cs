@@ -12,6 +12,7 @@ using System.IO;
 using System.Windows.Forms;
 
 using JaneIDE.Model;
+using JaneIDE.View;
 
 namespace JaneIDE.ViewModel
 {
