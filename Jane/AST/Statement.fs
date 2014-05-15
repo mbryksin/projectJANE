@@ -19,7 +19,6 @@ type Statement(pos : Position) =
 
 and Block(statements : Statement list, pos : Position) =
     inherit Statement(pos)
-    let mutable context = [] : Variable list
 
     member x.Statements = statements
 
