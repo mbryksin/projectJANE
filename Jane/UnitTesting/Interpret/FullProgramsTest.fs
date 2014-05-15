@@ -3,7 +3,7 @@
 
 open FsUnit
 open NUnit.Framework
-open SA.Program
+open SA
 open LanguageParser
 open Interpret
 open SupportFunction

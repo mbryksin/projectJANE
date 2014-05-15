@@ -11,6 +11,9 @@ type Position(startLine : int, startSymbol : int, endLine : int, endSymbol : int
     member x.EndSymbol   = endSymbol
     member x.StartPos    = startLine, startSymbol
     member x.EndPos      = endLine, endSymbol
+
+    override x.ToString() =
+        sprintf "{{%d, %d}, {%d, %d}}" startLine startSymbol endLine endSymbol 
     
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,5 +40,11 @@ type ID(id : string, p : Position) =
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
 type Error(errorMessage : string, position : Position) =
+    
+    let toString = sprintf "%A %s" position errorMessage
+
     member x.Position     = position
     member x.ErrorMessage = errorMessage
+
+    override x.ToString() = toString
+

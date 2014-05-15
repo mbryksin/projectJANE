@@ -3,7 +3,7 @@
 open FsUnit
 open NUnit.Framework
 open AST
-open SA.Program
+open SA
 open LanguageParser
 
 [<TestFixture>]
@@ -15,7 +15,7 @@ type TestingStaticAnalysis() =
     member x.MainTest textOfProgram textOfError result =
         let program = ParseProgram textOfProgram
         program.NameMainClass <- "MainClass"
-        SA_Program program
+        StaticAnalysis.Analyze program
         existsError program textOfError |> should be result
         
     member x.MainBadTest textOfProgram textOfError = 
@@ -61,22 +61,33 @@ type TestingStaticAnalysis() =
             "Method \"main\" must be void method."
 
     [<Test>]
-    member x. ``Название типа - ключевое слово`` ()=
+    member x. ``Название интерфейса - ключевое слово`` ()=
+        x.MainBadTest 
+            "interface string {}" 
+            "Incorrect identifier of interface: \"string\"."
+    [<Test>]
+    member x. ``Название класса - ключевое слово`` ()=
         x.MainBadTest 
             "class boolean {}" 
-            "Incorrect identifier: \"boolean\"."
+            "Incorrect identifier of class: \"boolean\"."
+
+    [<Test>]
+    member x. ``Название метода интерфейса - ключевое слово`` ()=
+        x.MainBadTest 
+            "interface A {void int();}" 
+            "Incorrect identifier of interface member: \"int\"."
+
+    [<Test>]
+    member x. ``Название поля класса - ключевое слово`` ()=
+        x.MainBadTest 
+            "class A {char int = '5';}" 
+            "Incorrect identifier of class member: \"int\"."
 
     [<Test>]
     member x.``Дублирование названий классов`` ()=
         x.MainBadTest
             "interface Name {} class Name {}"
             "Duplicate class: \"Name\"."
-
-    [<Test>]
-    member x.``Дублирование названий наследуемых интерфейсов`` ()=
-        x.MainBadTest
-            "interface Name {} interface A extends Name, C, Name {}"
-            "Duplicate extend interface: \"Name\"."
 
     [<Test>]
     member x.``Дублирование названий членов интерфейса`` ()=
@@ -94,5 +105,16 @@ type TestingStaticAnalysis() =
     member x.``Отсутствует наследуемый интерфейс`` ()=
         x.MainBadTest
             "interface A extends Name {}"
-            "Interface with name \"Name\" not exists."
+            "Extend interface with name \"Name\" not exists."
 
+    [<Test>]
+    member x.``Отсутствует наследуемый класс`` ()=
+        x.MainBadTest
+            "class A extends Name {}"
+            "Extend class with name \"Name\" not exists."
+
+    [<Test>]
+    member x.``Отсутствует реализуемый интерфейс`` ()=
+        x.MainBadTest
+            "class A implements Name {}"
+            "Implement interface with name \"Name\" not exists."

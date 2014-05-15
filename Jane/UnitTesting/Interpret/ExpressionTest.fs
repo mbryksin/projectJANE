@@ -3,7 +3,7 @@
 
 open FsUnit
 open NUnit.Framework
-open SA.Program
+open SA
 open LanguageParser
 open Interpret
 open SupportFunction
@@ -14,7 +14,7 @@ type TestingExpression() =
     member x.getResult (textProgram : string)=
         let program = ParseProgram textProgram
         program.NameMainClass <- "mainClass"  
-        SA_Program program
+        StaticAnalysis.Analyze program
         interpretProgram program 
     [<Test>]
     member x. ``Interpret: Hard expression`` ()=
