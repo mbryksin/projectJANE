@@ -10,9 +10,26 @@ namespace JaneIDE.ViewModel
 {
     class CodeBoxViewModel : WorkspaceViewModel
     {
-        public CodeBoxViewModel(string displayName)
+        private string content;
+        private Source src;
+
+        public CodeBoxViewModel(Source source)
         {
-            base.DisplayName = displayName;
+            src = source;
+            this.CodeboxText = src.Content;
+            base.DisplayName = src.FileName;            
+        }
+
+        public string CodeboxText
+        {
+            get { return content; }
+            set
+            {
+                if (value == content)
+                    return;
+                content = value;
+                src.Content = content;
+            }
         }
         
         

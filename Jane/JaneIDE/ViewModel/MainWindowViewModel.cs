@@ -12,6 +12,7 @@ using System.IO;
 using System.Windows.Forms;
 
 using JaneIDE.Model;
+using JaneIDE.View;
 
 namespace JaneIDE.ViewModel
 {
@@ -30,7 +31,7 @@ namespace JaneIDE.ViewModel
             openFileDialog.InitialDirectory = Environment.SpecialFolder.Personal.ToString();
             openFileDialog.Filter = "Project file (*.pro)|*.pro";
             openFileDialog.RestoreDirectory = true;
-            CreateNewFile("test.jane");
+
         }
 
         public ICommand OpenProjectCommand
@@ -43,6 +44,25 @@ namespace JaneIDE.ViewModel
 
                 return _openProjectCommand;
             }
+        }
+
+        public ICommand SaveProjectCommand
+        {
+            get { return new RelayCommand( param => project.SaveProject() ); }
+        }
+
+        public ICommand NewFileCommand
+        {
+            get { return new RelayCommand(param => this.OnRequestNewFileDialog()); }
+        }
+
+        public event EventHandler NewFileEvent;
+        
+        public void OnRequestNewFileDialog()
+        {
+            EventHandler handler = this.NewFileEvent;
+            if (handler != null)
+                handler(this, new EventArgs());
         }
 
         public ICommand NewProjectCommand
@@ -63,7 +83,6 @@ namespace JaneIDE.ViewModel
             EventHandler handler = this.NewProjectEvent;
             if (handler != null)
                 handler(this, new NewProjectEventArgs(project));
-
         }
 
         public ObservableCollection<WorkspaceViewModel> Workspaces
@@ -98,7 +117,7 @@ namespace JaneIDE.ViewModel
             this.Workspaces.Remove(workspace);
         }
 
-        void SetActiveWorkspace(WorkspaceViewModel workspace)
+        public void SetActiveWorkspace(WorkspaceViewModel workspace)
         {
             //Debug.Assert(this.Workspaces.Contains(workspace));
 
@@ -107,9 +126,20 @@ namespace JaneIDE.ViewModel
                 collectionView.MoveCurrentTo(workspace);
         }
 
-        void CreateNewFile(string filename)
+        public void CreateNewFile(string filename)
         {
-            CodeBoxViewModel workspace = new CodeBoxViewModel(filename);
+            Source src = new Source(filename);
+            project.AddSource(src);
+            CodeBoxViewModel workspace = new CodeBoxViewModel(src);
+            this.Workspaces.Add(workspace);
+            this.SetActiveWorkspace(workspace);
+        }
+
+        public void CreateMainClassWorkspace()
+        {
+            Workspaces.Clear();
+            CodeBoxViewModel workspace = new CodeBoxViewModel(project.MainClass);
+            
             this.Workspaces.Add(workspace);
             this.SetActiveWorkspace(workspace);
         }
@@ -141,8 +171,14 @@ namespace JaneIDE.ViewModel
                 }
 
                 project.OpenProject(openFileDialog.FileName, path);
+                this.Workspaces.Clear();
+                CodeBoxViewModel workspace = new CodeBoxViewModel(project.MainClass);
+                this.Workspaces.Add(workspace);
+                this.SetActiveWorkspace(workspace);
             }
         }
+
+
 
     }
 }

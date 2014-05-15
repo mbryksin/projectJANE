@@ -26,7 +26,7 @@ namespace JaneIDE.Model
             projectSources = new List<Source>();
         }
 
-        public Project(string name, string path, string mainClass): this()
+        public void SetProject(string name, string path, string mainClass)
         {
             this.Author = Environment.UserName;
             this.ProjectName = name;
@@ -222,10 +222,12 @@ namespace JaneIDE.Model
                         if (!mainClassFilePath.EndsWith(SOURCE_FORMAT))
                             mainClassFilePath += SOURCE_FORMAT;
 
+                        /*
                         if (File.Exists(mainClassFilePath))
                         {
                             File.Delete(mainClassFilePath);
                         }
+                        */
 
                         using (FileStream fstream = File.Open(mainClassFilePath, FileMode.Open))
                         {
@@ -234,6 +236,8 @@ namespace JaneIDE.Model
                                 mainClassSource.Content = sreader.ReadToEnd().Trim();
                             }
                         }
+
+                        this.AddSource(mainClassSource);
                         //Sources
                         sr.ReadLine();
                         while ((line = sr.ReadLine()) != null)
