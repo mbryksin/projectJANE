@@ -42,10 +42,6 @@ type ClassVoidMethod(isStatic : bool, name : ID, parameters : FormalParameter li
         let parametersStr = parameters |> List.map string |> String.concat ", " |> sprintf "(%s)"
         sprintf "%svoid %s%s %A" staticStr name.Value parametersStr body
 
-    //Interpret body of method
-    member x.Interpret() = 
-        (body :> Statement).Interpret()
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type ClassField(isStatic : bool, isFinal : bool, fieldType : Type, name : ID, body : Expression, pos : Position) =
