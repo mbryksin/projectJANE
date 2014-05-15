@@ -124,5 +124,5 @@ type TestingObject() =
                     Console.Writeline(Number.pi);
                 }
             }"
-        getResult(programText) = "3.14"  |> should be True
+        getResult(programText) = "3,14"  |> should be True
 

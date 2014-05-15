@@ -53,7 +53,7 @@ type TestingExpression() =
                     Console.Writeline(f);
                 }
             }"
-        getResult(programText) = "1.45"  |> should be True
+        getResult(programText) = "1,45"  |> should be True
 
     [<Test>]
     member x. ``Interpret: Literals, null`` ()=
