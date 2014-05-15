@@ -1,0 +1,16 @@
+//JANE language templates
+//Big Numbers by Matvey Bryksin
+
+class BigNumber 
+{
+	BigNumber()
+	{
+	}
+}
+
+class MainClass 
+{
+	static void main(String[] args)
+	{
+	}
+}
