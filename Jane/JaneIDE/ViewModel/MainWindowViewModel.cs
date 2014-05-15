@@ -171,12 +171,11 @@ namespace JaneIDE.ViewModel
                 }
 
                 project.OpenProject(openFileDialog.FileName, path);
+                this.Workspaces.Clear();
+                CodeBoxViewModel workspace = new CodeBoxViewModel(project.MainClass);
+                this.Workspaces.Add(workspace);
+                this.SetActiveWorkspace(workspace);
             }
-
-            this.Workspaces.Clear();
-            CodeBoxViewModel workspace = new CodeBoxViewModel(project.MainClass);
-            this.Workspaces.Add(workspace);
-            this.SetActiveWorkspace(workspace);
         }
 
 
