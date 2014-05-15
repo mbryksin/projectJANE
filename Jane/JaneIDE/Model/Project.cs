@@ -222,10 +222,12 @@ namespace JaneIDE.Model
                         if (!mainClassFilePath.EndsWith(SOURCE_FORMAT))
                             mainClassFilePath += SOURCE_FORMAT;
 
+                        /*
                         if (File.Exists(mainClassFilePath))
                         {
                             File.Delete(mainClassFilePath);
                         }
+                        */
 
                         using (FileStream fstream = File.Open(mainClassFilePath, FileMode.Open))
                         {
@@ -234,6 +236,8 @@ namespace JaneIDE.Model
                                 mainClassSource.Content = sreader.ReadToEnd().Trim();
                             }
                         }
+
+                        this.AddSource(mainClassSource);
                         //Sources
                         sr.ReadLine();
                         while ((line = sr.ReadLine()) != null)

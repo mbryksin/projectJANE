@@ -29,7 +29,9 @@ namespace JaneIDE.View
             // Initialize CodeBox by ScintillaNET
 
             // Integration fix from official instruction
-            ScintillaNET.Scintilla CodeBox = (ScintillaNET.Scintilla)wfh.Child; 
+            ScintillaNET.Scintilla CodeBox = (ScintillaNET.Scintilla)wfh.Child;
+
+            this.DataContextChanged += new DependencyPropertyChangedEventHandler(Reload);
 
             // Codebox configuration from JaNE.xml
             CodeBox.ConfigurationManager.Language = "jane";
@@ -62,10 +64,16 @@ namespace JaneIDE.View
 
             //Handler for snippets
             CodeBox.KeyDown += CodeBox_KeyDown;
-
-            
         }
 
+        private void Reload(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (this.DataContext == null)
+                return;
+            var viewModel = (CodeBoxViewModel)this.DataContext;
+            ScintillaNET.Scintilla CodeBox = (ScintillaNET.Scintilla)wfh.Child; 
+            CodeBox.Text = viewModel.CodeboxText;
+        }
 
         void CodeBox_KeyDown(object sender, System.Windows.Forms.KeyEventArgs e)
         {
@@ -91,6 +99,5 @@ namespace JaneIDE.View
             //TODO: BALLOON with ' '
         }
 
-    
     }
 }

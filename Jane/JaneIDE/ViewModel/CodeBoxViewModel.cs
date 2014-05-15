@@ -15,8 +15,8 @@ namespace JaneIDE.ViewModel
 
         public CodeBoxViewModel(Source source)
         {
-            content = String.Empty;
             src = source;
+            this.CodeboxText = src.Content;
             base.DisplayName = src.FileName;            
         }
 
