@@ -21,6 +21,7 @@ type Variable(name : string, varType : Type, value : Val) =
             | Str content   -> content.ToString()
             | Char content  -> content.ToString()
             | Float content -> content.ToString()
+            | Array content -> content.ToString()
             | _        -> "error"
         start + value
 
