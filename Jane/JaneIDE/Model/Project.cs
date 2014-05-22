@@ -7,6 +7,7 @@ using System.IO;
 using System.Threading.Tasks;
 
 using RunProject;
+using AST;
 
 namespace JaneIDE.Model
 {
@@ -272,7 +273,7 @@ namespace JaneIDE.Model
                         sr.ReadLine();
                         while ((line = sr.ReadLine()) != null)
                         {
-                            Debug.WriteLine(line);
+                            //Debug.WriteLine(line);
                         }
                     }
                 }
@@ -293,9 +294,22 @@ namespace JaneIDE.Model
                 return;
             
             this.SaveProject();
-            ProjectResult res = new ProjectResult(this.MainClass.Content);
-
-            Debug.WriteLine(res.getResult);
+            ProjectResult result = new ProjectResult(this.MainClass.Content, this.MainClass.FileName);
+            Debug.WriteLine("-------------Program started--------------");
+            result.StartRunning();
+            if (result.NoErrors)
+            {
+                Debug.WriteLine("Result: " + result.RunResultValue);
+                Debug.WriteLine("-------------Finished successfully!-------------");
+            } else
+            {
+                List<AST.Error> errs = result.Errors;
+                foreach (AST.Error err in errs)
+                {
+                    Debug.WriteLine("Line " + err.Position.StartLine + " Error: " + err.ErrorMessage);
+                }
+            }
+            Debug.WriteLine("-------------Program finished-------------");   
         }
     }
 }
