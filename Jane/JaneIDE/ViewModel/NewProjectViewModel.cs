@@ -34,7 +34,7 @@ namespace JaneIDE.ViewModel
             mainClass = "";
             this.folderBrowserDialog = new FolderBrowserDialog();
             this.folderBrowserDialog.Description = "Select the Jane project directory";
-            this.folderBrowserDialog.RootFolder = Environment.SpecialFolder.Personal;
+            this.folderBrowserDialog.RootFolder = Environment.SpecialFolder.MyComputer;
         }
 
         public string MainClass

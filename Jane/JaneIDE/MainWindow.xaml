@@ -24,9 +24,11 @@
                 <Separator/>
                 <MenuItem Header="Exit" Command="{Binding Path=CloseCommand}" />
             </MenuItem>
+            <MenuItem Header="Run">
+                <MenuItem Header="Run project" Command="{Binding Path=RunProjectCommand}" />
+            </MenuItem>
             <!--
             <MenuItem Header="Edit"/>
-            <MenuItem Header="Run"/>
             <MenuItem Header="Tools"/>
             <MenuItem Header="Help"/>
             -->
@@ -59,7 +61,7 @@
                     <Image Source="/Images/edit-redo.png" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Width="24">
+            <MenuItem Width="24" Command="{Binding Path=RunProjectCommand}">
                 <MenuItem.Icon>
                     <Image Source="/Images/run.png" />
                 </MenuItem.Icon>
@@ -100,12 +102,12 @@
                 />
 
                 <TabControl Grid.Row="1">
+                    <TabItem Header="Output">
+                        <Grid Background="#FFE5E5E5"/>
+                    </TabItem>
                     <TabItem Header="Problems">
                         <Grid Background="#FFE5E5E5">
                         </Grid>
-                    </TabItem>
-                    <TabItem Header="Output">
-                        <Grid Background="#FFE5E5E5"/>
                     </TabItem>
                     <TabItem Header="Process">
                         <Grid Background="#FFE5E5E5"/>
