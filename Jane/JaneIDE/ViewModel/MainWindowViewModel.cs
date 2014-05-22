@@ -45,26 +45,25 @@ namespace JaneIDE.ViewModel
                 return _openProjectCommand;
             }
         }
-
         public ICommand SaveProjectCommand
         {
-            get { return new RelayCommand( param => project.SaveProject() ); }
+            get { return new RelayCommand( param => project.SaveProject(), param => project.CanSave ); }
         }
-
+        public ICommand RunProjectCommand
+        {
+            get { return new RelayCommand(param => project.RunProject(), param => project.CanRun); }
+        }
         public ICommand NewFileCommand
         {
             get { return new RelayCommand(param => this.OnRequestNewFileDialog()); }
         }
-
         public event EventHandler NewFileEvent;
-        
         public void OnRequestNewFileDialog()
         {
             EventHandler handler = this.NewFileEvent;
             if (handler != null)
                 handler(this, new EventArgs());
         }
-
         public ICommand NewProjectCommand
         {
             get
@@ -75,9 +74,7 @@ namespace JaneIDE.ViewModel
                 return _newProjectCommand;
             }
         }
-
         public event EventHandler NewProjectEvent;
-
         void OnRequestNewProject()
         {
             EventHandler handler = this.NewProjectEvent;
@@ -98,7 +95,6 @@ namespace JaneIDE.ViewModel
                 return _workspaces;
             }
         }
-
         void OnWorkspacesChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.NewItems != null && e.NewItems.Count != 0)
@@ -109,14 +105,12 @@ namespace JaneIDE.ViewModel
                 foreach (WorkspaceViewModel workspace in e.OldItems)
                     workspace.RequestClose -= this.OnWorkspaceRequestClose;
         }
-
         void OnWorkspaceRequestClose(object sender, EventArgs e)
         {
             WorkspaceViewModel workspace = sender as WorkspaceViewModel;
             workspace.Dispose();
             this.Workspaces.Remove(workspace);
         }
-
         public void SetActiveWorkspace(WorkspaceViewModel workspace)
         {
             //Debug.Assert(this.Workspaces.Contains(workspace));
