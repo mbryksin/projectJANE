@@ -21,27 +21,34 @@
             <MenuItem Header="File">
                 <MenuItem Header="New project" Command="{Binding Path=NewProjectCommand}" />
                 <MenuItem Header="Open project" Command="{Binding Path=OpenProjectCommand}" />
+                <Separator/>
                 <MenuItem Header="Exit" Command="{Binding Path=CloseCommand}" />
             </MenuItem>
+            <MenuItem Header="Run">
+                <MenuItem Header="Run project" Command="{Binding Path=RunProjectCommand}" />
+            </MenuItem>
+            <!--
             <MenuItem Header="Edit"/>
-            <MenuItem Header="Run"/>
             <MenuItem Header="Tools"/>
             <MenuItem Header="Help"/>
+            -->
         </Menu>
         <Menu Grid.Row="1">
-            <MenuItem Width="24">
+            <!--
+            <MenuItem Width="24" Command="{Binding Path=NewFileCommand}">
                 <MenuItem.Icon>
                     <Image Source="/Images/newfile.png" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Width="24">
+            -->
+            <MenuItem Width="24" Command="{Binding Path=OpenProjectCommand}">
                 <MenuItem.Icon>
                     <Image Source="/Images/open.png" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Height="24" Width="24">
+            <MenuItem Height="24" Width="24" Command="{Binding Path=SaveProjectCommand}">
                 <MenuItem.Icon>
-                    <Image Source="/Images/save.png" />
+                    <Image Source="/Images/save.png"/>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem Width="24">
@@ -54,7 +61,7 @@
                     <Image Source="/Images/edit-redo.png" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Width="24">
+            <MenuItem Width="24" Command="{Binding Path=RunProjectCommand}">
                 <MenuItem.Icon>
                     <Image Source="/Images/run.png" />
                 </MenuItem.Icon>
@@ -95,12 +102,12 @@
                 />
 
                 <TabControl Grid.Row="1">
+                    <TabItem Header="Output">
+                        <Grid Background="#FFE5E5E5"/>
+                    </TabItem>
                     <TabItem Header="Problems">
                         <Grid Background="#FFE5E5E5">
                         </Grid>
-                    </TabItem>
-                    <TabItem Header="Output">
-                        <Grid Background="#FFE5E5E5"/>
                     </TabItem>
                     <TabItem Header="Process">
                         <Grid Background="#FFE5E5E5"/>

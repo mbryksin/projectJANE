@@ -3,20 +3,20 @@
 open ServiceFunction
 open ExpressionFunctions
 open ArrayFunctions
+open InterpretErrors
 
 open AST
-open SA.Program
-open LanguageParser
-open Errors
 
 let mutable (currentProgram : Program option) = None
 
 //***************************************************Program***************************************************//
+
 //Find mainClass, find mainMethod and interpret it
-let rec interpretProgram(program: Program) =
-    let mainMethod = program.MainMethod.Value :?> ClassVoidMethod
+let rec interpretProgram (program: Program) =
+    let mainMethod = program.MainMethod.Value
     currentProgram <- Some program
     interpretMethod mainMethod [] |> ignore
+    currentProgram.Value.ReturnString
 
 //***************************************************ClassMembers***************************************************//
 
@@ -25,7 +25,37 @@ and interpretMethod (classMethod : ClassMethod) (args : Val list) =
     let parameters = classMethod.Parameters
     //add arguments to method body context
     addArgsToMethodContext args parameters body    
-    interpretStatement (classMethod.Body :> Statement)
+    let statementVal = interpretStatement (classMethod.Body :> Statement)
+    match statementVal with
+    | Return value -> value
+    | _            -> Empty
+
+
+and interpretClassConstructor (constr : ClassConstructor) interpretArgs context =
+    let name = constr.Name.Value
+    let classConstructorBody = constr.Body
+    let classforObject = currentProgram.Value.Classes.[name]
+    let Fields = classforObject.Fields
+    classConstructorBody.Context <- [] //clearOldContext
+    
+    //Fields -> Variables for Object
+    let fieldsAsVar = 
+        Seq.map (fun (f : ClassField) -> 
+                      let varName = f.Name.Value
+                      let varType = f.Type
+                      let varVal = interpretExpression f.Body context
+                      let var = new Variable(varName, varType, varVal)
+                      var
+                      ) Fields.Values 
+        |> Seq.toList
+    classConstructorBody.Context <- fieldsAsVar @ classConstructorBody.Context
+
+    //Interpret constructor block and change fields for making object
+    let parametersConstructor = constr.Parameters;
+    addArgsToMethodContext interpretArgs parametersConstructor classConstructorBody
+    interpretBlock classConstructorBody |> ignore 
+    Object (fieldsAsVar, name)
+    
 
 //***************************************************Statements***************************************************//
 
@@ -55,11 +85,12 @@ and interpretBlock (block : Block) =
              match currStatement with
              | :? Block as bl -> 
                     bl.Context <- block.Context
-                    let valueInterpret = interpretStatement currStatement 
-                    statementsInterpret statements
-             | :? ReturnStatement as rs -> interpretReturnStatement rs                              
-             | _ -> interpretStatement currStatement |> ignore
-                    statementsInterpret statements
+                    interpretBlock bl         
+             | :? ReturnStatement as rs -> interpretReturnStatement rs             
+             | _ -> let valueInterpret = interpretStatement currStatement 
+                    match valueInterpret with
+                    | Return v -> Return v
+                    | _        -> statementsInterpret statements
         | [] -> Empty
     statementsInterpret statements
 
@@ -95,13 +126,19 @@ and interpretWhileStatement (whileStatement : WhileStatement) =
     //add context if statement is block
     addToBlockContext body context
 
-    while isTrueCondition(interpretExpression condition context) do
-        interpretStatement body |> ignore
-    Empty
+    let rec startWhile () =
+        let isTrueCond = isTrueCondition(interpretExpression condition context)
+        match isTrueCond with
+        | true  -> 
+            let bodyVal = interpretStatement body
+            match bodyVal with
+            | Return v -> Return v
+            | _        -> startWhile ()
+        | false -> Empty
+    startWhile ()
 
 //interpret init. if condition is true, interpret body and update
 and interpretForStatement (forstatement : ForStatement) =   
-    let context = forstatement.Parent.Value.Context
     let init = forstatement.Init
     let update = forstatement.Update
     let parent = forstatement.Parent
@@ -109,9 +146,10 @@ and interpretForStatement (forstatement : ForStatement) =
     let condition = forstatement.Condition
     init.Parent <- parent
     update.Parent <- parent
-
-    interpretDeclarationStatement init |> ignore
     body.Parent <- parent
+    //Add init var to context
+    interpretDeclarationStatement init |> ignore 
+    let context = forstatement.Parent.Value.Context
     //add context if statement is block
     addToBlockContext body context
 
@@ -129,7 +167,7 @@ and interpretReturnStatement (rs : ReturnStatement) =
     let returnValue = interpretExpression expressionReturn context
     Return returnValue
 
-and interpretBreakStatement (bs : BreakStatement) = Empty              //DO IT
+and interpretBreakStatement (bs : BreakStatement) = Return Empty   
 
 and interpretContinueStatement (cs : ContinueStatement) = Empty        //DO IT
 
@@ -186,6 +224,11 @@ and interpretExpression (expression : Expression) (context : Variable list) =
 
 and interpretInstanceOf (instance: InstanceOf) (context : Variable list) = Empty
 
+and interpretUnaryOperation (unOp: UnaryOperation) (context : Variable list) =
+    let operandVal = interpretExpression unOp.Operand context 
+    match unOp.Operator with
+    | NOT              -> notLogical operandVal
+    | MINUS            -> minus operandVal
 
 and interpretBinaryOperation (binOp: BinaryOperation) (context : Variable list) =
     let firstOpetandVal  = interpretExpression binOp.FirstOperand  context
@@ -205,35 +248,53 @@ and interpretBinaryOperation (binOp: BinaryOperation) (context : Variable list) 
     | MULTIPLICATION   -> multyplication firstOpetandVal secondOpetandVal
     | DIVISION         -> division firstOpetandVal secondOpetandVal
     | MODULUS          -> modul firstOpetandVal secondOpetandVal 
-    | MEMBER_CALL      -> let progListClasses = currentProgram.Value.Classes
-                          match firstOpetandVal, secondOpetandVal with
-                          | ClassOrField className, MethodVal (methodName, elems) ->
-                              let currClass = progListClasses.[className]
-                              let methods = currClass.Methods
-                              let currMethod = methods.[methodName]
-                              let args = elems
-                              interpretMethod currMethod args
-                          | Object (fields, className), MethodVal (methodName, elems) ->
-                              let currClass = progListClasses.[className]
-                              let methods = currClass.Methods
-                              let currMethod = methods.[methodName]
-                              let args = elems
-                              currMethod.Body.Context <- fields @ currMethod.Body.Context 
-                              interpretMethod currMethod args
-                          | Object (fields, className), ClassOrField fieldName ->
-                              let field = List.find (fun (f : Variable) -> f.Name = fieldName) fields
-                              field.Val
-                          | ClassOrField className, ClassOrField fieldName ->
-                              let currClass = progListClasses.[className]
-                              let field = currClass.Fields.[fieldName]
-                              interpretExpression field.Body context
-                          | _, _ -> Empty
+    | MEMBER_CALL      -> memberCall firstOpetandVal secondOpetandVal context
 
-and interpretUnaryOperation (unOp: UnaryOperation) (context : Variable list) =
-    let operandVal = interpretExpression unOp.Operand context 
-    match unOp.Operator with
-    | NOT              -> notLogical operandVal
-    | MINUS            -> minus operandVal
+//*********************************************Member Call******************************************//
+and memberCall objectOrClass classMember context = 
+    match objectOrClass, classMember with
+    | ClassOrField className, MethodVal (methodName, args) ->
+        staticMethodCall className methodName args context
+    | Object (fields, className), MethodVal (methodName, args) ->
+        methodCall fields className methodName args
+    | Object (fields, className), ClassOrField fieldName ->
+        fieldGet fields className fieldName
+    | ClassOrField className, ClassOrField fieldName ->
+        staticFieldGet className fieldName context
+    | _, _ -> Empty
+    
+and staticMethodCall className methodName args context =
+    let progListClasses = currentProgram.Value.Classes
+    match className, methodName with
+        // костыль, жду пока Саша нормальный Console.Writeline сделает
+        | "Console", "Writeline" -> currentProgram.Value.ReturnString <- writeValue args.Head
+                                    Empty
+//        | LibruaryClassName, _ when progListClasses.ContainsKey(LibruaryClassName) = false ->
+//            RunTimeMemberCall className methodName args          
+        | _ ->
+            let currClass = progListClasses.[className]
+            let methods = currClass.Methods
+            let currMethod = methods.[methodName]
+            interpretMethod currMethod args
+
+and methodCall fields className methodName args =
+    let progListClasses = currentProgram.Value.Classes
+    let currClass = progListClasses.[className]
+    let methods = currClass.Methods
+    let currMethod = methods.[methodName]
+    currMethod.Body.Context <- []
+    currMethod.Body.Context <- fields @ currMethod.Body.Context 
+    interpretMethod currMethod args
+
+and staticFieldGet className fieldName context =
+    let progListClasses = currentProgram.Value.Classes
+    let currClass = progListClasses.[className]
+    let field = currClass.Fields.[fieldName]
+    interpretExpression field.Body context
+
+and fieldGet fields className fieldName =
+    let field = List.find (fun (f : Variable) -> f.Name = fieldName) fields
+    field.Val
 
 //***************************************************Primary***************************************************//
 
@@ -253,29 +314,9 @@ and interpretConstructor (cons : Constructor) (context : Variable list) =
     let classforObject = currentProgram.Value.Classes.[name]
 
     let classConstructor = classforObject.Constructor;
-    let classConstructorBody = classConstructor.Body
-    let Fields = classforObject.Fields
+    interpretClassConstructor classConstructor interpretArgs context
 
-    classConstructorBody.Context <- [] //clearOldContext
-        
-    let fieldsAsVar = 
-        Seq.map (fun (f : ClassField) -> 
-                      let varName = f.Name.Value
-                      let varType = f.Type
-                      let varVal = interpretExpression f.Body context
-                      let var = new Variable(varName, varType, varVal)
-                      var
-                      ) Fields.Values 
-        |> Seq.toList
-
-    classConstructor.Body.Context <- fieldsAsVar @ classConstructor.Body.Context
-
-    let parametersConstructor = classConstructor.Parameters;
-    addArgsToMethodContext interpretArgs parametersConstructor classConstructorBody
-    interpretBlock classConstructorBody |> ignore 
-    Object (fieldsAsVar, name)
     
-
 //find var in context and return value
 and interpretIdentifier (ident : Identifier ) (context : Variable list) =
     let classes = currentProgram.Value.Classes
@@ -314,108 +355,3 @@ and interpretLiteral (literal : Literal) (context : Variable list) =
         | :? StringLiteral  as stringLiteral -> Str stringLiteral.Get
         | :? FloatLiteral   as floatLiteral  -> Float floatLiteral.Get
         | _                                  -> Empty
-
-//***************************************************TEST***************************************************//
-
-let programText = "
-    class Man {
-            
-        Man(int a, int e, int h)
-        {
-            Age = a;
-            Energy = e;
-            Height = h;
-        }
-        int Age = 0;
-        int Energy = 100;
-        int Height = 100;
-
-        int getAge()
-        {
-            return Age;
-        }
-
-        int getEnergy()
-        {
-            return Energy;
-        }
-
-        void work()
-        {
-            Energy = Energy - 10;
-        }
-
-        static Man reproduct(Man father, Man mother)
-        {
-            let son = new Man(0,0,40);
-            return son;
-        }
-    }
-
-    class Ariphmetic {
-        static int factor = 1;
-            
-        static int increment(int arg)
-        {
-            int b = arg + 1;
-            return (b);
-        }
-
-        static int decrement(int arg)
-        {
-            int b = arg - 1;
-            return (b);
-        }
-
-        static int sum(int a, int b)
-        {
-            if (0==0)
-            {
-            int s = a + b;
-            return (s);
-            }
-        }
-
-        static int fact(int n)
-        {
-            if (n < 2)
-            {
-                return 1;
-            }
-            else
-            {
-                int fact = Ariphmetic.fact(n-1) * n;
-                return fact;
-            }
-        }
-
-    }
-    class myClass {
-
-        myClass() {
-        }
-
-        static void main() {
-            Man x = null;
-            if (x == null)
-            {
-                x = new Man(1,2,3);
-            }
-            else
-            {
-                x = new Man(3,2,1);
-            }
-            x.work();
-            int age = x.getAge();
-            int age2 = x.Age;
-        }
-    }"
-
-let myProg = ParseProgram programText
-myProg.NameMainClass <- "myClass"  
-SA_Program myProg
-printfn "%A" myProg
-interpretProgram myProg 
-
-
-     

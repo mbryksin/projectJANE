@@ -23,5 +23,19 @@ let rec addArgsToMethodContext (arguments : Val list) (parameters : FormalParame
 
 let addToBlockContext (block : Statement) context = 
     match block with
-    | :? Block as bl -> bl.Context <- context
+    | :? Block as bl -> bl.Context <-  context
     | _ -> ()    
+
+let rec writeValue vl =
+    match vl with
+    | Null          -> "null"
+    | Int content   -> content.ToString()
+    | Bool content  -> content.ToString()
+    | Str content   -> content.ToString()
+    | Char content  -> content.ToString()
+    | Float content -> content.ToString()
+    | Array content -> 
+                    let arrayValues = Array.map (fun (v : Val) -> writeValue v) content
+                    "{" + Array.fold (fun acc s ->  acc + s + " ") "" arrayValues + "}"
+    | Object (fields, className) -> className.ToString() + fields.ToString() 
+    | _        -> "error"

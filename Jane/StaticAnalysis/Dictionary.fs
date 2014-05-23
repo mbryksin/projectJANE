@@ -49,4 +49,9 @@ type Dictionary<'TKey, 'TValue> with
     /// Возвращает список ключей.
     /// </summary>
     member x.ToListKeys() = [for a in x -> a.Key]
+
+    /// <summary> 
+    /// Возвращает список пар из ключей и значений.
+    /// </summary>
+    member x.ToListPairs() = [for a in x -> a.Key, a.Value]
     

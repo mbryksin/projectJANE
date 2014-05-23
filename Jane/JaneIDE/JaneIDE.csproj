@@ -9,6 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>JaneIDE</RootNamespace>
     <AssemblyName>JaneIDE</AssemblyName>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -84,8 +85,12 @@
     <Compile Include="Model\Project.cs" />
     <Compile Include="Model\Source.cs" />
     <Compile Include="ViewModel\CodeBoxViewModel.cs" />
+    <Compile Include="ViewModel\NewFileViewModel.cs" />
     <Compile Include="View\CodeBox.xaml.cs">
       <DependentUpon>CodeBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\NewFileDialog.xaml.cs">
+      <DependentUpon>NewFileDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\NewProjectDialog.xaml.cs">
       <DependentUpon>NewProjectDialog.xaml</DependentUpon>
@@ -110,6 +115,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="View\CodeBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\NewFileDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -187,6 +196,16 @@
     <EmbeddedResource Include="SciLexer64.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AST\AST.fsproj">
+      <Project>{02daa5a7-9d06-4441-8b7e-e4d9baf1acfe}</Project>
+      <Name>AST</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RunProject\RunProject.fsproj">
+      <Project>{a89c8252-c027-4bcd-b1de-26e86cf0eb6a}</Project>
+      <Name>RunProject</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

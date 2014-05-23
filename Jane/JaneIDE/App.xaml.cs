@@ -19,6 +19,8 @@ namespace JaneIDE
     /// </summary>
     public partial class App : Application
     {
+        private MainWindowViewModel viewModel;
+
         static App()
         {
             // This code is used to test the app when using other cultures.
@@ -36,23 +38,46 @@ namespace JaneIDE
               new FrameworkPropertyMetadata(XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag)));
         }
 
-        static void c_NewProject(object sender, EventArgs e)
+        void c_NewProject(object sender, EventArgs e)
         {
             NewProjectDialog newProjectDialogWindow = new NewProjectDialog();
             NewProjectEventArgs args = (NewProjectEventArgs)e;
-            var viewModel = new NewProjectViewModel(args.Project);
+            var newProjectViewModel = new NewProjectViewModel(args.Project);
 
             EventHandler handler = null;
             handler = delegate
             {
-                viewModel.RequestClose -= handler;
+                newProjectViewModel.RequestClose -= handler;
                 newProjectDialogWindow.Close();
+                if (newProjectViewModel.Saved)
+                    viewModel.CreateMainClassWorkspace();
             };
-            viewModel.RequestClose += handler;
 
-            newProjectDialogWindow.DataContext = viewModel;
+            newProjectViewModel.RequestClose += handler;
+
+            newProjectDialogWindow.DataContext = newProjectViewModel;
             newProjectDialogWindow.ShowDialog();
             
+        }
+
+        void c_NewFile(object sender, EventArgs e)
+        {
+            NewFileDialog newFileDialogWindow = new NewFileDialog();
+            var newFileViewModel = new NewFileViewModel();
+
+            EventHandler handler = null;
+            handler = delegate
+            {
+                newFileViewModel.RequestClose -= handler;
+                newFileDialogWindow.Close();
+                if (newFileViewModel.Finished)
+                    viewModel.CreateNewFile(newFileViewModel.FileName);
+            };
+
+            newFileViewModel.RequestClose += handler;
+
+            newFileDialogWindow.DataContext = newFileViewModel;
+            newFileDialogWindow.ShowDialog();
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -60,8 +85,7 @@ namespace JaneIDE
             base.OnStartup(e);
 
             MainWindow window = new MainWindow();
-
-            var viewModel = new MainWindowViewModel();
+            viewModel = new MainWindowViewModel();
 
             // When the ViewModel asks to be closed, 
             // close the window.
@@ -73,6 +97,7 @@ namespace JaneIDE
             };
             viewModel.RequestClose += handler;
             viewModel.NewProjectEvent += c_NewProject;
+            viewModel.NewFileEvent += c_NewFile;
 
             // Allow all controls in the window to 
             // bind to the ViewModel by setting the 

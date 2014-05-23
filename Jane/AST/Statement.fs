@@ -3,23 +3,24 @@
 [<AbstractClass>]
 type Statement(pos : Position) =
     inherit Node(pos)
-    let nutable iReturn = false
-    let mutable parent : Block option = None
+
+    let mutable parent  : Block option  = None
+    let mutable context : Variable list = []
+
     member x.Parent
         with get() = parent
         and  set(value) = parent <- value
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-and Block(statements : Statement list, pos : Position) =
-    inherit Statement(pos)
-    let mutable context = [] : Variable list
-
-    member x.Statements = statements
     member x.Context 
         with get () = context
         and  set (value) = context <- value
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+and Block(statements : Statement list, pos : Position) =
+    inherit Statement(pos)
+
+    member x.Statements = statements
 
     override x.ToString() = statements
                             |> List.map string
@@ -90,7 +91,6 @@ type ForStatement(init : DeclarationStatement, condition : Expression,
     override x.ToString() = sprintf "for (%A %A = %A; %A; %A = %A) %A" init.Type init.Name init.Body 
                                     condition update.Name update.Body body
                             
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type BreakStatement(pos : Position) =

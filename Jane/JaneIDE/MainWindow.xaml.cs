@@ -25,7 +25,6 @@ namespace JaneIDE
         public MainWindow()
         {
             InitializeComponent();
-
         }
     }
 }

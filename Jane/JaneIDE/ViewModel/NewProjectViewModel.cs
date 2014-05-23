@@ -22,9 +22,11 @@ namespace JaneIDE.ViewModel
         string projectName;
         string projectFolder;
         string mainClass;
+        private bool saved;
 
         public NewProjectViewModel(Project project)
         {
+            saved = false;
             newProject = project;
             projectFolder = "";
             projectName = "";
@@ -32,7 +34,7 @@ namespace JaneIDE.ViewModel
             mainClass = "";
             this.folderBrowserDialog = new FolderBrowserDialog();
             this.folderBrowserDialog.Description = "Select the Jane project directory";
-            this.folderBrowserDialog.RootFolder = Environment.SpecialFolder.Personal;
+            this.folderBrowserDialog.RootFolder = Environment.SpecialFolder.MyComputer;
         }
 
         public string MainClass
@@ -47,6 +49,8 @@ namespace JaneIDE.ViewModel
                 base.OnPropertyChanged("MainClass");
             }
         }
+
+        public bool Saved { get { return saved; } }
 
         public string ProjectName
         {
@@ -154,7 +158,8 @@ namespace JaneIDE.ViewModel
         {
             if (this.CanSave)
             {
-                newProject = new Project(this.ProjectName, this.ProjectFolder, this.MainClass);
+                saved = true;
+                newProject.SetProject(this.ProjectName, this.ProjectFolder, this.MainClass);
                 newProject.SaveProject();
                 this.CloseCommand.Execute(null);
             }

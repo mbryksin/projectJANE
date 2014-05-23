@@ -53,11 +53,15 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
   <ItemGroup>
-    <Compile Include="Interpret.fs" />
     <Compile Include="Parser.fs" />
     <Compile Include="StaticAnalysis.fs" />
     <None Include="app.config" />
-    <None Include="packages.config" />
+    <Compile Include="Interpret\SupportFunction.fs" />
+    <Compile Include="Interpret\StatementsTests.fs" />
+    <Compile Include="Interpret\ArraysTest.fs" />
+    <Compile Include="Interpret\ExpressionTest.fs" />
+    <Compile Include="Interpret\ObjectTests.fs" />
+    <Compile Include="Interpret\FullProgramsTest.fs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Interpret\Interpreter.fsproj">
@@ -78,23 +82,19 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="nunit.core">
-      <HintPath>..\packages\NUnitTestAdapter.1.0\lib\nunit.core.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>packages\NUnitTestAdapter.1.0\lib\nunit.core.dll</HintPath>
     </Reference>
     <Reference Include="nunit.core.interfaces">
-      <HintPath>..\packages\NUnitTestAdapter.1.0\lib\nunit.core.interfaces.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>packages\NUnitTestAdapter.1.0\lib\nunit.core.interfaces.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework">
-      <HintPath>.\packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
+      <HintPath>packages\NUnit.2.6.3\lib\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="nunit.util">
-      <HintPath>..\packages\NUnitTestAdapter.1.0\lib\nunit.util.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>packages\NUnitTestAdapter.1.0\lib\nunit.util.dll</HintPath>
     </Reference>
     <Reference Include="NUnit.VisualStudio.TestAdapter">
-      <HintPath>..\packages\NUnitTestAdapter.1.0\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>packages\NUnitTestAdapter.1.0\lib\NUnit.VisualStudio.TestAdapter.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

@@ -10,9 +10,7 @@ let compareOperation (operand1 : Val, operand2: Val, op : System.IComparable -> 
     | Char char1, Char char2   -> Bool((op) char1 char2)
     | Str str1, Str str2       -> Bool((op) str1 str2)
     | Null, Null               -> Bool(true)
-    | Null, _                  -> Bool(false)
-    | _, Null                  -> Bool(false)
-    | _                        -> Empty
+    | _                        -> Bool(false)
 
 let logicalOperation (operand1 : Val, operand2: Val, op : bool -> bool -> bool) = 
     match operand1, operand2 with

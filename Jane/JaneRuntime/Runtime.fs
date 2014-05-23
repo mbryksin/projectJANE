@@ -66,124 +66,120 @@ type Runtime =
     static member private fieldNotFound (classname : string) (fieldname : string) = printfn "No field %s found in %s class" fieldname classname
     static member private typeMismatch (classname : string) (methodname : string) = printfn "Type mismatch in %s.%s" classname methodname 
 
-    static member callStaticVoidMethod(classname : string, methodname : string, args : Val list) : unit = 
-        match classname with
-        | "Console" -> 
-            match methodname with
-            | "writeLine" -> 
-                match args.Head with
-                    | Str s -> JaneConsole.writeLine s
-                    | _ -> Runtime.typeMismatch classname methodname
-            | _ -> Runtime.methodNotFound classname methodname
-        | _ -> Runtime.classNotFound classname
-
     static member getStaticField(classname : string, fieldname : string) : Val =
         match classname with
         | "Math" -> 
             match fieldname with
-            | "PI_F" | "PI_D" -> Float(JaneMath.PI)
-            | "E_F" | "E_D" -> Float(JaneMath.E)
+            | "PI" -> Float(JaneMath.PI)
+            | "E" -> Float(JaneMath.E)
             | _ -> Runtime.fieldNotFound classname fieldname; Empty
         | _ -> Runtime.classNotFound classname; Empty
 
     static member callStaticMethod(classname : string, methodname : string, args : Val list) : Val =
         match classname with
+        | "Console" -> 
+            match methodname with
+            | "writeLine" -> 
+                match args.Head with
+                    | Str s -> JaneConsole.writeLine s; Empty
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | _ -> Runtime.methodNotFound classname methodname; Empty
         | "Math" -> 
             match methodname with
-            | "absb" | "abss" | "absi" | "absl" -> 
+            | "absi" -> 
                 match args.Head with
                     | Int i -> Int (JaneMath.abs i)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "absf" | "absd" -> 
+            | "absf" -> 
                 match args.Head with
                     | Float f -> Float (JaneMath.abs f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
 
-            | "acosf" | "acosd" ->
+            | "acos" ->
                 match args.Head with
                     | Float f -> Float (JaneMath.acos f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "asinf" | "asind" ->
+            | "asin" ->
                 match args.Head with
                     | Float f -> Float (JaneMath.asin f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "atanf" | "atand" ->
+            | "atan" ->
                 match args.Head with
                     | Float f -> Float (JaneMath.atan f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "cbrtf" | "cbrtd" ->
+            | "cbrt" ->
                 match args.Head with
                     | Float f -> Float (JaneMath.cbrt f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "ceilf" | "ceild" ->
+            | "ceil" ->
                 match args.Head with
                     | Float f -> Float (JaneMath.ceil f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "cosf" | "cosd" ->
+            | "cos" ->
                 match args.Head with
                     | Float f -> Float (JaneMath.cos f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "coshf" | "coshd" ->
+            | "cosh" ->
                 match args.Head with
                     | Float f -> Float (JaneMath.cosh f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "floorf" | "floord" ->
+            | "floor" ->
                 match args.Head with
                     | Float f -> Float (JaneMath.floor f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "lnf" | "lnd" ->
+            | "ln" ->
                 match args.Head with
                     | Float f -> Float (JaneMath.ln f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "log10f" | "log10d" ->
+            | "log10" ->
                 match args.Head with
                     | Float f -> Float (JaneMath.log10 f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "maxb" | "maxs" | "maxi" | "maxl" -> 
+            | "maxi" -> 
                 match (args.Head, args.Tail.Head) with
                     | (Int a, Int b) -> Int (JaneMath.max(a, b))
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "maxf" | "maxd" -> 
+            | "maxf"  -> 
                 match (args.Head, args.Tail.Head) with
                     | (Float a, Float b) -> Float (JaneMath.max(a, b))
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "minb" | "mins" | "mini" | "minl" -> 
+            | "mini"-> 
                 match (args.Head, args.Tail.Head) with
                     | (Int a, Int b) -> Int (JaneMath.min(a, b))
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "minf" | "mind" -> 
+            | "minf" -> 
                 match (args.Head, args.Tail.Head) with
                     | (Float a, Float b) -> Float (JaneMath.min(a, b))
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "powf" | "powd" -> 
+            | "pow" -> 
                 match (args.Head, args.Tail.Head) with
                     | (Float a, Float b) -> Float (JaneMath.pow(a, b))
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "sinf" | "sind" ->
+            | "sin" ->
                 match args.Head with
                     | Float f -> Float (JaneMath.sin f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "sinhf" | "sinhd" ->
+            | "sinh" ->
                 match args.Head with
                     | Float f -> Float (JaneMath.sinh f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "sqrtf" | "sqrtd" ->
+            | "sqrt" ->
                 match args.Head with
                     | Float f -> Float (JaneMath.sqrt f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "tanf" | "tand" ->
+            | "tan" ->
                 match args.Head with
                     | Float f -> Float (JaneMath.tan f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "tanhf" | "tanhd" ->
+            | "tanh" ->
                 match args.Head with
                     | Float f -> Float (JaneMath.tanh f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "toDegreesf" | "toDegreesd" ->
+            | "toDegrees" ->
                 match args.Head with
                     | Float f -> Float (JaneMath.toDegrees f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "toRadiansf" | "toRadiansd" ->
+            | "toRadians" ->
                 match args.Head with
                     | Float f -> Float (JaneMath.toRadians f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty

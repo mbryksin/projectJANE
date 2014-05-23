@@ -6,6 +6,9 @@ using System.Text;
 using System.IO;
 using System.Threading.Tasks;
 
+using RunProject;
+using AST;
+
 namespace JaneIDE.Model
 {
     class Project
@@ -14,6 +17,9 @@ namespace JaneIDE.Model
         private const string SOURCE_FORMAT = ".jane";
         private const string PROJECT_FORMAT = ".pro";
         private const string MANIFEST_FILENAME = "MANIFEST.MF";
+
+        private bool canRun;
+        private bool canSave;
 
         private string projectName;
         private string projectFolderPath;
@@ -24,9 +30,11 @@ namespace JaneIDE.Model
         public Project()
         {
             projectSources = new List<Source>();
+            this.CanRun = false;
+            this.CanSave = false;
         }
 
-        public Project(string name, string path, string mainClass): this()
+        public void SetProject(string name, string path, string mainClass)
         {
             this.Author = Environment.UserName;
             this.ProjectName = name;
@@ -34,12 +42,16 @@ namespace JaneIDE.Model
             this.Version = DEFAULT_VERSION;
 
             this.AddSource(new Source(mainClass));
+            this.CanRun = true;
+            this.CanSave = true;
         }
 
         private void CleanProject()
         {
             this.ProjectName = String.Empty;
             this.ProjectFolder = String.Empty;
+            this.CanRun = false;
+            this.CanSave = false;
             projectSources.Clear();
             this.Version = DEFAULT_VERSION;
         }
@@ -49,19 +61,16 @@ namespace JaneIDE.Model
             get { return authorName; }
             private set { authorName = value; }
         }
-
         public string ProjectName
         {
             get { return projectName; }
             private set { projectName = value; } 
         }
-
         public string ProjectFolder
         {
             get { return projectFolderPath; }
             private set { projectFolderPath = value; }
         }
-
         public int Version
         {
             get { return projectVersion; }
@@ -72,17 +81,34 @@ namespace JaneIDE.Model
                 projectVersion = value;
             }
         }
-
+        public bool CanRun
+        {
+            get { return canRun; }
+            set
+            {
+                if (value == canRun)
+                    return;
+                canRun = value;
+            }
+        }
+        public bool CanSave
+        {
+            get { return canSave; }
+            set
+            {
+                if (value == canSave)
+                    return;
+                canSave = value;
+            }
+        }
         public Source MainClass
         {
             get { return projectSources.First<Source>(); }
         }
-
         public List<Source> Sources
         {
             get { return projectSources; }
         }
-
         public void AddSource(Source src)
         {
             if (projectSources.Contains(src))
@@ -93,6 +119,9 @@ namespace JaneIDE.Model
 
         public void SaveProject()
         {
+            if (!this.CanSave)
+                return;
+
             projectVersion += 1;
 
             if (!Directory.Exists(this.ProjectFolder))
@@ -166,6 +195,8 @@ namespace JaneIDE.Model
                     }
                     
                 }
+
+                this.CanRun = true;
             }
 
             catch (Exception Ex)
@@ -222,10 +253,12 @@ namespace JaneIDE.Model
                         if (!mainClassFilePath.EndsWith(SOURCE_FORMAT))
                             mainClassFilePath += SOURCE_FORMAT;
 
+                        /*
                         if (File.Exists(mainClassFilePath))
                         {
                             File.Delete(mainClassFilePath);
                         }
+                        */
 
                         using (FileStream fstream = File.Open(mainClassFilePath, FileMode.Open))
                         {
@@ -234,15 +267,19 @@ namespace JaneIDE.Model
                                 mainClassSource.Content = sreader.ReadToEnd().Trim();
                             }
                         }
+
+                        this.AddSource(mainClassSource);
                         //Sources
                         sr.ReadLine();
                         while ((line = sr.ReadLine()) != null)
                         {
-                            Debug.WriteLine(line);
+                            //Debug.WriteLine(line);
                         }
                     }
                 }
 
+                this.CanRun = true;
+                this.CanSave = true;
             }
             catch (Exception Ex)
             {
@@ -253,7 +290,26 @@ namespace JaneIDE.Model
 
         public void RunProject()
         {
-
+            if (!this.CanRun)
+                return;
+            
+            this.SaveProject();
+            ProjectResult result = new ProjectResult(this.MainClass.Content, this.MainClass.FileName);
+            Debug.WriteLine("-------------Program started--------------");
+            result.StartRunning();
+            if (result.NoErrors)
+            {
+                Debug.WriteLine("Result: " + result.RunResultValue);
+                Debug.WriteLine("-------------Finished successfully!-------------");
+            } else
+            {
+                List<AST.Error> errs = result.Errors;
+                foreach (AST.Error err in errs)
+                {
+                    Debug.WriteLine("Line " + err.Position.StartLine + " Error: " + err.ErrorMessage);
+                }
+            }
+            Debug.WriteLine("-------------Program finished-------------");   
         }
     }
 }
