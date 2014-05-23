@@ -18,6 +18,11 @@ namespace JaneIDE.Model
         private const string PROJECT_FORMAT = ".pro";
         private const string MANIFEST_FILENAME = "MANIFEST.MF";
 
+        public event EventHandler<String> OutputWriteLineEvent;
+        public event EventHandler<String> OutputWriteEvent;
+        public event EventHandler<String> ErrorsWriteLineEvent;
+        public event EventHandler<String> ProcessWriteLineEvent;
+
         private bool canRun;
         private bool canSave;
 
@@ -28,7 +33,7 @@ namespace JaneIDE.Model
         private List<Source> projectSources;
 
         public Project()
-        {
+        {   
             projectSources = new List<Source>();
             this.CanRun = false;
             this.CanSave = false;
@@ -37,7 +42,8 @@ namespace JaneIDE.Model
         public void SetProject(string name, string path, string mainClass)
         {
             this.Author = Environment.UserName;
-            this.ProjectName = name;
+            
+            this.ProjectName = name;   
             this.ProjectFolder = path;
             this.Version = DEFAULT_VERSION;
 
@@ -116,7 +122,6 @@ namespace JaneIDE.Model
 
             projectSources.Add(src);
         }
-
         public void SaveProject()
         {
             if (!this.CanSave)
@@ -197,6 +202,7 @@ namespace JaneIDE.Model
                 }
 
                 this.CanRun = true;
+                this.ProcessWriteLineEvent(this, this.ProjectName + ": saved");
             }
 
             catch (Exception Ex)
@@ -205,7 +211,6 @@ namespace JaneIDE.Model
             }
 
         }
-
         public void OpenProject(string openedProjectName, string openedProjectPath)
         {
             this.CleanProject();
@@ -280,6 +285,8 @@ namespace JaneIDE.Model
 
                 this.CanRun = true;
                 this.CanSave = true;
+
+                this.ProcessWriteLineEvent(this, this.ProjectName + ": loaded");
             }
             catch (Exception Ex)
             {
@@ -295,21 +302,42 @@ namespace JaneIDE.Model
             
             this.SaveProject();
             ProjectResult result = new ProjectResult(this.MainClass.Content, this.MainClass.FileName);
-            Debug.WriteLine("-------------Program started--------------");
+            
+            OutputWriteLineEvent(this, ">------ Program started ------<");
+            ErrorsWriteLineEvent(this, ">------ Program started ------<");
+            
+            var startTime = DateTime.Now;
+            ProcessWriteLineEvent(this, "> Run project " + this.ProjectName);
+
             result.StartRunning();
+
             if (result.NoErrors)
             {
-                Debug.WriteLine("Result: " + result.RunResultValue);
-                Debug.WriteLine("-------------Finished successfully!-------------");
+                var finishTime = DateTime.Now;
+                var time = finishTime - startTime;
+                OutputWriteLineEvent(this, result.RunResultValue);
+                OutputWriteLineEvent(this, ">------ Program finished successfully ------<");
+                ErrorsWriteLineEvent(this, ">------ Program finished successfully ------<");
+                ProcessWriteLineEvent(this, "> Program finished. Execute time:  " + time.TotalMilliseconds.ToString() + " msecs");
             } else
             {
                 List<AST.Error> errs = result.Errors;
+                int numerrs = errs.Count;
+                string message;
+                if (numerrs > 1) 
+                    message = ">------ Program terminated. " + numerrs.ToString() + " errors ------<";
+                else
+                    message = ">------ Program terminated. 1 error ------<";
+                
+                OutputWriteLineEvent(this, message);
+                ProcessWriteLineEvent(this, message);
+
                 foreach (AST.Error err in errs)
                 {
-                    Debug.WriteLine("Line " + err.Position.StartLine + " Error: " + err.ErrorMessage);
+                    ErrorsWriteLineEvent(this, "Line " + err.Position.StartLine + " Error: " + err.ErrorMessage);
                 }
-            }
-            Debug.WriteLine("-------------Program finished-------------");   
+                ErrorsWriteLineEvent(this, ">-----");
+            } 
         }
     }
 }

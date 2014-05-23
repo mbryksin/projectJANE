@@ -26,4 +26,4 @@ type ProjectResult(code: string, mainclass: string) =
         if (this.NoErrors)
             then
                 let interpretResult = interpretProgram program
-                runResultValue <- "Program finished: " + interpretResult
+                runResultValue <- interpretResult
