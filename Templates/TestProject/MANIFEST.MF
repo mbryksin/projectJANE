@@ -1,0 +1,5 @@
+Author: Matvey
+Version: 112
+Main-Class: MainClass
+Sources:
+MainClass.jane

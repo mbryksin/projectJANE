@@ -307,7 +307,7 @@ namespace JaneIDE.Model
             ErrorsWriteLineEvent(this, ">------ Program started ------<");
             
             var startTime = DateTime.Now;
-            ProcessWriteLineEvent(this, "Run project " + this.ProjectName);
+            ProcessWriteLineEvent(this, "> Run project " + this.ProjectName);
 
             result.StartRunning();
 
@@ -318,7 +318,7 @@ namespace JaneIDE.Model
                 OutputWriteLineEvent(this, result.RunResultValue);
                 OutputWriteLineEvent(this, ">------ Program finished successfully ------<");
                 ErrorsWriteLineEvent(this, ">------ Program finished successfully ------<");
-                ProcessWriteLineEvent(this, "Program finished. Execute time:  " + time.TotalMilliseconds.ToString() + " msecs");
+                ProcessWriteLineEvent(this, "> Program finished. Execute time:  " + time.TotalMilliseconds.ToString() + " msecs");
             } else
             {
                 List<AST.Error> errs = result.Errors;
