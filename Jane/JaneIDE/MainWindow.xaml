@@ -1,6 +1,8 @@
 ﻿<Window x:Class="JaneIDE.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vw="clr-namespace:JaneIDE.View"
+        xmlns:toolkit="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
         Title="JANE Studio" MinHeight="480" MinWidth="640"
         Icon="/Images/JanePic.ico"
         WindowStartupLocation="CenterScreen" 
@@ -103,14 +105,25 @@
 
                 <TabControl Grid.Row="1">
                     <TabItem Header="Output">
-                        <Grid Background="#FFE5E5E5"/>
+                        <toolkit:RichTextBox IsReadOnly="True" Background="GhostWhite" Name="outputTextBox" Text="{Binding OutputText}" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <toolkit:RichTextBox.TextFormatter>
+                                <toolkit:PlainTextFormatter />
+                            </toolkit:RichTextBox.TextFormatter>
+                        </toolkit:RichTextBox>
                     </TabItem>
-                    <TabItem Header="Problems">
-                        <Grid Background="#FFE5E5E5">
-                        </Grid>
+                    <TabItem Header="Errors">
+                        <toolkit:RichTextBox IsReadOnly="True" Background="Snow" Name="errorsTextBox" Text="{Binding ErrorsText}" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <toolkit:RichTextBox.TextFormatter>
+                                <toolkit:PlainTextFormatter />
+                            </toolkit:RichTextBox.TextFormatter>
+                        </toolkit:RichTextBox>
                     </TabItem>
                     <TabItem Header="Process">
-                        <Grid Background="#FFE5E5E5"/>
+                        <toolkit:RichTextBox IsReadOnly="True" Background="White" Name="processTextBox" Text="{Binding ProcessText}" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <toolkit:RichTextBox.TextFormatter>
+                                <toolkit:PlainTextFormatter />
+                            </toolkit:RichTextBox.TextFormatter>
+                        </toolkit:RichTextBox>
                     </TabItem>
                 </TabControl>
                 <GridSplitter Grid.Row="0" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Height="2"/>
