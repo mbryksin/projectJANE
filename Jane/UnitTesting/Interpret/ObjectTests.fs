@@ -126,3 +126,34 @@ type TestingObject() =
             }"
         getResult(programText) = "3,14"  |> should be True
 
+
+    [<Test>]
+    member x. ``Interpret: Extends Test`` ()=
+        let programText ="
+            class mainClass 
+            {
+                 static void main() 
+                 {
+                      B b = new B();
+                      b.f(); 
+                      b.k(); 
+                 }
+            }
+
+            class A 
+            {
+                 void f()
+                 {
+                    Console.Writeline(\"f\");
+                 } 
+     
+            }
+
+            class B extends A
+            {
+                void k()
+                {
+                    Console.Writeline(\"k\");
+                }
+            }"
+        getResult(programText) = "fk"  |> should be True

@@ -8,10 +8,12 @@ type Val =
     | Char      of char
     | Bool      of bool
     | Return    of Val
+    | Continue
     | Array     of Val array
     | ClassOrField  of string
     | MethodVal of string * Val list // id + elements
     | Object    of Variable list * string //Fields + ClassName
+    | Err of string * Position
     | Null
 
 and  Variable(name : string, varType : Type, value : Val) =

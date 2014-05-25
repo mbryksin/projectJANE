@@ -162,5 +162,20 @@ type TestingStatements() =
                     }
                 }
             }"
-        let g = getResult(programText)
         getResult(programText) = "123"  |> should be True
+
+    [<Test>]
+    member x. ``Interpret: Continue`` ()=
+        let programText ="
+            class mainClass 
+            {
+                 static void main() 
+                 {
+                      for (int i = 1; i < 5; i = i + 1)
+                      {
+                          if (i == 3) continue;
+		                  Console.Writeline(i);            
+                      }
+                 }
+            }"
+        getResult(programText) = "124"  |> should be True

@@ -36,11 +36,11 @@ let multyplication firstOpetandVal secondOpetandVal =
     | Float floatnum1, Float floatnum2 -> Float(floatnum1 * floatnum2)
     | _                                -> Empty
 
-let division firstOpetandVal secondOpetandVal = 
+let division firstOpetandVal secondOpetandVal position = 
     match firstOpetandVal, secondOpetandVal with
-    | Int intnum1, Int intnum2         -> Int(intnum1 / intnum2)
-    | Float floatnum1, Float floatnum2 -> Float(floatnum1 / floatnum2)
-    | _                                -> Empty
+    | Int intnum1, Int intnum2 when intnum2 <> 0L -> Int(intnum1 / intnum2)
+    | Float floatnum1, Float floatnum2 when floatnum2 <> 0.0 -> Float(floatnum1 / floatnum2)
+    | _                                -> Err ("Division by zero", position)
 
 let modul firstOpetandVal secondOpetandVal = 
     match firstOpetandVal, secondOpetandVal with

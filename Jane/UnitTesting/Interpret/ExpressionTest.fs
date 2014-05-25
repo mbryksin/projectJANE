@@ -1,6 +1,5 @@
 ﻿module ExpressionTest
 
-
 open FsUnit
 open NUnit.Framework
 open SA
@@ -80,4 +79,5 @@ type TestingExpression() =
                 }
             }"
         getResult(programText) = "g"  |> should be True
+
 

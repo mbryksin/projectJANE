@@ -60,6 +60,11 @@
       <Project>{02daa5a7-9d06-4441-8b7e-e4d9baf1acfe}</Project>
       <Private>True</Private>
     </ProjectReference>
+    <ProjectReference Include="..\JaneRuntime\JaneRuntime.fsproj">
+      <Name>JaneRuntime</Name>
+      <Project>{87a2a46a-edf0-4fae-a006-0205d3e4c7be}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <ProjectReference Include="..\Parser\Parser.fsproj">
       <Name>Parser</Name>
       <Project>{23ed62fb-8fc8-44e9-95a6-159ca36c247b}</Project>

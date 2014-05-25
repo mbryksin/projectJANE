@@ -4,6 +4,7 @@ open ServiceFunction
 open ExpressionFunctions
 open ArrayFunctions
 open InterpretErrors
+open JaneRuntime
 
 open AST
 
@@ -15,8 +16,14 @@ let mutable (currentProgram : Program option) = None
 let rec interpretProgram (program: Program) =
     let mainMethod = program.MainMethod.Value
     currentProgram <- Some program
-    interpretMethod mainMethod [] |> ignore
-    currentProgram.Value.ReturnString
+    let valInterpret = interpretMethod mainMethod []
+    match valInterpret with
+    | Err (message, pos) -> 
+        let err = Error(message, pos)
+        currentProgram.Value.Errors <- err :: currentProgram.Value.Errors
+        err.ErrorMessage
+    | _ -> currentProgram.Value.ReturnString
+    
 
 //***************************************************ClassMembers***************************************************//
 
@@ -28,6 +35,7 @@ and interpretMethod (classMethod : ClassMethod) (args : Val list) =
     let statementVal = interpretStatement (classMethod.Body :> Statement)
     match statementVal with
     | Return value -> value
+    | Err(_,_)     -> statementVal
     | _            -> Empty
 
 
@@ -53,8 +61,10 @@ and interpretClassConstructor (constr : ClassConstructor) interpretArgs context 
     //Interpret constructor block and change fields for making object
     let parametersConstructor = constr.Parameters;
     addArgsToMethodContext interpretArgs parametersConstructor classConstructorBody
-    interpretBlock classConstructorBody |> ignore 
-    Object (fieldsAsVar, name)
+    let valBlock = interpretBlock classConstructorBody
+    match valBlock with
+    | Err(_,_) -> valBlock
+    | _ -> Object (fieldsAsVar, name)
     
 
 //***************************************************Statements***************************************************//
@@ -89,7 +99,9 @@ and interpretBlock (block : Block) =
              | :? ReturnStatement as rs -> interpretReturnStatement rs             
              | _ -> let valueInterpret = interpretStatement currStatement 
                     match valueInterpret with
-                    | Return v -> Return v
+                    | Return v -> valueInterpret
+                    | Err (_,_) -> valueInterpret
+                    | Continue  -> valueInterpret
                     | _        -> statementsInterpret statements
         | [] -> Empty
     statementsInterpret statements
@@ -132,8 +144,9 @@ and interpretWhileStatement (whileStatement : WhileStatement) =
         | true  -> 
             let bodyVal = interpretStatement body
             match bodyVal with
-            | Return v -> Return v
-            | _        -> startWhile ()
+            | Return v -> bodyVal
+            | Err(_,_) -> bodyVal
+            | _        -> startWhile ()   //Continue included
         | false -> Empty
     startWhile ()
 
@@ -153,10 +166,18 @@ and interpretForStatement (forstatement : ForStatement) =
     //add context if statement is block
     addToBlockContext body context
 
-    while isTrueCondition(interpretExpression condition context) do
-        interpretStatement body |> ignore
-        interpretAssignmentStatement update |> ignore
-    Empty
+    let rec startFor () =
+        let isTrueCond = isTrueCondition(interpretExpression condition context)
+        match isTrueCond with
+        | true  -> 
+            let bodyVal = interpretStatement body
+            match bodyVal with
+            | Return v -> bodyVal
+            | Err(_,_) -> bodyVal
+            | _        -> interpretAssignmentStatement update |> ignore
+                          startFor ()
+        | false -> Empty
+    startFor ()
 
 and interpretSuperStatement (ss : SuperStatement) = Empty             //DO IT
 
@@ -165,11 +186,13 @@ and interpretReturnStatement (rs : ReturnStatement) =
     let expressionReturn = rs.Expression.Value
     let context = rs.Parent.Value.Context
     let returnValue = interpretExpression expressionReturn context
-    Return returnValue
+    match returnValue with
+    | Err(_,_) -> returnValue
+    | _ -> Return returnValue
 
 and interpretBreakStatement (bs : BreakStatement) = Return Empty   
 
-and interpretContinueStatement (cs : ContinueStatement) = Empty        //DO IT
+and interpretContinueStatement (cs : ContinueStatement) = Continue
 
 // Interpret body of method
 and interpretMemberCallStatement (mc : MemberCallStatement) = 
@@ -181,12 +204,15 @@ and interpretMemberCallStatement (mc : MemberCallStatement) =
 and interpretAssignmentStatement (assign : AssignmentStatement) = 
     let parentBlockContext = assign.Parent.Value.Context
     let AssignVarName = assign.Name.Value             //using for simply imperative tests
-    let valOfInitializer = interpretInitializer assign.Body parentBlockContext
     let currentVariable = List.find (fun (v: Variable) -> v.Name = AssignVarName) parentBlockContext
-    printfn "%s" <| "beforeAssign " + currentVariable.ToString() //for debugging
-    currentVariable.Assign(valOfInitializer)
-    printfn "%s" <| "AfterAssign " + currentVariable.ToString()  //for debugging
-    Empty
+    let valOfInitializer = interpretInitializer assign.Body parentBlockContext
+    match valOfInitializer with
+    | Err(_,_) -> valOfInitializer
+    | _ -> 
+        printfn "%s" <| "beforeAssign " + currentVariable.ToString() //for debugging
+        currentVariable.Assign(valOfInitializer)
+        printfn "%s" <| "AfterAssign " + currentVariable.ToString()  //for debugging
+        Empty
 
 //Add variable in context
 and interpretDeclarationStatement (declaration : DeclarationStatement) =
@@ -195,9 +221,12 @@ and interpretDeclarationStatement (declaration : DeclarationStatement) =
     let declVarName = declaration.Name.Value
     let declVarType = declaration.Type
     let declVarValue = interpretInitializer declaration.Body context
-    parentBlock.Context <- Variable(declVarName, declVarType, declVarValue) :: parentBlock.Context
-    printfn "%s" <|  "declaration " + parentBlock.Context.Head.ToString() //for debugging
-    Empty
+    match declVarValue with
+    | Err(_,_) -> declVarValue
+    | _ -> 
+        parentBlock.Context <- Variable(declVarName, declVarType, declVarValue) :: parentBlock.Context
+        printfn "%s" <|  "declaration " + parentBlock.Context.Head.ToString() //for debugging
+        Empty
 
 //***************************************************Initializers***************************************************//
 
@@ -233,6 +262,7 @@ and interpretUnaryOperation (unOp: UnaryOperation) (context : Variable list) =
 and interpretBinaryOperation (binOp: BinaryOperation) (context : Variable list) =
     let firstOpetandVal  = interpretExpression binOp.FirstOperand  context
     let secondOpetandVal = interpretExpression binOp.SecondOperand context
+    let position = binOp.Position
 
     match binOp.Operator with
     | OR               -> logicalOperation (firstOpetandVal, secondOpetandVal, (||))
@@ -246,12 +276,12 @@ and interpretBinaryOperation (binOp: BinaryOperation) (context : Variable list) 
     | ADDITION         -> addition firstOpetandVal secondOpetandVal
     | SUBSTRACTION     -> substraction firstOpetandVal secondOpetandVal
     | MULTIPLICATION   -> multyplication firstOpetandVal secondOpetandVal
-    | DIVISION         -> division firstOpetandVal secondOpetandVal
+    | DIVISION         -> division firstOpetandVal secondOpetandVal position
     | MODULUS          -> modul firstOpetandVal secondOpetandVal 
-    | MEMBER_CALL      -> memberCall firstOpetandVal secondOpetandVal context
+    | MEMBER_CALL      -> memberCall firstOpetandVal secondOpetandVal context position
 
 //*********************************************Member Call******************************************//
-and memberCall objectOrClass classMember context = 
+and memberCall objectOrClass classMember context position = 
     match objectOrClass, classMember with
     | ClassOrField className, MethodVal (methodName, args) ->
         staticMethodCall className methodName args context
@@ -261,6 +291,7 @@ and memberCall objectOrClass classMember context =
         fieldGet fields className fieldName
     | ClassOrField className, ClassOrField fieldName ->
         staticFieldGet className fieldName context
+    | Null, _ -> Err ("Null referense Exeption", position)
     | _, _ -> Empty
     
 and staticMethodCall className methodName args context =
@@ -269,8 +300,8 @@ and staticMethodCall className methodName args context =
         // костыль, жду пока Саша нормальный Console.Writeline сделает
         | "Console", "Writeline" -> currentProgram.Value.ReturnString <- writeValue args.Head
                                     Empty
-//        | LibruaryClassName, _ when progListClasses.ContainsKey(LibruaryClassName) = false ->
-//            RunTimeMemberCall className methodName args          
+        | libraryClassName, _ when not <| progListClasses.ContainsKey(libraryClassName) ->
+            Runtime.callStaticMethod (className, methodName, args)          
         | _ ->
             let currClass = progListClasses.[className]
             let methods = currClass.Methods
@@ -336,7 +367,7 @@ and interpretMember (memb : Member) (context : Variable list) =
         | :? ArrayElement  as arrayElem -> 
             let currentVariable = List.find (fun (v: Variable) -> v.Name = memberName) context
             let ValOfIndex =  interpretExpression arrayElem.Index context
-            getValueOfIndex currentVariable ValOfIndex     
+            getValueOfIndex currentVariable ValOfIndex memb.Position    
         //Получаем как значение MethodVal с аргументами и именем
         | :? Arguments     as args      -> 
                 let arguments = List.map (fun (a : Expression) -> interpretExpression a context) args.Arguments
