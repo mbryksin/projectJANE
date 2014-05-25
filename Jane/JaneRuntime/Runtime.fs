@@ -4,8 +4,23 @@ open System
 open AST
 
 type JaneConsole =
-    static member writeLine(str : string) =
-        Console.WriteLine(str)
+    static member writeLine(v : Val) =
+        let rec writeValue vl =
+            match vl with
+            | Null          -> "null"
+            | Int content   -> content.ToString()
+            | Bool content  -> content.ToString()
+            | Str content   -> content.ToString()
+            | Char content  -> content.ToString()
+            | Float content -> content.ToString()
+            | Array content -> 
+                            let arrayValues = Array.map (fun (v : Val) -> writeValue v) content
+                            "{" + Array.fold (fun acc s ->  acc + s + " ") "" arrayValues + "}"
+            | Object (fields, className) -> className.ToString() + fields.ToString() 
+            | _        -> "error"
+        let s = writeValue v
+        printfn "%s" s
+        s
         
 type JaneMath =
     static member PI = Math.PI
@@ -80,9 +95,7 @@ type Runtime =
         | "Console" -> 
             match methodname with
             | "writeLine" -> 
-                match args.Head with
-                    | Str s -> JaneConsole.writeLine s; Empty
-                    | _ -> Runtime.typeMismatch classname methodname; Empty
+                Str(JaneConsole.writeLine args.Head)
             | _ -> Runtime.methodNotFound classname methodname; Empty
         | "Math" -> 
             match methodname with

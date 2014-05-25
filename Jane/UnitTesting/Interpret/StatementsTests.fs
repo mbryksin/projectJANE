@@ -25,7 +25,7 @@ type TestingStatements() =
                     {
                         for(int i = 1; i < 5; i = i + 1)
                         {
-                            Console.Writeline(i);
+                            Console.writeLine(i);
                         }
                     }
                 }"            
@@ -41,7 +41,7 @@ type TestingStatements() =
                         int i = 1;
                         if (i > 0)
                         {
-                            Console.Writeline(i);
+                            Console.writeLine(i);
                         }
                     }
                 }"            
@@ -57,7 +57,7 @@ type TestingStatements() =
                         int i = 1;
                         while(i < 5)
                         {
-                            Console.Writeline(i);
+                            Console.writeLine(i);
                             i = i + 1;
                         }
                     }
@@ -75,7 +75,7 @@ type TestingStatements() =
                     {
                         if (i > 3)
                         {
-                            Console.Writeline(i);
+                            Console.writeLine(i);
                         }
                     }
                 }
@@ -94,7 +94,7 @@ type TestingStatements() =
                     {
                         if (i > 3)
                         {
-                            Console.Writeline(i);
+                            Console.writeLine(i);
                         }
                         i = i + 1;
                     }
@@ -112,11 +112,11 @@ type TestingStatements() =
                     int i = 1;
                     if (i >5)
                     {
-                        Console.Writeline(\"false\");
+                        Console.writeLine(\"false\");
                     }
                     else
                     {
-                        Console.Writeline(\"true\");
+                        Console.writeLine(\"true\");
                     }
                 }
             }"
@@ -135,7 +135,7 @@ type TestingStatements() =
                         {
                             for (int k = 1; k < 3; k = k + 1)
                             {
-                                Console.Writeline(i+j+k);
+                                Console.writeLine(i+j+k);
                             }
                         }
                     }
@@ -157,10 +157,25 @@ type TestingStatements() =
                         {
                             break;
                         }
-                        Console.Writeline(i);
+                        Console.writeLine(i);
                         i = i + 1;
                     }
                 }
             }"
-        let g = getResult(programText)
         getResult(programText) = "123"  |> should be True
+
+    [<Test>]
+    member x. ``Interpret: Continue`` ()=
+        let programText ="
+            class mainClass 
+            {
+                 static void main() 
+                 {
+                      for (int i = 1; i < 5; i = i + 1)
+                      {
+                          if (i == 3) continue;
+		                  Console.writeLine(i);            
+                      }
+                 }
+            }"
+        getResult(programText) = "124"  |> should be True

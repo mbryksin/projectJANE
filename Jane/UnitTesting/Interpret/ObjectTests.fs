@@ -33,7 +33,7 @@ type TestingObject() =
                 static void main() 
                 {
                     Number num = new Number(5);
-                    Console.Writeline(num.val);
+                    Console.writeLine(num.val);
                 }
             }"
         getResult(programText) = "5"  |> should be True
@@ -59,7 +59,7 @@ type TestingObject() =
                 static void main() 
                 {
                     Number num = new Number(5);
-                    Console.Writeline(num.getVal());
+                    Console.writeLine(num.getVal());
                 }
             }"
         getResult(programText) = "5"  |> should be True
@@ -91,7 +91,7 @@ type TestingObject() =
                     Number num1 = new Number(5);
                     Number num2 = new Number(1);
                     Number Result = Number.Plus(num1, num2);
-                    Console.Writeline(Result.getVal());
+                    Console.writeLine(Result.getVal());
                 }
             }"
         getResult(programText) = "6"  |> should be True
@@ -121,8 +121,39 @@ type TestingObject() =
             {
                 static void main() 
                 {
-                    Console.Writeline(Number.pi);
+                    Console.writeLine(Number.pi);
                 }
             }"
         getResult(programText) = "3,14"  |> should be True
 
+
+    [<Test>]
+    member x. ``Interpret: Extends Test`` ()=
+        let programText ="
+            class mainClass 
+            {
+                 static void main() 
+                 {
+                      B b = new B();
+                      b.f(); 
+                      b.k(); 
+                 }
+            }
+
+            class A 
+            {
+                 void f()
+                 {
+                    Console.writeLine(\"f\");
+                 } 
+     
+            }
+
+            class B extends A
+            {
+                void k()
+                {
+                    Console.writeLine(\"k\");
+                }
+            }"
+        getResult(programText) = "fk"  |> should be True
