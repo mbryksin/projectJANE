@@ -86,15 +86,11 @@ type Runtime =
             | _ -> Runtime.methodNotFound classname methodname; Empty
         | "Math" -> 
             match methodname with
-            | "absi" -> 
+            | "abs" -> 
                 match args.Head with
                     | Int i -> Int (JaneMath.abs i)
-                    | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "absf" -> 
-                match args.Head with
                     | Float f -> Float (JaneMath.abs f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-
             | "acos" ->
                 match args.Head with
                     | Float f -> Float (JaneMath.acos f)
@@ -135,20 +131,14 @@ type Runtime =
                 match args.Head with
                     | Float f -> Float (JaneMath.log10 f)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "maxi" -> 
+            | "max" -> 
                 match (args.Head, args.Tail.Head) with
                     | (Int a, Int b) -> Int (JaneMath.max(a, b))
-                    | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "maxf"  -> 
-                match (args.Head, args.Tail.Head) with
                     | (Float a, Float b) -> Float (JaneMath.max(a, b))
                     | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "mini"-> 
+            | "min"-> 
                 match (args.Head, args.Tail.Head) with
                     | (Int a, Int b) -> Int (JaneMath.min(a, b))
-                    | _ -> Runtime.typeMismatch classname methodname; Empty
-            | "minf" -> 
-                match (args.Head, args.Tail.Head) with
                     | (Float a, Float b) -> Float (JaneMath.min(a, b))
                     | _ -> Runtime.typeMismatch classname methodname; Empty
             | "pow" -> 
