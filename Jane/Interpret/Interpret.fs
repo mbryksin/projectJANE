@@ -209,9 +209,7 @@ and interpretAssignmentStatement (assign : AssignmentStatement) =
     match valOfInitializer with
     | Err(_,_) -> valOfInitializer
     | _ -> 
-        printfn "%s" <| "beforeAssign " + currentVariable.ToString() //for debugging
         currentVariable.Assign(valOfInitializer)
-        printfn "%s" <| "AfterAssign " + currentVariable.ToString()  //for debugging
         Empty
 
 //Add variable in context
@@ -225,7 +223,6 @@ and interpretDeclarationStatement (declaration : DeclarationStatement) =
     | Err(_,_) -> declVarValue
     | _ -> 
         parentBlock.Context <- Variable(declVarName, declVarType, declVarValue) :: parentBlock.Context
-        printfn "%s" <|  "declaration " + parentBlock.Context.Head.ToString() //for debugging
         Empty
 
 //***************************************************Initializers***************************************************//
@@ -297,11 +294,10 @@ and memberCall objectOrClass classMember context position =
 and staticMethodCall className methodName args context =
     let progListClasses = currentProgram.Value.Classes
     match className, methodName with
-        // костыль, жду пока Саша нормальный Console.Writeline сделает
-        (*
-        | "Console", "writeLine" -> currentProgram.Value.ReturnString <- writeValue args.Head
-                                    Empty
-        *)
+        //For Tests complete
+        | "Console", "writeLine" -> 
+            currentProgram.Value.ReturnString <- writeValue args.Head
+            Runtime.callStaticMethod (className, methodName, args)  
         | libraryClassName, _ when not <| progListClasses.ContainsKey(libraryClassName) ->
             Runtime.callStaticMethod (className, methodName, args)          
         | _ ->
