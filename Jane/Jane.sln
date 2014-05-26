@@ -26,6 +26,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "RunProject", "RunProject\Ru
 		{23ED62FB-8FC8-44E9-95A6-159CA36C247B} = {23ED62FB-8FC8-44E9-95A6-159CA36C247B}
 	EndProjectSection
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "JaneRuntime", "JaneRuntime\JaneRuntime.fsproj", "{87A2A46A-EDF0-4FAE-A006-0205D3E4C7BE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,6 +62,10 @@ Global
 		{A89C8252-C027-4BCD-B1DE-26E86CF0EB6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A89C8252-C027-4BCD-B1DE-26E86CF0EB6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A89C8252-C027-4BCD-B1DE-26E86CF0EB6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87A2A46A-EDF0-4FAE-A006-0205D3E4C7BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87A2A46A-EDF0-4FAE-A006-0205D3E4C7BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87A2A46A-EDF0-4FAE-A006-0205D3E4C7BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87A2A46A-EDF0-4FAE-A006-0205D3E4C7BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

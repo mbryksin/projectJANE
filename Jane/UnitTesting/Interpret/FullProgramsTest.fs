@@ -95,9 +95,9 @@ type TestingFullProgram() =
                     myTree.insert(4);
                     Tree leftTree = myTree.left;
                     int leftVal = leftTree.getVal();
-                    Console.Writeline(leftVal);
+                    Console.writeLine(leftVal);
                     int h = Tree.height(myTree);
-                    Console.Writeline(h);
+                    Console.writeLine(h);
                 }
             }"            
         getResult(programText) = "33"  |> should be True

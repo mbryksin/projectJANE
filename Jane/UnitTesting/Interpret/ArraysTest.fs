@@ -24,7 +24,7 @@ type TestingArrays() =
                 static void main() 
                 {
                     int[] array = {1,2,3};
-                    Console.Writeline(array);
+                    Console.writeLine(array);
                 }
             }"
         getResult(programText) = "{1 2 3 }"  |> should be True
@@ -37,7 +37,7 @@ type TestingArrays() =
                 static void main() 
                 {
                     int[] array = {1,2,3};
-                    Console.Writeline(array[0]);
+                    Console.writeLine(array[0]);
                 }
             }"
         getResult(programText) = "1"  |> should be True
@@ -50,7 +50,7 @@ type TestingArrays() =
                 static void main() 
                 {
                     int[] array = {{1,2,3}, {4,5,6}};
-                    Console.Writeline(array[0]);
+                    Console.writeLine(array[0]);
                 }
             }"
         getResult(programText) = "{1 2 3 }"  |> should be True
@@ -64,7 +64,7 @@ type TestingArrays() =
                 {
                     int j = 1;
                     int[] array = {{1,2,3}, {4,5,6}};
-                    Console.Writeline(array[6-5*1 -j]);
+                    Console.writeLine(array[6-5*1 -j]);
                 }
             }"
         getResult(programText) = "{1 2 3 }"  |> should be True
@@ -77,7 +77,7 @@ type TestingArrays() =
                 static void main() 
                 {
                     string s = \"lalka\";
-                    Console.Writeline(s[1]);
+                    Console.writeLine(s[1]);
                 }
             }"
         getResult(programText) = "a"  |> should be True

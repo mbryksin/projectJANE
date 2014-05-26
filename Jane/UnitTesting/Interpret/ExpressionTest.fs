@@ -1,6 +1,5 @@
 ﻿module ExpressionTest
 
-
 open FsUnit
 open NUnit.Framework
 open SA
@@ -24,7 +23,7 @@ type TestingExpression() =
                 static void main() 
                 {
                     int i = 1 + 2*3 - 4 +(5*4*0);
-                    Console.Writeline(i);
+                    Console.writeLine(i);
                 }
             }"
         getResult(programText) = "3"  |> should be True
@@ -37,7 +36,7 @@ type TestingExpression() =
                 static void main() 
                 {
                     bool f = true;
-                    Console.Writeline(f);
+                    Console.writeLine(f);
                 }
             }"
         getResult(programText) = "True"  |> should be True
@@ -50,7 +49,7 @@ type TestingExpression() =
                 static void main() 
                 {
                     bool f = 1.45;
-                    Console.Writeline(f);
+                    Console.writeLine(f);
                 }
             }"
         getResult(programText) = "1,45"  |> should be True
@@ -63,7 +62,7 @@ type TestingExpression() =
                 static void main() 
                 {
                     bool f = null;
-                    Console.Writeline(f);
+                    Console.writeLine(f);
                 }
             }"
         getResult(programText) = "null"  |> should be True
@@ -76,8 +75,9 @@ type TestingExpression() =
                 static void main() 
                 {
                     char f = 'g';
-                    Console.Writeline(f);
+                    Console.writeLine(f);
                 }
             }"
         getResult(programText) = "g"  |> should be True
+
 
