@@ -19,11 +19,18 @@ type ProjectResult(code: string, mainclass: string) =
     
     member this.StartRunning() = 
         let program = ParseProgram textCode
-        program.NameMainClass <- mainClassName
-        StaticAnalysis.Analyze program
-        let errs = program.Errors
-        List.iter (fun x -> errors.Add(x)) errs
+        let parserErrs = program.Errors
+        List.iter (fun x -> errors.Add(x)) parserErrs
         if (this.NoErrors)
             then
-                let interpretResult = interpretProgram program
-                runResultValue <- interpretResult
+                program.NameMainClass <- mainClassName
+                StaticAnalysis.Analyze program
+                let SAerrs = program.Errors
+                List.iter (fun x -> errors.Add(x)) SAerrs
+                if (this.NoErrors)
+                    then
+                        let interpretResult = interpretProgram program
+                        let interpretErrs = program.Errors
+                        List.iter (fun x -> errors.Add(x)) interpretErrs
+                        if (this.NoErrors)
+                            then runResultValue <- interpretResult
