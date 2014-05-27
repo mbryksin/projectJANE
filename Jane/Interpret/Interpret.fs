@@ -298,10 +298,8 @@ and staticMethodCall className methodName args context =
     let progListClasses = currentProgram.Value.Classes
     match className, methodName with
         // костыль, жду пока Саша нормальный Console.Writeline сделает
-        (*
         | "Console", "writeLine" -> currentProgram.Value.ReturnString <- writeValue args.Head
                                     Empty
-        *)
         | libraryClassName, _ when not <| progListClasses.ContainsKey(libraryClassName) ->
             Runtime.callStaticMethod (className, methodName, args)          
         | _ ->
