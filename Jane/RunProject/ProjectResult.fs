@@ -29,8 +29,12 @@ type ProjectResult(code: string, mainclass: string) =
                 List.iter (fun x -> errors.Add(x)) SAerrs
                 if (this.NoErrors)
                     then
-                        let interpretResult = interpretProgram program
-                        let interpretErrs = program.Errors
-                        List.iter (fun x -> errors.Add(x)) interpretErrs
-                        if (this.NoErrors)
-                            then runResultValue <- interpretResult
+                        let interpr =
+                            async{
+                                let interpretResult = interpretProgram program
+                                let interpretErrs = program.Errors
+                                List.iter (fun x -> errors.Add(x)) interpretErrs
+                                if (this.NoErrors)
+                                    then runResultValue <- interpretResult
+                            }
+                        interpr |> Async.RunSynchronously

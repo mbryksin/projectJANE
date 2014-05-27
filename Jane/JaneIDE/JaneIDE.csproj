@@ -220,6 +220,10 @@
       <Project>{02daa5a7-9d06-4441-8b7e-e4d9baf1acfe}</Project>
       <Name>AST</Name>
     </ProjectReference>
+    <ProjectReference Include="..\JaneRuntime\JaneRuntime.fsproj">
+      <Project>{87a2a46a-edf0-4fae-a006-0205d3e4c7be}</Project>
+      <Name>JaneRuntime</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RunProject\RunProject.fsproj">
       <Project>{a89c8252-c027-4bcd-b1de-26e86cf0eb6a}</Project>
       <Name>RunProject</Name>

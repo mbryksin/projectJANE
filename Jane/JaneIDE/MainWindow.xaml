@@ -105,21 +105,21 @@
 
                 <TabControl Grid.Row="1">
                     <TabItem Header="Output">
-                        <toolkit:RichTextBox IsReadOnly="True" Background="GhostWhite" Name="outputTextBox" Text="{Binding OutputText}" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <toolkit:RichTextBox IsReadOnly="True" Background="GhostWhite" Name="outputTextBox" Text="{Binding Path=OutputText, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <toolkit:RichTextBox.TextFormatter>
                                 <toolkit:PlainTextFormatter />
                             </toolkit:RichTextBox.TextFormatter>
                         </toolkit:RichTextBox>
                     </TabItem>
                     <TabItem Header="Errors">
-                        <toolkit:RichTextBox IsReadOnly="True" Background="Snow" Name="errorsTextBox" Text="{Binding ErrorsText}" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <toolkit:RichTextBox IsReadOnly="True" Background="Snow" Name="errorsTextBox" Text="{Binding Path=ErrorsText, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <toolkit:RichTextBox.TextFormatter>
                                 <toolkit:PlainTextFormatter />
                             </toolkit:RichTextBox.TextFormatter>
                         </toolkit:RichTextBox>
                     </TabItem>
                     <TabItem Header="Process">
-                        <toolkit:RichTextBox IsReadOnly="True" Background="White" Name="processTextBox" Text="{Binding ProcessText}" ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <toolkit:RichTextBox IsReadOnly="True" Background="White" Name="processTextBox" Text="{Binding Path=ProcessText, UpdateSourceTrigger=PropertyChanged}" ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <toolkit:RichTextBox.TextFormatter>
                                 <toolkit:PlainTextFormatter />
                             </toolkit:RichTextBox.TextFormatter>
