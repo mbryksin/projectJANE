@@ -16,7 +16,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="20"/>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="24"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Menu Grid.Row="0">
@@ -45,34 +45,34 @@
                 </MenuItem.Icon>
             </MenuItem>
             -->
-            <MenuItem Width="40" Height="40" Command="{Binding Path=OpenProjectCommand}">
+            <MenuItem Width="24" Height="24" Command="{Binding Path=OpenProjectCommand}">
                 <MenuItem.Icon>
-                    <Image Source="/Images/open.png" Margin="-10,-10,-23,-10" />
+                    <Image Source="/Images/open.png"/>
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Height="40" Width="40" Command="{Binding Path=SaveProjectCommand}">
+            <MenuItem Height="24" Width="24" Command="{Binding Path=SaveProjectCommand}">
                 <MenuItem.Icon>
-                    <Image Source="/Images/save.png" Margin="-10,-10,-25,-10"/>
+                    <Image Source="/Images/save.png"/>
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Height="40" Width="40" IsEnabled="False">
+            <MenuItem Height="24" Width="24" IsEnabled="False">
                 <MenuItem.Icon>
-                    <Image Source="/Images/edit-undo.png" Margin="-10,-10,-23,-10" Opacity="0.2"/>
+                    <Image Source="/Images/edit-undo.png" Opacity="0.2"/>
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Width="40" Height="40" IsEnabled="False">
+            <MenuItem Width="24" Height="24" IsEnabled="False">
                 <MenuItem.Icon>
-                    <Image Source="/Images/edit-redo.png" Margin="-10,-10,-25,-10" Opacity="0.2"/>
+                    <Image Source="/Images/edit-redo.png" Opacity="0.2"/>
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Width="40" Height="40" Command="{Binding Path=RunProjectCommand}">
+            <MenuItem Width="24" Height="24" Command="{Binding Path=RunProjectCommand}">
                 <MenuItem.Icon>
-                    <Image Source="/Images/run.png" Margin="-10,-10,-23,-10"/>
+                    <Image Source="/Images/run.png"/>
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Width="40" Height="40" Command="{Binding Path=StopProjectCommand}">
+            <MenuItem Width="24" Height="24" Command="{Binding Path=StopProjectCommand}">
                 <MenuItem.Icon>
-                    <Image Source="/Images/stop.png" Margin="-9,-9,-25,-10" Opacity="0.8"/>
+                    <Image Source="/Images/stop.png" Opacity="0.8"/>
                 </MenuItem.Icon>
             </MenuItem>
         </Menu>
