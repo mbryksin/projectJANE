@@ -4,6 +4,13 @@ class MainClass
 {
 	static void main() 
 	{
+		String str = "123";
+		int l = String.length(str);
+		Console.writeLine(l);
+		int[] arr = {0,1,2,3};
+		int l2 = Array.length(arr);
+		Console.writeLine(l2);
+		
 		for (int x = 1; x < 1000000; x = x + 1)
 		{
 			if (x % 10000 == 0)
