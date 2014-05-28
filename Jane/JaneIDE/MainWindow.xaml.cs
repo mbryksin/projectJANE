@@ -26,7 +26,9 @@ namespace JaneIDE
         public MainWindow()
         {
             InitializeComponent();
-
+			
+			processTextBox.TextChanged += delegate { processTextBox.ScrollToEnd(); };
+			errorsTextBox.TextChanged += delegate { errorsTextBox.ScrollToEnd(); };
             outputTextBox.TextChanged += delegate { outputTextBox.ScrollToEnd(); };
         }
         
