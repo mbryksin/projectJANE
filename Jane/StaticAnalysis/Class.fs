@@ -188,4 +188,13 @@ let SA_Class (p : Program) (c : Class) =
     c.AllImplementsInterfaces.ToListValues()
     |> List.iter ImplementInterface
 
+    // Проверяет, совпадает ли имя констркутора и имя класса
+    if c.Name.Value <> c.Constructor.Name.Value then 
+        p.AddError <| Error.IncorrectName c.Constructor.Name "constructor"
+
+    // Ищет ошибики на нижних уровнях
+    List.iter (SA_ClassMember p c) c.MemberList
+    
+    
+
     

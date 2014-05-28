@@ -33,3 +33,10 @@ type Error with
 
     static member InterfaceMemberIsNotImplemented (im : InterfaceMember) (i : Interface) (c : Class) =
         new Error (sprintf "In class \"%A\" not implement member \"%A\" of interface \"%A\"." c.Name im.Name i.Name, c.Position)
+
+    static member ExpectedTypes (types : Type list) (n : Node) =
+        let str = types |> List.map (fun t -> t.Name) |> String.concat ", "
+        new Error (sprintf "Ecpected types: \"%s\"." str, n.Position)
+
+    static member ExpectedValueType (n : Node) =
+        new Error ("Expected value type.", n.Position)
