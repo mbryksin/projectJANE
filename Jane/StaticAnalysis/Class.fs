@@ -163,7 +163,7 @@ let SA_Class (p : Program) (c : Class) =
                     let cm = cm :?> ClassMethod
                     let imParameters = List.map (fun (p : FormalParameter) -> p.Type) im.Parameters
                     let cmParameters = List.map (fun (p : FormalParameter) -> p.Type) cm.Parameters
-                    if cm.IsStatic = im.IsStatic && imParameters.Length = cmParameters.Length && List.forall2 (=) imParameters cmParameters then                                                       
+                    if imParameters.Length = cmParameters.Length && List.forall2 (=) imParameters cmParameters then                                                       
                         match im with
                         | :? InterfaceVoidMethod when (cm :? ClassVoidMethod) -> ()
                         | :? InterfaceReturnMethod as irm when (cm :? ClassReturnMethod) ->
