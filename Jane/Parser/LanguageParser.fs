@@ -1,5 +1,6 @@
 ﻿module LanguageParser
 
+open AST
 open Parser
 open Lexer
 open Microsoft.FSharp.Text.Lexing
@@ -12,10 +13,10 @@ let ParseProgram (expression : string) =
                   let pos = lexbuf.EndPos
                   let line = pos.Line
                   let column = pos.Column
-                  let message = e.Message
                   let lastToken = new System.String(lexbuf.Lexeme)
-                  printf "Parse failed at line %d, column %d:\n" line column
-                  printf "Last loken: %s" lastToken
-                  printf "\n"
-                  exit 1
+                  let message = sprintf "Parse failed at line %d, column %d:\nLast token: %s\n" line column lastToken
+                  let error = new Error(message, new AST.Position(0,0,line,column))
+                  let result = new Program([], new AST.Position(0,0,line,column))
+                  result.AddError(error)
+                  result
     ast   

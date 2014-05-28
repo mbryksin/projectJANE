@@ -201,16 +201,51 @@ and interpretMemberCallStatement (mc : MemberCallStatement) =
     interpretExpression expr parentContext
 
 // Find variable in context and assign current value
-and interpretAssignmentStatement (assign : AssignmentStatement) = 
+and interpretAssignmentStatement (assign : AssignmentStatement) =
+    let indexes = assign.Indexes;
+    let pos = assign.Position 
     let parentBlockContext = assign.Parent.Value.Context
     let AssignVarName = assign.Name.Value             //using for simply imperative tests
     let currentVariable = List.find (fun (v: Variable) -> v.Name = AssignVarName) parentBlockContext
-    let valOfInitializer = interpretInitializer assign.Body parentBlockContext
-    match valOfInitializer with
-    | Err(_,_) -> valOfInitializer
+    let setVal = interpretInitializer assign.Body parentBlockContext
+    match setVal with
+    | Err(_,_) -> setVal
     | _ -> 
-        currentVariable.Assign(valOfInitializer)
-        Empty
+        match assign.Indexes with
+        | ind :: inds ->
+            match currentVariable.Val with
+                | Array array -> setValueOfIndex setVal indexes currentVariable parentBlockContext pos
+                | _ -> Empty                         
+        | [] -> 
+            currentVariable.Assign(setVal)
+            Empty
+
+// Set Element in Array;
+and setValueOfIndex setVal indexes currentVariable context pos =
+    let rec setInArray (array : Val array) listInd setValue =
+            match listInd with
+            | currIndex :: tail -> 
+                match currIndex with
+                | n when n >= 0 && n < array.Length ->
+                    match array.[currIndex] with
+                    | Array ar -> setInArray ar tail setVal 
+                    | _        -> array.[currIndex] <- setVal 
+                                  Array array      
+                | _ -> Err ("Index out of range", pos)                         
+            | [] -> Empty    
+    //Val Indexes
+    let listIndexes = List.map (fun (e : Expression) -> 
+                            interpretExpression e context ) indexes
+    //Int Indexes
+    let intlistIndexes = 
+        List.map (fun (v : Val) -> 
+            match v with  
+            | Int num -> (int) num
+            | _       -> -1) listIndexes
+    //Set
+    match currentVariable.Val with
+        | Array array -> setInArray array intlistIndexes setVal 
+        | _ -> Empty
 
 //Add variable in context
 and interpretDeclarationStatement (declaration : DeclarationStatement) =
@@ -364,8 +399,8 @@ and interpretMember (memb : Member) (context : Variable list) =
         //Достаем элемент по индексу из массива
         | :? ArrayElement  as arrayElem -> 
             let currentVariable = List.find (fun (v: Variable) -> v.Name = memberName) context
-            let ValOfIndex =  interpretExpression arrayElem.Index context
-            getValueOfIndex currentVariable ValOfIndex memb.Position    
+            let listOfIndexVal =  List.map (fun (e: Expression) -> interpretExpression e context) arrayElem.Indexes
+            getValueOfIndex currentVariable listOfIndexVal memb.Position    
         //Получаем как значение MethodVal с аргументами и именем
         | :? Arguments     as args      -> 
                 let arguments = List.map (fun (a : Expression) -> interpretExpression a context) args.Arguments

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Threading.Tasks;
+using System.Threading;
 
 using RunProject;
 using AST;
@@ -19,7 +20,14 @@ namespace JaneIDE.Model
         private const string PROJECT_FORMAT = ".pro";
         private const string MANIFEST_FILENAME = "MANIFEST.MF";
 
-        
+        ProjectResult result;
+
+        Thread t1;
+        Thread t2;
+
+        DateTime startTime;
+        DateTime finishTime;
+
         public event EventHandler<String> OutputWriteLineEvent;
         public event EventHandler<String> OutputWriteEvent;
         public event EventHandler<String> ErrorsWriteLineEvent;
@@ -27,6 +35,7 @@ namespace JaneIDE.Model
 
         private bool canRun;
         private bool canSave;
+        private bool canStop;
 
         private string projectName;
         private string projectFolderPath;
@@ -39,8 +48,7 @@ namespace JaneIDE.Model
             projectSources = new List<Source>();
             this.CanRun = false;
             this.CanSave = false;
-
-            JaneRuntime.ConsoleEvent.Event += ConsoleWriteLine;
+            this.CanStop = false;
         }
 
         void ConsoleWriteLine(object sender, String arg)
@@ -123,6 +131,16 @@ namespace JaneIDE.Model
                 if (value == canSave)
                     return;
                 canSave = value;
+            }
+        }
+        public bool CanStop
+        {
+            get { return canStop; }
+            set
+            {
+                if (value == canStop)
+                    return;
+                canStop = value;
             }
         }
         public Source MainClass
@@ -317,50 +335,89 @@ namespace JaneIDE.Model
         {
             if (!this.CanRun)
                 return;
-            
+
+            JaneRuntime.ConsoleEvent.Event += ConsoleWriteLine;
             this.SaveProject();
-            ProjectResult result = new ProjectResult(this.MainClass.Content, this.MainClass.FileName);
+
+            this.CanRun = false;
+            this.CanStop = true;
+            result = new ProjectResult(this.MainClass.Content, this.MainClass.FileName);
             
             OutputWriteLineEvent(this, ">------ Program started ------<");
             ErrorsWriteLineEvent(this, ">------ Program started ------<");
             
-            var startTime = DateTime.Now;
             ProcessWriteLineEvent(this, "> Run project " + this.ProjectName);
 
-            System.Threading.Thread t = new System.Threading.Thread(delegate()
+            startTime = DateTime.Now;
+            t1 = new Thread(delegate()
             {
-                result.StartRunning();
-            });
-            t.Start();
-            t.Join();
-
-            if (result.NoErrors)
-            {
-                var finishTime = DateTime.Now;
-                var time = finishTime - startTime;
-                //OutputWriteLineEvent(this, result.RunResultValue);
-                OutputWriteLineEvent(this, ">------ Program finished successfully ------<");
-                ErrorsWriteLineEvent(this, ">------ Program finished successfully ------<");
-                ProcessWriteLineEvent(this, "> Program finished. Execute time:  " + time.TotalMilliseconds.ToString() + " msecs");
-            } else
-            {
-                List<AST.Error> errs = result.Errors;
-                int numerrs = errs.Count;
-                string message;
-                if (numerrs > 1) 
-                    message = ">------ Program terminated. " + numerrs.ToString() + " errors ------<";
-                else
-                    message = ">------ Program terminated. 1 error ------<";
-                
-                OutputWriteLineEvent(this, message);
-                ProcessWriteLineEvent(this, message);
-
-                foreach (AST.Error err in errs)
+                try {
+                    result.StartRunning();
+                } catch (ThreadAbortException)
                 {
-                    ErrorsWriteLineEvent(this, "Line " + err.Position.StartLine + " Error: " + err.ErrorMessage);
+                    JaneRuntime.ConsoleEvent.Event -= ConsoleWriteLine;
+                    
+                    finishTime = DateTime.Now;
+                    var time = finishTime - startTime;
+
+                    string message = ">------ Program aborted ------<";
+
+                    OutputWriteLineEvent(this, message);
+                    ProcessWriteLineEvent(this, message);
+                    ProcessWriteLineEvent(this, "> Program aborted. Execute time:  " + time.TotalMilliseconds.ToString() + " msecs");
+
+                    this.CanRun = true;
+                    this.CanStop = false;
                 }
-                ErrorsWriteLineEvent(this, ">-----");
-            }
+                
+            });
+            t1.Start();
+
+            t2 = new Thread(delegate()
+            {
+                t1.Join();
+                JaneRuntime.ConsoleEvent.Event -= ConsoleWriteLine;
+                if (result.NoErrors)
+                {
+                    finishTime = DateTime.Now;
+                    var time = finishTime - startTime;
+                    //OutputWriteLineEvent(this, result.RunResultValue);
+                    OutputWriteLineEvent(this, ">------ Program finished successfully ------<");
+                    ErrorsWriteLineEvent(this, ">------ Program finished successfully ------<");
+                    ProcessWriteLineEvent(this, "> Program finished. Execute time:  " + time.TotalMilliseconds.ToString() + " msecs");
+                }
+                else
+                {
+                    List<AST.Error> errs = result.Errors;
+                    int numerrs = errs.Count;
+                    string message;
+                    if (numerrs > 1)
+                        message = ">------ Program terminated. " + numerrs.ToString() + " errors ------<";
+                    else
+                        message = ">------ Program terminated. 1 error ------<";
+
+                    OutputWriteLineEvent(this, message);
+                    ProcessWriteLineEvent(this, message);
+
+                    foreach (AST.Error err in errs)
+                    {
+                        ErrorsWriteLineEvent(this, "Line " + err.Position.StartLine + " Error: " + err.ErrorMessage);
+                    }
+                    ErrorsWriteLineEvent(this, ">-----");
+                }
+
+                this.CanRun = true;
+                this.CanStop = false;
+            });
+            t2.Start();
+        }
+
+        public void StopRunning()
+        {
+            if (!this.CanStop)
+                return;            
+            t1.Abort();
+            t2.Abort();
         }
     }
 }

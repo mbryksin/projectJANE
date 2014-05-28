@@ -1,17 +1,22 @@
-class A
-{
-	int a = 1;
-	A b = this;
-}
+//JANE template project for testing Console.writeLine
 
 class MainClass 
 {
 	static void main() 
 	{
-		A a = new A();
-		for(int i = 1; i < 5; i = i + 1)
-        {
-			Console.Writeline(a.b.b.b.b.b.b.b.b.b.b.b.b.a);
-        }
+		String str = "123";
+		int l = String.length(str);
+		Console.writeLine(l);
+		int[] arr = {0,1,2,3};
+		int l2 = Array.length(arr);
+		Console.writeLine(l2);
+
+		for (int x = 1; x < 1000000; x = x + 1)
+		{
+			if (x % 10000 == 0)
+			{
+				Console.writeLine(x);
+			}
+		}
     }
 }

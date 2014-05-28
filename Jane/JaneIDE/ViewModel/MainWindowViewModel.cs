@@ -27,8 +27,6 @@ namespace JaneIDE.ViewModel
         private string errors;
         private string process;
 
-        public event EventHandler updateOutput;
-
         public MainWindowViewModel()
         {
             project = new Project();
@@ -46,8 +44,6 @@ namespace JaneIDE.ViewModel
         void OutputWriteLine(object sender, String e)
         {
             this.OutputText = this.OutputText + e + "\r";
-            base.OnPropertyChanged("OutputText");
-            //updateOutput(this, null);
         }
         void OutputWrite(object sender, String e)
         {
@@ -101,22 +97,26 @@ namespace JaneIDE.ViewModel
             {
                 if (_openProjectCommand == null)
                     _openProjectCommand = new RelayCommand(param => this.OpenProject(),
-                                                           param => true);
+                                                           param => !project.CanStop);
 
                 return _openProjectCommand;
             }
         }
         public ICommand SaveProjectCommand
         {
-            get { return new RelayCommand( param => project.SaveProject(), param => project.CanSave ); }
+            get { return new RelayCommand( param => project.SaveProject(), param => (project.CanSave & !project.CanStop) ); }
         }
         public ICommand RunProjectCommand
         {
             get { return new RelayCommand(param => project.RunProject(), param => project.CanRun); }
         }
+        public ICommand StopProjectCommand
+        {
+            get { return new RelayCommand(param => project.StopRunning(), param => project.CanStop); }
+        }
         public ICommand NewFileCommand
         {
-            get { return new RelayCommand(param => this.OnRequestNewFileDialog()); }
+            get { return new RelayCommand(param => this.OnRequestNewFileDialog(), param => !project.CanStop); }
         }
         public event EventHandler NewFileEvent;
         public void OnRequestNewFileDialog()
@@ -130,7 +130,8 @@ namespace JaneIDE.ViewModel
             get
             {
                 if (_newProjectCommand == null)
-                    _newProjectCommand = new RelayCommand(param => this.OnRequestNewProject());
+                    _newProjectCommand = new RelayCommand(param => this.OnRequestNewProject(),
+                                                          param => !project.CanStop);
 
                 return _newProjectCommand;
             }
@@ -224,16 +225,15 @@ namespace JaneIDE.ViewModel
                 {
                     MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
                 }
-
-                project.OpenProject(openFileDialog.FileName, path);
+                string filePath = openFileDialog.FileName;
+                string folderPath = Path.GetDirectoryName(filePath);
+                project.OpenProject(filePath, folderPath);
                 this.Workspaces.Clear();
                 CodeBoxViewModel workspace = new CodeBoxViewModel(project.MainClass);
                 this.Workspaces.Add(workspace);
                 this.SetActiveWorkspace(workspace);
             }
         }
-
-
 
     }
 }
