@@ -120,6 +120,7 @@ type nonTerminalId =
     | NONTERM_Statement
     | NONTERM_MemberCallStatement
     | NONTERM_Assignment
+    | NONTERM_Indexes
     | NONTERM_Declaration
     | NONTERM_Block
     | NONTERM_Statements
@@ -155,6 +156,7 @@ type nonTerminalId =
     | NONTERM_Constructor
     | NONTERM_Member
     | NONTERM_Suffix
+    | NONTERM_ArrayElements
     | NONTERM_ArrayElement
     | NONTERM_Arguments
     | NONTERM_ArgsRest
