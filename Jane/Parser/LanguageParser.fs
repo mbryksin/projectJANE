@@ -15,7 +15,7 @@ let ParseProgram (expression : string) =
                   let message = e.Message
                   let lastToken = new System.String(lexbuf.Lexeme)
                   printf "Parse failed at line %d, column %d:\n" line column
-                  printf "Last loken: %s" lastToken
+                  printf "Last token: %s" lastToken
                   printf "\n"
                   exit 1
     ast   

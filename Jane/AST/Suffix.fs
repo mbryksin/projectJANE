@@ -17,8 +17,8 @@ type Arguments(arguments : Expression list, pos : Position) =
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type ArrayElement(index : Expression, pos : Position) =
+type ArrayElement(indexes : Expression list, pos : Position) =
     inherit Suffix(pos)
-    member x.Index = index
-
-    override x.ToString() = sprintf "[%A]" index
+    member x.Indexes = indexes
+    
+    override x.ToString() = List.fold (fun acc x -> acc + x.ToString()) "" indexes
