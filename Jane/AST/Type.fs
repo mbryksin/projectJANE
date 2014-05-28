@@ -19,6 +19,11 @@ type Type(name : string, dimension : int, pos : Position) =
 type CustomType(name : string, dimension : int, pos : Position) =
     inherit Type(name, dimension, pos)
 
+    let mutable classOrInterface : Node option = None
+
+    member x.ClassOrInterface with get() = classOrInterface
+                              and set(n) = classOrInterface <- n
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 [<AbstractClass>]
