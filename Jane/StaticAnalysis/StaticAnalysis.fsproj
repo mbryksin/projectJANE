@@ -52,7 +52,10 @@
     <Compile Include="Errors.fs" />
     <Compile Include="HelperFunctions.fs" />
     <Compile Include="Dictionary.fs" />
+    <Compile Include="Type.fs" />
+    <Compile Include="Expression.fs" />
     <Compile Include="Interface.fs" />
+    <Compile Include="ClassMember.fs" />
     <Compile Include="Class.fs" />
     <Compile Include="ProgramMember.fs" />
     <Compile Include="Program.fs" />

@@ -8,6 +8,7 @@ open SA.Errors
 open SA.Interface
 open SA.Dictionary
 open SA.HelperFunctions
+open SA.ClassMember
 
 // GD ~ Gathering Data
 // SA ~ Static Analysis
@@ -141,6 +142,9 @@ let GD_Class (p : Program) (c : Class) =
     c.StaticContext <- fieldList
                     |> List.filter (fun f -> f.IsStatic)
                     |> List.map (fun f -> new Variable(f.Name.Value, f.Type, Val.Null, IsFinal = f.IsFinal))
+
+    // Сбор данных на нижних уровнях
+    c.MemberList |> List.iter (fun cm -> GD_ClassMember p c cm)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
