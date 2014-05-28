@@ -53,6 +53,7 @@ type TestingArrays() =
                     Console.writeLine(array[0]);
                 }
             }"
+        let x = getResult(programText)
         getResult(programText) = "{1 2 3 }"  |> should be True
 
     [<Test>]
@@ -63,11 +64,11 @@ type TestingArrays() =
                 static void main() 
                 {
                     int j = 1;
-                    int[] array = {{1,2,3}, {4,5,6}};
+                    int[] array = {4,5,6};
                     Console.writeLine(array[6-5*1 -j]);
                 }
             }"
-        getResult(programText) = "{1 2 3 }"  |> should be True
+        getResult(programText) = "4"  |> should be True
 
     [<Test>]
     member x. ``Interpret: String, get index`` ()=
