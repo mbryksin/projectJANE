@@ -4,9 +4,9 @@ class main
     {
       float[] x = {1.0,2.0,3.0};
 	  float[] y = {2.0,4.0,6.0};
-	  float x0 = 2.1; 
+	  float x0 = 21.0; 
       float y0 = main.inter(x,y,x0);
-	  Console.writeLine(y0);
+	  Console.writeLine(y0);	
     }
   static float inter(float[] x, float[] y, float x0)
 	{
