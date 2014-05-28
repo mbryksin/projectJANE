@@ -92,7 +92,7 @@ let GD_Class (p : Program) (c : Class) =
                     let newM = m :?> ClassMethod
                     let oldParameters = List.map (fun (p : FormalParameter) -> p.Type) oldM.Parameters
                     let newParameters = List.map (fun (p : FormalParameter) -> p.Type) newM.Parameters
-                    if oldParameters.Length = newParameters.Length && List.forall2 (=) oldParameters newParameters then                                                       
+                    if oldM.IsStatic && newM.IsStatic && oldParameters.Length = newParameters.Length && List.forall2 (=) oldParameters newParameters then                                                       
                         match oldM with
                         | :? ClassVoidMethod when (newM :? ClassVoidMethod) -> ()
                         | :? ClassReturnMethod as oldRM when (newM :? ClassReturnMethod) ->
@@ -156,7 +156,7 @@ let SA_Class (p : Program) (c : Class) =
                 let cm = cm :?> ClassMethod
                 let imParameters = List.map (fun (p : FormalParameter) -> p.Type) im.Parameters
                 let cmParameters = List.map (fun (p : FormalParameter) -> p.Type) cm.Parameters
-                if imParameters.Length = cmParameters.Length && List.forall2 (=) imParameters cmParameters then                                                       
+                if cm.IsStatic = im.IsStatic && imParameters.Length = cmParameters.Length && List.forall2 (=) imParameters cmParameters then                                                       
                     match im with
                     | :? InterfaceVoidMethod when (cm :? ClassVoidMethod) -> ()
                     | :? InterfaceReturnMethod as irm when (cm :? ClassReturnMethod) ->
