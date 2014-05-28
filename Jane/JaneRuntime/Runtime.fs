@@ -228,6 +228,14 @@ type Runtime =
                 match args.Head with
                     | Bool b -> Str (JaneString.valueOfBoolean b)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "parseInt" ->
+                match args.Head with
+                    | Str s -> Int (JaneString.parseInt s)
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "parseFloat" ->
+                match args.Head with
+                    | Str s -> Float (JaneString.parseFloat s)
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
             | _ -> Runtime.methodNotFound classname methodname; Empty
         | "Array" ->
             match methodname with
@@ -238,6 +246,13 @@ type Runtime =
             | "create" ->
                 match args.Head with
                     | Int i -> Array (Array.create ((int)i) args.Tail.Head)
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | _ -> Runtime.methodNotFound classname methodname; Empty
+        | "Char" ->
+            match methodname with
+            | "parseInt" -> 
+                match args.Head with
+                    | Char c -> Int ((int64)((int)c - int('0')))
                     | _ -> Runtime.typeMismatch classname methodname; Empty
             | _ -> Runtime.methodNotFound classname methodname; Empty
 
