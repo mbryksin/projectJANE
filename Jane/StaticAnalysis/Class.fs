@@ -29,7 +29,7 @@ let GD_Class (p : Program) (c : Class) =
     let errorCreator id = p.AddError <| Error.ObjectIsNotExist id "Implement interface"
     List.iter (fun (id : ID) -> if not <| p.Interfaces.ContainsKey(id.Value) then errorCreator id) c.ImplementsInterfacesName
 
-    // Добавляет предков
+    // Добавляет предка
     let rec addAllAncestor (id : ID) =
         
         // Предок, если существует и ещё не внесён
@@ -65,7 +65,6 @@ let GD_Class (p : Program) (c : Class) =
         |> List.collect (fun i -> i.AllAncestors.ToListPairs())
         |> (@) (List.map (fun (i : Interface) -> i.Name.Value, i) nearestImplementsInterfaces)
 
-
     // Добавляет все реализуемые интерфейсы в словарь реализуемых интерфейсов
     c.AllImplementsInterfaces.TryAddListWithInaction allImplementsInterfaces
 
@@ -79,26 +78,62 @@ let GD_Class (p : Program) (c : Class) =
     let addToDicts (typeMember : string) (m : ClassMember) = 
         // Функция создающая ошибку повтора имени
         let errorCreator() = p.AddError <| Error.DuplicateNode typeMember m.Name
+
+        // Добавление ошибки дублирования 
+        if typeMember <> "" then
+            let name = m.Name.Value;
+            if c.Members.ContainsKey(name) then
+                let oldMember = c.Members.[name]
+                match oldMember with
+                | :? ClassField when (m :? ClassField) -> ()
+                | :? ClassMethod as oldM when (m :? ClassMethod) -> 
+                    let newM = m :?> ClassMethod
+                    let oldParameters = List.map (fun (p : FormalParameter) -> p.Type) oldM.Parameters
+                    let newParameters = List.map (fun (p : FormalParameter) -> p.Type) newM.Parameters
+                    if oldParameters.Length = newParameters.Length && List.forall2 (=) oldParameters newParameters then                                                       
+                        match oldM with
+                        | :? ClassVoidMethod when (newM :? ClassVoidMethod) -> ()
+                        | :? ClassReturnMethod as oldRM when (newM :? ClassReturnMethod) ->
+                            let newRM = newM :?> ClassReturnMethod
+                            if newRM.ReturnType = oldRM.ReturnType then ()
+                            else errorCreator()
+                        | _ -> errorCreator()
+                    else errorCreator()
+                | _ -> errorCreator()
+
         // Проверка корректности имени и добавление ошибки 
         IncorrectName p m.Name typeMember
-        // Добавление в общий словарь методов и полей + ошибка повтора
-        c.Members.TryAddWithAction m.Name.Value m errorCreator        
+        // Добавление в общий словарь методов и полей
+        c.Members.AddOrUpdate m.Name.Value m        
         // Добавление в нужные словари
         match m with
-        | :? ClassField        as f  -> c.Fields.TryAddWithInaction f.Name.Value f
-        | :? ClassReturnMethod as rm -> c.Methods.TryAddWithInaction rm.Name.Value rm
-                                        c.ReturnMethods.TryAddWithInaction rm.Name.Value rm
-        | :? ClassVoidMethod   as vm -> c.Methods.TryAddWithInaction vm.Name.Value vm
-                                        c.VoidMethods.TryAddWithInaction vm.Name.Value vm
+        | :? ClassField        as f  -> c.Fields.AddOrUpdate f.Name.Value f
+        | :? ClassReturnMethod as rm -> c.Methods.AddOrUpdate rm.Name.Value rm
+                                        c.ReturnMethods.AddOrUpdate rm.Name.Value rm
+        | :? ClassVoidMethod   as vm -> c.Methods.AddOrUpdate vm.Name.Value vm
+                                        c.VoidMethods.AddOrUpdate vm.Name.Value vm
         | _                          -> ()  
     
     // Добавляет методы всех предков
     c.AllAncestorsClasses.ToListValues()
+    |> List.rev
     |> List.collect (fun c -> c.OwnMembers.ToListValues())
-    |> List.iter (addToDicts "member of extend class")
+    |> List.iter (addToDicts "")
 
     // Добавляет методы класса
-    List.iter (addToDicts "class member") c.MemberList  
+    List.iter (addToDicts "class member") c.MemberList
+    
+    // Все поля класса
+    let fieldList = c.Fields.ToListValues();
+    
+    // Собирает контекст для методов
+    c.Context <- fieldList 
+              |> List.map (fun f -> new Variable(f.Name.Value, f.Type, Val.Null, IsFinal = f.IsFinal)) 
+    
+    // Собирает контекст для статический методов          
+    c.StaticContext <- fieldList
+                    |> List.filter (fun f -> f.IsStatic)
+                    |> List.map (fun f -> new Variable(f.Name.Value, f.Type, Val.Null, IsFinal = f.IsFinal))
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
