@@ -85,7 +85,9 @@ let GD_Class (p : Program) (c : Class) =
             if c.Members.ContainsKey(name) then
                 let oldMember = c.Members.[name]
                 match oldMember with
-                | :? ClassField when (m :? ClassField) -> ()
+                | :? ClassField as oldF when (m :? ClassField) ->
+                    let newF = m :?> ClassField
+                    if oldF.Type <> newF.Type then errorCreator()
                 | :? ClassMethod as oldM when (m :? ClassMethod) -> 
                     let newM = m :?> ClassMethod
                     let oldParameters = List.map (fun (p : FormalParameter) -> p.Type) oldM.Parameters
@@ -95,8 +97,7 @@ let GD_Class (p : Program) (c : Class) =
                         | :? ClassVoidMethod when (newM :? ClassVoidMethod) -> ()
                         | :? ClassReturnMethod as oldRM when (newM :? ClassReturnMethod) ->
                             let newRM = newM :?> ClassReturnMethod
-                            if newRM.ReturnType = oldRM.ReturnType then ()
-                            else errorCreator()
+                            if newRM.ReturnType <> oldRM.ReturnType then errorCreator()
                         | _ -> errorCreator()
                     else errorCreator()
                 | _ -> errorCreator()
@@ -137,4 +138,41 @@ let GD_Class (p : Program) (c : Class) =
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-let SA_Class (p : Program) (c : Class) = () // Заглушка
+let SA_Class (p : Program) (c : Class) =
+
+    // Проверяет, реализует ли класс метод интерфейса
+    let ImplementMember (i : Interface) (im : InterfaceMember) =
+        
+        let errorCreator() = p.AddError <| Error.InterfaceMemberIsNotImplemented im i c
+        let name = im.Name.Value
+
+        if not <| c.OwnMembers.ContainsKey(name) then errorCreator()
+        else let cm = c.OwnMembers.[name]
+             match im with
+             | :? InterfaceField as iField when (cm :? ClassField) -> 
+                let cField = cm :?> ClassField
+                if iField.Type <> cField.Type then errorCreator()
+             | :? InterfaceMethod as im when (cm :? ClassMethod) ->
+                let cm = cm :?> ClassMethod
+                let imParameters = List.map (fun (p : FormalParameter) -> p.Type) im.Parameters
+                let cmParameters = List.map (fun (p : FormalParameter) -> p.Type) cm.Parameters
+                if imParameters.Length = cmParameters.Length && List.forall2 (=) imParameters cmParameters then                                                       
+                    match im with
+                    | :? InterfaceVoidMethod when (cm :? ClassVoidMethod) -> ()
+                    | :? InterfaceReturnMethod as irm when (cm :? ClassReturnMethod) ->
+                        let crm = cm :?> ClassReturnMethod
+                        if crm.ReturnType <> irm.ReturnType then errorCreator()
+                    | _ -> errorCreator()
+                else errorCreator()
+             | _ -> errorCreator()
+
+    // Проверяет, реализует ли класс весь интерфейс
+    let ImplementInterface (i : Interface) =
+        i.MemberList
+        |> List.iter (ImplementMember i)
+
+    // Проверяет, реализует ли класс все свои интерфейсы (с учётом предков интерфейсов)
+    c.AllImplementsInterfaces.ToListValues()
+    |> List.iter ImplementInterface
+
+    
