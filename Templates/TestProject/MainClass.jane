@@ -1,3 +1,5 @@
+//JANE template project for testing Console.writeLine
+
 class MainClass 
 {
 	static void main() 
