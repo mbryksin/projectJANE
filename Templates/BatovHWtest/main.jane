@@ -1,3 +1,6 @@
+//Batov Nikita SPbSU, 271
+// Lagrange interpolation
+
 class main
 {
   static void main()
