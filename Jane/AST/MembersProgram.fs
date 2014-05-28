@@ -57,7 +57,8 @@ type Class(name : ID, ancestorName : ID option, implementsInterfacesName : ID li
     |> List.iter (fun pm -> try ownMembers.Add(pm.Name.Value, pm)
                             with :? ArgumentException -> ())
 
-    let mutable variables : Variable list = []
+    let mutable context       : Variable list = []
+    let mutable staticContext : Variable list = []
                        
     let classConstructor = match classConstructor with
                            | Some cc -> cc
@@ -80,8 +81,11 @@ type Class(name : ID, ancestorName : ID option, implementsInterfacesName : ID li
     member x.AllImplementsInterfaces     = allImplementsInterfaces
     member x.NearestImplementsInterfaces = nearestImplementsInterfaces
 
-    member x.Variables with get() = variables
-                       and set(l) = variables <- l
+    member x.Context with get() = staticContext
+                     and set(l) = staticContext <- l
+
+    member x.StaticContext with get() = context
+                           and set(l) = context <- l
 
     override x.ToString() =
         let extendsStr    = if ancestorName.IsSome then sprintf " extends %A" ancestorName.Value else ""
