@@ -2,86 +2,7 @@
 
 open System
 open AST
-
-type ConsoleEvent() =
-    static let e = new DelegateEvent<EventHandler<String>>()
-    [<CLIEvent>]
-    static member Event = e.Publish
-    static member TriggerEvent(args) = e.Trigger([|box null; box args|])
-
-type JaneConsole =
-
-    static member writeLine(v : Val) =
-        let rec writeValue vl =
-            match vl with
-            | Null          -> "null"
-            | Int content   -> content.ToString()
-            | Bool content  -> content.ToString()
-            | Str content   -> content.ToString()
-            | Char content  -> content.ToString()
-            | Float content -> content.ToString()
-            | Array content -> 
-                            let arrayValues = Array.map (fun (v : Val) -> writeValue v) content
-                            "{" + Array.fold (fun acc s ->  acc + s + " ") "" arrayValues + "}"
-            | Object (fields, className) -> className.ToString() + fields.ToString() 
-            | _        -> "error"
-        let s = writeValue v
-        ConsoleEvent.TriggerEvent(s)
-        s
         
-type JaneMath =
-    static member PI = Math.PI
-    static member E = Math.E
-    static member writeLine(str : string) =
-        Console.WriteLine(str)
-    static member abs(value : int64) : int64 =
-        Math.Abs value
-    static member abs(value : float) : float =
-        Math.Abs value
-    static member acos(value : float) : float =
-        Math.Acos value
-    static member asin(value : float) : float =
-        Math.Asin value
-    static member atan(value : float) : float =
-        Math.Atan value
-    static member cbrt(value : float) : float =
-        Math.Pow(value, 1.0 / 3.0)
-    static member ceil(value : float) : float =
-        Math.Ceiling value
-    static member cos(value : float) : float =
-        Math.Cos value
-    static member cosh(value : float) : float =
-        Math.Cosh value
-    static member floor(value : float) : float =
-        Math.Floor value
-    static member ln(value : float) : float =
-        Math.Log value
-    static member log10(value : float) : float =
-        Math.Log10 value
-    static member max(a : int64, b : int64) : int64 =
-        Math.Max(a, b)
-    static member max(a : float, b : float) : float =
-        Math.Max(a, b)
-    static member min(a : int64, b : int64) : int64 =
-        Math.Min(a, b)
-    static member min(a : float, b : float) : float =
-        Math.Min(a, b)
-    static member pow(a : float, b : float) : float =
-        Math.Pow(a, b)
-    static member sin(value : float) : float =
-        Math.Sin value
-    static member sinh(value : float) : float =
-        Math.Sinh value
-    static member sqrt(value : float) : float =
-        Math.Sqrt value
-    static member tan(value : float) : float =
-        Math.Tan value
-    static member tanh(value : float) : float =
-        Math.Tanh value
-    static member toDegrees(value : float) : float =
-        value * 180.0 / Math.PI
-    static member toRadians(value : float) : float =
-        value * Math.PI / 180.0
 type Runtime = 
     static member private classNotFound (classname : string) = printfn "No class %s found in runtime library" classname
     static member private methodNotFound (classname : string) (methodname : string) = printfn "No method %s found in %s class" methodname classname
@@ -192,6 +113,120 @@ type Runtime =
             | "toRadians" ->
                 match args.Head with
                     | Float f -> Float (JaneMath.toRadians f)
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | _ -> Runtime.methodNotFound classname methodname; Empty
+        | "String" ->
+            match methodname with
+
+            | "charAt" ->
+                match (args.Head, args.Tail.Head) with
+                    | (Str s, Int i) -> Char (JaneString.charAt(s, i))
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "compareTo" ->
+                match (args.Head, args.Tail.Head) with
+                    | (Str s, Str s1) -> Bool (JaneString.compareTo(s, s1))
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "compareToIgnoreCase" ->
+                match (args.Head, args.Tail.Head) with
+                    | (Str s, Str s1) -> Bool (JaneString.compareToIgnoreCase(s, s1))
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "concat" ->
+                match (args.Head, args.Tail.Head) with
+                    | (Str s, Str s1) -> Str (JaneString.concat(s, s1))
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "copyValueOf" ->
+                let valToCharArray (a : Val array) =
+                    let mapping (v : Val) : char =
+                        match v with
+                        | Char c -> c
+                        | _ -> (char)0
+                    Array.map mapping a
+                match args.Head with
+                    | Array a -> Str (JaneString.copyValueOf (valToCharArray a))
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "endsWith" ->
+                match (args.Head, args.Tail.Head) with
+                    | (Str s, Str s1) -> Bool (JaneString.endsWith(s, s1))
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "indexOfChar" ->
+                match (args.Head, args.Tail.Head) with
+                    | (Str s, Char c) -> Int (JaneString.indexOfChar(s, c))
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "indexOfCharFromIndex" ->
+                match (args.Head, args.Tail.Head, args.Tail.Tail.Head) with
+                    | (Str s, Char c, Int i) -> Int (JaneString.indexOfCharFromIndex(s, c, i))
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "indexOfString" ->
+                match (args.Head, args.Tail.Head) with
+                    | (Str s, Str s1) -> Int (JaneString.indexOfString(s, s1))
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "indexOfStringFromIndex" ->
+                match (args.Head, args.Tail.Head, args.Tail.Tail.Head) with
+                    | (Str s, Str s1, Int i) -> Int (JaneString.indexOfStringFromIndex(s, s1, i))
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "lastIndexOfChar" ->
+                match (args.Head, args.Tail.Head) with
+                    | (Str s, Char c) -> Int (JaneString.lastIndexOfChar(s, c))
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "lastIndexOfCharFromIndex" ->
+                match (args.Head, args.Tail.Head, args.Tail.Tail.Head) with
+                    | (Str s, Char c, Int i) -> Int (JaneString.lastIndexOfCharFromIndex(s, c, i))
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "lastIndexOfString" ->
+                match (args.Head, args.Tail.Head) with
+                    | (Str s, Str s1) -> Int (JaneString.lastIndexOfString(s, s1))
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "lastIndexOfStringFromIndex" ->
+                match (args.Head, args.Tail.Head, args.Tail.Tail.Head) with
+                    | (Str s, Str s1, Int i) -> Int (JaneString.lastIndexOfStringFromIndex(s, s1, i))
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "length" ->
+                match args.Head with
+                    | Str s -> Int (JaneString.length s)
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "startsWith" ->
+                match (args.Head, args.Tail.Head) with
+                    | (Str s, Str s1) -> Bool (JaneString.startsWith(s, s1))
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "substringFromIndex" ->
+                match (args.Head, args.Tail.Head) with
+                    | (Str s, Int i) -> Str (JaneString.substringFromIndex(s, i))
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "substringFromInterval" ->
+                match (args.Head, args.Tail.Head, args.Tail.Tail.Head) with
+                    | (Str s, Int i, Int i1) -> Str (JaneString.substringFromInterval(s, i, i1))
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "toCharArray" ->
+                match args.Head with
+                    | Str s -> Array (Array.map (fun c -> Char c) (JaneString.toCharArray s))
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "toLowerCase" ->
+                match args.Head with
+                    | Str s -> Str (JaneString.toLowerCase s)
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "toUpperCase" ->
+                match args.Head with
+                    | Str s -> Str (JaneString.toUpperCase s)
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "trim" ->
+                match args.Head with
+                    | Str s -> Str (JaneString.trim s)
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "valueOfInt" ->
+                match args.Head with
+                    | Int i -> Str (JaneString.valueOfInt i)
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "valueOfChar" ->
+                match args.Head with
+                    | Char c -> Str (JaneString.valueOfChar c)
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "valueOfFloat" ->
+                match args.Head with
+                    | Float f -> Str (JaneString.valueOfFloat f)
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "valueOfBoolean" ->
+                match args.Head with
+                    | Bool b -> Str (JaneString.valueOfBoolean b)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
             | _ -> Runtime.methodNotFound classname methodname; Empty
         | _ -> Runtime.classNotFound classname; Empty
