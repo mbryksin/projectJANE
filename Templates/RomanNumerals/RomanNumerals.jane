@@ -1,0 +1,130 @@
+/*
+(c) Alexander Smirnov, 2014
+This program converts Roman numerals to Arabic and vice versa.
+*/
+class RomanNumerals
+{
+    static void main()
+    {
+        for (int i = 0; i < 1200; i = i + 1)
+		{
+			string s = Roman.toRoman(i);
+			int k = Roman.fromRoman(s);
+			Console.writeLine("Arabic: " + String.valueOfInt(i) + ", Roman: " + s + ", then again: " + String.valueOfInt(k));
+		}
+    }
+}
+class Roman
+{   
+    static string toRoman(int n)
+    {
+        int num = n;
+        string result = " ";
+
+        if (n == 0)
+            return "N";
+
+        if (n < 0 || n >= 4000)
+            return " ";
+
+        while (n >= 1000)
+        {
+            result = result + "M";
+            n = n - 1000;
+        }
+        if (n >= 900)
+        {
+            result = result + "CM";
+            n = n - 900;
+        }
+        if (n >= 500)
+        {
+            result = result + "D";
+            n = n - 500;
+        }
+        if (n >= 400)
+        {
+            result = result + "CD";
+            n = n - 400;
+        }
+        while (n >= 100)
+        {
+            result = result + "C";
+            n = n - 100;
+        }
+        if (n >= 90)
+        {
+            result = result + "XC";
+            n = n - 90;
+        }
+        if (n >= 50)
+        {
+            result = result + "L";
+            n = n - 50;
+        }
+        if (n >= 40)
+        {
+            result = result + "XL";
+            n = n - 40;
+        }
+        while (n >= 10)
+        {
+            result = result + "X";
+            n = n - 10;
+        }
+        if (n >= 9)
+        {
+            result = result + "IX";
+            n = n - 9;
+        }
+        if (n >= 5)
+        {
+            result = result + "V";
+            n = n - 5;
+        }
+        if (n >= 4)
+        {
+            result = result + "IV";
+            n = n - 4;
+        }
+        while (n >= 1)
+        {
+            result = result + "I";
+            n = n - 1;
+        }
+		
+        return String.trim(result);
+    }
+    static int fromRoman(string str)
+    {
+        string[] roman =  {"M", "CM","D","CD","C", "XC","L","XL","X","IX","V","IV","I","N"};
+        int[] rep_count = {3,   1,   1,  1,   3,   1,   1,  1,   3,  1,   1,  1,   3,  1};
+        int[] arabic =    {1000,900, 500,400, 100, 90,  50, 40,  10, 9,   5,  4,   1,  0};
+        int result = 0;
+        int i = 0;
+        int rep = 0;
+
+        string s = str;
+
+        while (String.length(s) > 0)
+        {
+            while (String.startsWith(s, roman[i]))
+            {
+                if (rep < rep_count[i])
+                {
+                    s = String.substringFromIndex(s, String.length(roman[i]));
+                    result = result + arabic[i];
+                    rep = rep + 1;
+                }
+                else
+                {
+                    Console.writeLine("Too many repeating symbols");
+                    return -1;
+                }
+            }
+            rep = 0;
+            i = i + 1;
+        }
+        return result;
+    }
+}
