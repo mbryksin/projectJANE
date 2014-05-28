@@ -57,7 +57,7 @@ type Class(name : ID, ancestorName : ID option, implementsInterfacesName : ID li
     |> List.iter (fun pm -> try ownMembers.Add(pm.Name.Value, pm)
                             with :? ArgumentException -> ())
 
-    let mutable variables : Variable  list = []
+    let mutable variables : Variable list = []
                        
     let classConstructor = match classConstructor with
                            | Some cc -> cc

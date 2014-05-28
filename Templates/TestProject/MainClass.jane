@@ -1,10 +1,17 @@
+class A
+{
+	int a = 1;
+	A b = this;
+}
+
 class MainClass 
 {
 	static void main() 
 	{
+		A a = new A();
 		for(int i = 1; i < 5; i = i + 1)
         {
-			Console.Writeline(i);
+			Console.Writeline(a.b.b.b.b.b.b.b.b.b.b.b.b.a);
         }
     }
 }
