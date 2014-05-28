@@ -72,6 +72,8 @@ let equalSign      = [ '=' ]
  
 rule tokenize = parse
 | whitespace				{ tokenize lexbuf }
+| "//" [ ^ '\n' ]+          { tokenize lexbuf }
+| "/*"                      { comment lexbuf; tokenize lexbuf }
 | null                      { NULL (getNullLiteral lexbuf) }
 | int       				{ INT (getIntegerLiteral lexbuf) }
 | boolean                   { BOOLEAN (getBooleanLiteral lexbuf) }
@@ -121,3 +123,7 @@ rule tokenize = parse
 | cCurBracket               { C_CUR_BRACKET (getPos lexbuf) }
 
 | eof						{ END }
+
+and comment = parse
+| "*/" | eof                { () }
+| _                         { comment lexbuf }

@@ -40,12 +40,13 @@ type DeclarationStatement(declarationType : Type, name : ID, body : Initializer,
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-type AssignmentStatement(name : ID, body : Initializer, pos : Position) =
+type AssignmentStatement(name : ID, indexes : Expression list, body : Initializer, pos : Position) =
     inherit Statement(pos)
     member x.Name = name
     member x.Body = body
+    member x.Indexes = indexes
 
-    override x.ToString() = sprintf "%A = %A;\n" name body
+    override x.ToString() = sprintf "%A[%A] = %A;\n" name indexes body
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
