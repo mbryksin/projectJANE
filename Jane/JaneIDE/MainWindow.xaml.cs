@@ -27,21 +27,8 @@ namespace JaneIDE
         {
             InitializeComponent();
 
-            //this.DataContextChanged += Reload;
+            outputTextBox.TextChanged += delegate { outputTextBox.ScrollToEnd(); };
         }
-        /*
-        private void Reload(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (this.DataContext == null)
-                return;
-            
-            var vm = (MainWindowViewModel)this.DataContext;
-            vm.updateOutput += delegate
-            {
-                outputTextBox.Text = vm.OutputText;
-            };
-            
-        }
-        */
+        
     }
 }
