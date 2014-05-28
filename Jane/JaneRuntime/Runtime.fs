@@ -229,5 +229,13 @@ type Runtime =
                     | Bool b -> Str (JaneString.valueOfBoolean b)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
             | _ -> Runtime.methodNotFound classname methodname; Empty
+        | "Array" ->
+            match methodname with
+            | "length" -> 
+                match args.Head with
+                    | Array a -> Int ((int64)a.Length)
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
+            | _ -> Runtime.methodNotFound classname methodname; Empty
+
         | _ -> Runtime.classNotFound classname; Empty
         
