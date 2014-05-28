@@ -8,6 +8,7 @@
         <vw:CodeBox />
     </DataTemplate>
 
+
     <DataTemplate x:Key="ClosableTabItemTemplate">
         <DockPanel Width="120">
             <Button 

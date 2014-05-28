@@ -23,17 +23,74 @@ namespace JaneIDE.ViewModel
         RelayCommand _newProjectCommand;
         RelayCommand _openProjectCommand;
         private OpenFileDialog openFileDialog;
+        private string output;
+        private string errors;
+        private string process;
 
         public MainWindowViewModel()
         {
             project = new Project();
+            project.OutputWriteLineEvent += OutputWriteLine;
+            project.OutputWriteEvent += OutputWrite;
+            project.ErrorsWriteLineEvent += ErrorsWriteLine;
+            project.ProcessWriteLineEvent += ProcessWriteLine;
+
             openFileDialog = new OpenFileDialog();
             openFileDialog.InitialDirectory = Environment.SpecialFolder.Personal.ToString();
             openFileDialog.Filter = "Project file (*.pro)|*.pro";
             openFileDialog.RestoreDirectory = true;
-
         }
 
+        void OutputWriteLine(object sender, String e)
+        {
+            this.OutputText = this.OutputText + e + "\r";
+        }
+        void OutputWrite(object sender, String e)
+        {
+            this.OutputText = this.OutputText + e;
+        }
+        void ErrorsWriteLine(object sender, String e)
+        {
+            this.ErrorsText = this.ErrorsText + e + "\r";
+        }
+        void ProcessWriteLine(object sender, String e)
+        {
+            this.ProcessText = this.ProcessText + e + "\r";
+        }
+
+        public string OutputText
+        {
+            get { return output; }
+            set
+            {
+                if (value == output)
+                    return;
+                output = value;
+                base.OnPropertyChanged("OutputText");
+            }
+        }
+        public string ErrorsText
+        {
+            get { return errors; }
+            set
+            {
+                if (value == errors)
+                    return;
+                errors = value;
+                base.OnPropertyChanged("ErrorsText");
+            }
+        }
+        public string ProcessText
+        {
+            get { return process; }
+            set
+            {
+                if (value == process)
+                    return;
+                process = value;
+                base.OnPropertyChanged("ProcessText");
+            }
+        }
         public ICommand OpenProjectCommand
         {
             get
