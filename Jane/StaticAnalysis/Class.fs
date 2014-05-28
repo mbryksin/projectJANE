@@ -85,19 +85,25 @@ let GD_Class (p : Program) (c : Class) =
             if c.Members.ContainsKey(name) then
                 let oldMember = c.Members.[name]
                 match oldMember with
-                | :? ClassField as oldF when (m :? ClassField) ->
-                    let newF = m :?> ClassField
-                    if oldF.Type <> newF.Type then errorCreator()
-                | :? ClassMethod as oldM when (m :? ClassMethod) -> 
-                    let newM = m :?> ClassMethod
-                    let oldParameters = List.map (fun (p : FormalParameter) -> p.Type) oldM.Parameters
-                    let newParameters = List.map (fun (p : FormalParameter) -> p.Type) newM.Parameters
-                    if oldM.IsStatic && newM.IsStatic && oldParameters.Length = newParameters.Length && List.forall2 (=) oldParameters newParameters then                                                       
+                | :? ClassMethodOrField as oldM when (m :? ClassMethodOrField) ->
+                    let newM = m :?> ClassMethodOrField
+                    if oldM.IsStatic = newM.IsStatic then
                         match oldM with
-                        | :? ClassVoidMethod when (newM :? ClassVoidMethod) -> ()
-                        | :? ClassReturnMethod as oldRM when (newM :? ClassReturnMethod) ->
-                            let newRM = newM :?> ClassReturnMethod
-                            if newRM.ReturnType <> oldRM.ReturnType then errorCreator()
+                        | :? ClassField as oldF when (m :? ClassField) ->
+                            let newF = m :?> ClassField
+                            if oldF.Type <> newF.Type then errorCreator()
+                        | :? ClassMethod as oldM when (m :? ClassMethod) -> 
+                            let newM = m :?> ClassMethod
+                            let oldParameters = List.map (fun (p : FormalParameter) -> p.Type) oldM.Parameters
+                            let newParameters = List.map (fun (p : FormalParameter) -> p.Type) newM.Parameters
+                            if oldParameters.Length = newParameters.Length && List.forall2 (=) oldParameters newParameters then                                                       
+                                match oldM with
+                                | :? ClassVoidMethod when (newM :? ClassVoidMethod) -> ()
+                                | :? ClassReturnMethod as oldRM when (newM :? ClassReturnMethod) ->
+                                    let newRM = newM :?> ClassReturnMethod
+                                    if newRM.ReturnType <> oldRM.ReturnType then errorCreator()
+                                | _ -> errorCreator()
+                            else errorCreator()
                         | _ -> errorCreator()
                     else errorCreator()
                 | _ -> errorCreator()
@@ -148,23 +154,26 @@ let SA_Class (p : Program) (c : Class) =
 
         if not <| c.OwnMembers.ContainsKey(name) then errorCreator()
         else let cm = c.OwnMembers.[name]
-             match im with
-             | :? InterfaceField as iField when (cm :? ClassField) -> 
-                let cField = cm :?> ClassField
-                if iField.Type <> cField.Type then errorCreator()
-             | :? InterfaceMethod as im when (cm :? ClassMethod) ->
-                let cm = cm :?> ClassMethod
-                let imParameters = List.map (fun (p : FormalParameter) -> p.Type) im.Parameters
-                let cmParameters = List.map (fun (p : FormalParameter) -> p.Type) cm.Parameters
-                if cm.IsStatic = im.IsStatic && imParameters.Length = cmParameters.Length && List.forall2 (=) imParameters cmParameters then                                                       
-                    match im with
-                    | :? InterfaceVoidMethod when (cm :? ClassVoidMethod) -> ()
-                    | :? InterfaceReturnMethod as irm when (cm :? ClassReturnMethod) ->
-                        let crm = cm :?> ClassReturnMethod
-                        if crm.ReturnType <> irm.ReturnType then errorCreator()
-                    | _ -> errorCreator()
-                else errorCreator()
-             | _ -> errorCreator()
+             if cm :? ClassMethodOrField && (cm :?> ClassMethodOrField).IsStatic = im.IsStatic then
+                 match im with
+                 | :? InterfaceField as iField when (cm :? ClassField) -> 
+                    let cField = cm :?> ClassField
+                    if iField.Type <> cField.Type then errorCreator()
+                 | :? InterfaceMethod as im when (cm :? ClassMethod) ->
+                    let cm = cm :?> ClassMethod
+                    let imParameters = List.map (fun (p : FormalParameter) -> p.Type) im.Parameters
+                    let cmParameters = List.map (fun (p : FormalParameter) -> p.Type) cm.Parameters
+                    if cm.IsStatic = im.IsStatic && imParameters.Length = cmParameters.Length && List.forall2 (=) imParameters cmParameters then                                                       
+                        match im with
+                        | :? InterfaceVoidMethod when (cm :? ClassVoidMethod) -> ()
+                        | :? InterfaceReturnMethod as irm when (cm :? ClassReturnMethod) ->
+                            let crm = cm :?> ClassReturnMethod
+                            if crm.ReturnType <> irm.ReturnType then errorCreator()
+                        | _ -> errorCreator()
+                    else errorCreator()
+                 | _ -> errorCreator()
+             
+             else errorCreator()
 
     // Проверяет, реализует ли класс весь интерфейс
     let ImplementInterface (i : Interface) =
