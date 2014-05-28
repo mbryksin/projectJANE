@@ -54,6 +54,7 @@
     <Compile Include="Dictionary.fs" />
     <Compile Include="Type.fs" />
     <Compile Include="Expression.fs" />
+    <Compile Include="InterfaceMember.fs" />
     <Compile Include="Interface.fs" />
     <Compile Include="ClassMember.fs" />
     <Compile Include="Class.fs" />
