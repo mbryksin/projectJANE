@@ -5,6 +5,8 @@
 open AST
 open SA.Errors
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 let private position   = new Position(0,0,0,0)
 let private boolType   = new BooleanType(0, position) :> Type
 let private intType    = new IntType(0, position)     :> Type
@@ -48,7 +50,7 @@ let rec SA_Expression (p : Program) (expr : Expression) (expectedTypes : Type li
             let isBad1 = isBadExpr (fun (t : Type) -> t <> intType && t <> floatType)
             let isBad2 = isBadExpr ((<>) stringType)
             if isBad1 && isBad2 then ErrorCreator ()
-            elif isBad1 then NextExpression bo.FirstOperand  [intType; floatType] 
+            elif isBad2 then NextExpression bo.FirstOperand  [intType; floatType] 
                              NextExpression bo.SecondOperand [intType; floatType]
             else             NextExpression bo.FirstOperand  [stringType] 
                              NextExpression bo.SecondOperand [stringType]
@@ -70,11 +72,13 @@ let rec SA_Expression (p : Program) (expr : Expression) (expectedTypes : Type li
             else NextExpression bo.FirstOperand  [boolType]
                  NextExpression bo.SecondOperand [boolType]
         
-        | MEMBER_CALL -> if bo.FirstOperand :? Identifier then () // Заглушка
+        | MEMBER_CALL -> () // Заглушка
         |_ -> ()
          
+    | :? Identifier      as i  -> let var = context |> List.tryFind(fun v -> v.Name = i.Name.Value)
+                                  if var.IsNone then p.AddError <| Error.ObjectIsNotExist i.Name "Variable"
+                                  
     | :? InstanceOf      as io -> () // Заглушка
     | :? Constructor     as c  -> () // Заглушка
-    | :? Identifier      as i  -> () // Заглушка
     | :? Member          as m  -> () // Заглушка
     | _                        -> ()

@@ -41,7 +41,7 @@ let SA_ClassMember (p : Program) (c : Class) (cm : ClassMember) =
                                    |> fun l -> (List.Cons (cf.Type, l))
                 | _  -> []
             | _ -> []
-        let context = if cf.IsStatic then c.StaticContext else c.Context
+        let context = if cf.IsStatic then c.StaticContext else c.Context |> List.filter (fun v -> v.Name <> cf.Name.Value)
         SA_Expression p cf.Body expectedTypes context
 
     | :? ClassConstructor as cc -> () // Заглушка
