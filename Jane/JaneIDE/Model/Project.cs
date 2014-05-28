@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 using RunProject;
 using AST;
+using JaneRuntime;
 
 namespace JaneIDE.Model
 {
@@ -18,6 +19,7 @@ namespace JaneIDE.Model
         private const string PROJECT_FORMAT = ".pro";
         private const string MANIFEST_FILENAME = "MANIFEST.MF";
 
+        
         public event EventHandler<String> OutputWriteLineEvent;
         public event EventHandler<String> OutputWriteEvent;
         public event EventHandler<String> ErrorsWriteLineEvent;
@@ -37,6 +39,22 @@ namespace JaneIDE.Model
             projectSources = new List<Source>();
             this.CanRun = false;
             this.CanSave = false;
+
+            JaneRuntime.ConsoleEvent.Event += ConsoleWriteLine;
+        }
+
+        void ConsoleWriteLine(object sender, String arg)
+        {
+            OutputWriteLineEvent(this, arg);
+        }
+
+        private void SortOutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
+        {
+            // Collect the sort command output. 
+            if (!String.IsNullOrEmpty(outLine.Data))
+            {
+                OutputWriteLineEvent(this, outLine.Data);
+            }
         }
 
         public void SetProject(string name, string path, string mainClass)
@@ -309,13 +327,18 @@ namespace JaneIDE.Model
             var startTime = DateTime.Now;
             ProcessWriteLineEvent(this, "> Run project " + this.ProjectName);
 
-            result.StartRunning();
+            System.Threading.Thread t = new System.Threading.Thread(delegate()
+            {
+                result.StartRunning();
+            });
+            t.Start();
+            t.Join();
 
             if (result.NoErrors)
             {
                 var finishTime = DateTime.Now;
                 var time = finishTime - startTime;
-                OutputWriteLineEvent(this, result.RunResultValue);
+                //OutputWriteLineEvent(this, result.RunResultValue);
                 OutputWriteLineEvent(this, ">------ Program finished successfully ------<");
                 ErrorsWriteLineEvent(this, ">------ Program finished successfully ------<");
                 ProcessWriteLineEvent(this, "> Program finished. Execute time:  " + time.TotalMilliseconds.ToString() + " msecs");
@@ -337,7 +360,7 @@ namespace JaneIDE.Model
                     ErrorsWriteLineEvent(this, "Line " + err.Position.StartLine + " Error: " + err.ErrorMessage);
                 }
                 ErrorsWriteLineEvent(this, ">-----");
-            } 
+            }
         }
     }
 }

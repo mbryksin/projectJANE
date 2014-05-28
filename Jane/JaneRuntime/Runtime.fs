@@ -3,7 +3,14 @@
 open System
 open AST
 
+type ConsoleEvent() =
+    static let e = new DelegateEvent<EventHandler<String>>()
+    [<CLIEvent>]
+    static member Event = e.Publish
+    static member TriggerEvent(args) = e.Trigger([|box null; box args|])
+
 type JaneConsole =
+
     static member writeLine(v : Val) =
         let rec writeValue vl =
             match vl with
@@ -19,7 +26,7 @@ type JaneConsole =
             | Object (fields, className) -> className.ToString() + fields.ToString() 
             | _        -> "error"
         let s = writeValue v
-        printfn "%s" s
+        ConsoleEvent.TriggerEvent(s)
         s
         
 type JaneMath =
