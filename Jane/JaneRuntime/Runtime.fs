@@ -235,6 +235,10 @@ type Runtime =
                 match args.Head with
                     | Array a -> Int ((int64)a.Length)
                     | _ -> Runtime.typeMismatch classname methodname; Empty
+            | "create" ->
+                match args.Head with
+                    | Int i -> Array (Array.create ((int)i) args.Tail.Head)
+                    | _ -> Runtime.typeMismatch classname methodname; Empty
             | _ -> Runtime.methodNotFound classname methodname; Empty
 
         | _ -> Runtime.classNotFound classname; Empty
