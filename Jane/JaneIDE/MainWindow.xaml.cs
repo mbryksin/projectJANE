@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using JaneIDE.ViewModel;
 using JaneIDE.View;
 
 namespace JaneIDE
@@ -25,6 +26,22 @@ namespace JaneIDE
         public MainWindow()
         {
             InitializeComponent();
+
+            //this.DataContextChanged += Reload;
         }
+        /*
+        private void Reload(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (this.DataContext == null)
+                return;
+            
+            var vm = (MainWindowViewModel)this.DataContext;
+            vm.updateOutput += delegate
+            {
+                outputTextBox.Text = vm.OutputText;
+            };
+            
+        }
+        */
     }
 }

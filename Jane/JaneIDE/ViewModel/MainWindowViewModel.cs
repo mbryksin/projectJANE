@@ -27,6 +27,8 @@ namespace JaneIDE.ViewModel
         private string errors;
         private string process;
 
+        public event EventHandler updateOutput;
+
         public MainWindowViewModel()
         {
             project = new Project();
@@ -44,6 +46,8 @@ namespace JaneIDE.ViewModel
         void OutputWriteLine(object sender, String e)
         {
             this.OutputText = this.OutputText + e + "\r";
+            base.OnPropertyChanged("OutputText");
+            //updateOutput(this, null);
         }
         void OutputWrite(object sender, String e)
         {
