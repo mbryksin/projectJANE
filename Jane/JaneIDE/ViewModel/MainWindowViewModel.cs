@@ -225,16 +225,15 @@ namespace JaneIDE.ViewModel
                 {
                     MessageBox.Show("Error: Could not read file from disk. Original error: " + ex.Message);
                 }
-
-                project.OpenProject(openFileDialog.FileName, path);
+                string filePath = openFileDialog.FileName;
+                string folderPath = Path.GetDirectoryName(filePath);
+                project.OpenProject(filePath, folderPath);
                 this.Workspaces.Clear();
                 CodeBoxViewModel workspace = new CodeBoxViewModel(project.MainClass);
                 this.Workspaces.Add(workspace);
                 this.SetActiveWorkspace(workspace);
             }
         }
-
-
 
     }
 }

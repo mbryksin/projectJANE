@@ -1,1 +1,1 @@
-C:\Users\Matvey\Documents\Jane Solutions\Arithmetics
+C:\git\projectJANE\Templates\Arithmetics
