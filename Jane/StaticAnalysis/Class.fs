@@ -144,7 +144,7 @@ let GD_Class (p : Program) (c : Class) =
                     |> List.map (fun f -> new Variable(f.Name.Value, f.Type, Val.Null, IsFinal = f.IsFinal))
 
     // Сбор данных на нижних уровнях
-    c.MemberList |> List.iter (fun cm -> GD_ClassMember p c cm)
+    c.MemberList |> List.iter (GD_ClassMember p c)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
