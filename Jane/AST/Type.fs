@@ -6,6 +6,12 @@ type Type(name : string, dimension : int, pos : Position) =
     member x.Name      = name
     member x.Dimension = dimension
 
+    override x.Equals(y : obj) =
+        if y :? Type then
+            let y = y :?> Type
+            name = y.Name && dimension = y.Dimension
+        else false
+
     override x.ToString() = sprintf "%s%s" name (String.replicate dimension "[]")
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
