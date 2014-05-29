@@ -1,5 +1,5 @@
 Author: Алексей
-Version: 104
+Version: 118
 Main-Class: MainClass
 Sources:
 MainClass.jane

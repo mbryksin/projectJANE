@@ -1,74 +1,78 @@
 class Tree
 {
-    int value = -1;
+	int value = 0;
     Tree left = null;
     Tree right = null;
 
     static int height(Tree tree)
     {
-        if (tree == null) 
+		if (tree == null) 
         {           
-            return 0;
+			return 0;
         }         
         else
         {
-            int leftH  = Tree.height(tree.left);
+			int leftH  = Tree.height(tree.left);
             int rightH = Tree.height(tree.right);
             int max = 0;
             if (leftH > rightH)
             {
-                max = leftH;
+				max = leftH;
             }
-            else
+			else
             {
-                max = rightH;
+				max = rightH;
             }
             return max+1;
-        }           
-    }
-    int getVal()
+        }   
+            
+	}
+	int getVal()
     {
-        return value;
+		return value;
     }
 
     int setVal(int setVal)
     {
-        value = setVal;
+		value = setVal;
     }
 
     void insert(int val)
     {
-        if (value == -1) 
+		if (value == 0) 
         {           
-            value = val;  
+			value = val;  
         }         
-        else
+		else
         {
-            if (value > val)
+			if (value > val)
             {
-                if (left == null)
+				if (left == null)
                 {
-                    left = new Tree();
+					left = new Tree();
                 }
                 left.insert(val);
             }
             else
             {
-                if (right == null)
+				if (right == null)
                 {
-                    right = new Tree();
+					right = new Tree();
                 }
                 right.insert(val);
             }            
-        }               
-    }  
+		}   
+            
+	}  
 }
+
+            
 
 class MainClass 
 {
-    static void main() 
+	static void main() 
     {
-        Tree myTree = new Tree();
+		Tree myTree = new Tree();
         myTree.insert(7);
         myTree.insert(8);
         myTree.insert(3);
@@ -79,5 +83,5 @@ class MainClass
         Console.writeLine(leftVal);
         int h = Tree.height(myTree);
         Console.writeLine(h);
-    }
+	}
 }
