@@ -1,0 +1,5 @@
+Author: Алексей
+Version: 104
+Main-Class: MainClass
+Sources:
+MainClass.jane
