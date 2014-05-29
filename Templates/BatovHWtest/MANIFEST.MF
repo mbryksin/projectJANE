@@ -1,0 +1,5 @@
+Author: 1
+Version: 200
+Main-Class: main
+Sources:
+main.jane

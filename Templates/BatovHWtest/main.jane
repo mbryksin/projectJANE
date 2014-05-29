@@ -1,0 +1,32 @@
+//Batov Nikita SPbSU, 271
+// Lagrange interpolation
+
+class main
+{
+  static void main()
+    {
+      float[] x = {1.0,2.0,3.0};
+	  float[] y = {2.0,4.0,6.0};
+	  float x0 = 21.0; 
+      float y0 = main.inter(x,y,x0);
+	  Console.writeLine(y0);	
+    }
+  static float inter(float[] x, float[] y, float x0)
+	{
+		float y0 = 0.0;
+		int s = Array.length(x);
+		for(int k = 0; k < s; k = k + 1)
+		{
+			float l = 1.0;
+			for(int j = 0; j < s; j = j + 1)
+			{	
+				if (j != k)
+				{
+					l = l * ((x0 - x[j])/(x[k] - x[j]));
+				}
+			}
+			y0 = y0 + y[k] * l;
+		}
+		return y0;
+	}
+}

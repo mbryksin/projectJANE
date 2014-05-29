@@ -58,3 +58,7 @@ type JaneString =
         x.ToString()
     static member valueOfBoolean(x : bool) : string = 
         x.ToString()
+    static member parseInt(s : string) : int64 =
+        Int64.Parse s
+    static member parseFloat(s : string) : float =
+        (float)(Single.Parse s)

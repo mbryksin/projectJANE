@@ -5,7 +5,7 @@
         <Lexer LexerName="cpp"/>
         <Lexer LineCommentPrefix="//" StreamCommentPrefix="/*" StreamCommentSuffix="*/" >
             <Keywords List="0">class static import new interface null return final for while do break continue super if else </Keywords>
-            <Keywords List="1">void int string String byte</Keywords>
+            <Keywords List="1">void int string String byte boolean float</Keywords>
             <Properties>
         		<Property Name="fold.comment" Value="1" />
       		</Properties>
@@ -23,7 +23,7 @@
 
         <AutoComplete FillUpCharacters="" SingleLineAccept="True" IsCaseSensitive="False">
         <List>
-        	class static import new interface return final break continue super void int string byte
+          boolean class static import new interface return final float break continue super void int string byte Char.parseInt() Math.abs() Math.abs() Math.acos() Math.asin() Math.atan() Math.cbrt() Math.ceil() Math.cos() Math.cosh() Math.floor() Math.ln() Math.log10() Math.max() Math.max() Math.min() Math.min() Math.pow() Math.sin() Math.sinh() Math.sqrt() Math.tan() Math.tanh() Math.toDegrees() Math.toRadians()  String.charAt() String.compareTo() String.compareToIgnoreCase() String.concat() String.copyValueOf() String.endsWith() String.indexOfChar() String.indexOfCharFromIndex() String.indexOfString() String.indexOfStringFromIndex() String.lastIndexOfChar() String.lastIndexOfCharFromIndex() String.lastIndexOfString() String.lastIndexOfStringFromIndex() String.length() String.parseInt() String.parseFloat() String.startsWith() String.substringFromIndex() String.substringFromInterval() String.toCharArray() String.toLowerCase() String.toUpperCase() String.trim() String.valueOfInt() String.valueOfChar() String.valueOfFloat() String.valueOfBoolean()   Console.writeLine()  Array.length() Array.create()
         </List>
         </AutoComplete>	
 
@@ -58,9 +58,9 @@ else
 
         <Snippet Shortcut="YAS" IsSurroundsWith="true">YetAnotherSnippet($end$);</Snippet>
 
-      <Snippet Shortcut="NewClassWithMain" IsSurroundsWith="true">class $NewClass$
+      <Snippet Shortcut="MainClass" IsSurroundsWith="true">class $main$
 {
-  void main(String[] args)
+  static void main()
     {
       $end$
     }

@@ -1,4 +1,4 @@
-/*	Big numbers arithmetics project
+/*	Big numbers arithmetics template project
 	
 	Copyright Matvey Bryksin
 
@@ -15,20 +15,196 @@
 	limitations under the License.
 */
 
-class BigNumber {
-	BigNumber() {
-	}
-	void sayHello()
+class BigNumber 
+{
+	BigNumber(string numStr) 
 	{
-		Console.writeLine("Hello world!");
+		bnString = numStr;
+		bnSign = String.startsWith(bnString,"-");
+		if (bnSign)
+		{
+			bnString = String.substringFromIndex(bnString, 1);
+		}
 	}
+	string bnString = " ";
+	boolean bnSign = false;
+
+	boolean Sign()
+	{
+		return bnSign;
+	}
+	static BigNumber Abs(BigNumber n1)
+	{
+		BigNumber t1 = new BigNumber(n1.bnString);
+		return t1;
+	}
+	static void Negate(BigNumber n1)
+	{
+		n1.SetSign(!n1.Sign());
+	}
+	void SetSign(boolean newSign)
+	{
+		if (bnSign == newSign)
+		{
+			return;
+		}
+		bnSign = newSign;
+	}
+	string ToString()
+	{	
+		if (bnSign)
+		{
+			return "-"+bnString;
+		} else
+		{
+			return bnString;
+		}
+		
+	}
+	static void Add(BigNumber n1, BigNumber n2)
+	{
+		if (n1.Sign() == n2.Sign())
+		{
+			int shift = 0;
+			string result = String.substringFromIndex(" ", 1);
+			string strNum1 = n1.bnString;
+			string strNum2 = n2.bnString;
+			int l1 = String.length(strNum1);
+			int l2 = String.length(strNum2);
+			
+			int k1 = l1 - 1;
+			int k2 = l2 - 1;
+			while ((k1 >= 0) && (k2 >= 0))
+			{
+				int x1 = Char.parseInt(strNum1[k1]);
+				int x2 = Char.parseInt(strNum2[k2]);
+				if ((x1 + x2 + shift) >= 10)
+				{
+					result = String.valueOfInt(x1 + x2 + shift - 10) + result;
+					shift = 1;
+				} else
+				{
+					result = String.valueOfInt(x1 + x2 + shift) + result;
+					shift = 0;
+				}
+				k1 = k1 - 1;
+				k2 = k2 - 1;
+			}
+			while (k1 >= 0)
+			{
+				int x1 = Char.parseInt(strNum1[k1]);
+				if ((x1 + shift) >= 10)
+				{
+					result = String.valueOfInt(x1 + shift - 10) + result;
+					shift = 1;
+				} else
+				{
+					result = String.valueOfInt(x1 + shift) + result;
+					shift = 0;
+				}
+				k1 = k1 - 1;
+			}
+			while (k2 >= 0)
+			{
+				int x2 = Char.parseInt(strNum2[k2]);
+				if ((x2 + shift) >= 10)
+				{
+					result = String.valueOfInt(x2 + shift - 10) + result;
+					shift = 1;
+				} else
+				{
+					result = String.valueOfInt(x2 + shift) + result;
+					shift = 0;
+				}
+				k2 = k2 - 1;
+			}	
+
+			if (shift == 1)
+			{
+				result = "1" + result;
+				shift = 0;
+			}
+
+			if (n1.Sign())
+			{
+				result = "-"+result;
+			}
+
+			return new BigNumber(result);			
+		} else
+		{
+			if (n1.Sign())
+			{	
+				BigNumber tempBN = BigNumber.Abs(n1);
+				return BigNumber.Sub(n2, tempBN);
+			} else
+			{	
+				BigNumber tempBN = BigNumber.Abs(n2);
+				return BigNumber.Sub(n1, tempBN);
+			}
+		}
+	}
+
+	static BigNumber Sub(BigNumber n1, BigNumber n2)
+	{
+		return new BigNumber("0");
+	}
+	
+	static BigNumber Mult(BigNumber n1, BigNumber n2)
+	{
+		string strNum1 = n1.bnString;
+		string strNum2 = n2.bnString;
+		int l1 = String.length(strNum1);
+		int l2 = String.length(strNum2);
+		BigNumber temp = new BigNumber("0");
+		for (int k2 = l2 - 1; k2 >= 0; k2 = k2 - 1)
+		{
+			string result = String.substringFromIndex(" ", 1);
+			int shift = 0;
+			int x2 = Char.parseInt(strNum2[k2]);
+
+			int k1 = l1 - 1;
+			while (k1 >= 0)
+			{
+				int x1 = Char.parseInt(strNum1[k1]);
+				result = String.valueOfInt((x1*x2+shift)%10) + result;
+				shift = (x1*x2 + shift)/10;
+				k1 = k1 - 1;
+			}
+			if (shift != 0)
+			{
+				result = String.valueOfInt(shift) + result;
+			}
+			for (int h = 0; h < l2 - k2 - 1; h = h + 1)
+				result = result + "0";
+			
+			BigNumber temp2 = new BigNumber(result);
+			temp = BigNumber.Add(temp, temp2);
+		}
+		if (n1.Sign() != n2.Sign())
+			BigNumber.Negate(temp);
+		return temp;
+	}
+
 }
 
 class MainClass 
 {
 	static void main() 
     {
-		BigNumber num1 = new BigNumber();
-		num1.sayHello();
+		/*
+		100! execution time = 2.7 seconds
+		200! execution time = 40 seconds
+		300! execution time = 2.6 minutes
+		*/
+		int n = 300;
+		BigNumber res = new BigNumber("1");
+		for (int x = 1; x <= n; x = x + 1)
+		{
+			Console.writeLine(x);
+			BigNumber tempX = new BigNumber(String.valueOfInt(x));
+			res = BigNumber.Mult(res, tempX);
+		}
+		Console.writeLine(res.ToString());
     }
 }
