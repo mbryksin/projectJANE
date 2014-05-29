@@ -4,6 +4,8 @@ open AST
 open SA.Type
 open SA.Expression
 open SA.Dictionary
+open SA.ClassConstructor
+open SA.ClassMethod
 
 // GD ~ Gathering Data
 // SA ~ Static Analysis
@@ -44,6 +46,6 @@ let SA_ClassMember (p : Program) (c : Class) (cm : ClassMember) =
         let context = if cf.IsStatic then c.StaticContext else c.Context |> List.filter (fun v -> v.Name <> cf.Name.Value)
         SA_Expression p cf.Body expectedTypes context
 
-    | :? ClassConstructor as cc -> () // Заглушка
-    | :? ClassMethod as cm      -> () // Заглушка
+    | :? ClassConstructor as cc -> SA_ClassConstructor p c cc
+    | :? ClassMethod as cm      -> SA_ClassMethod p c cm
     | _                         -> () // Заглушка

@@ -56,6 +56,9 @@
     <Compile Include="Expression.fs" />
     <Compile Include="InterfaceMember.fs" />
     <Compile Include="Interface.fs" />
+    <Compile Include="Statement.fs" />
+    <Compile Include="ClassConstructor.fs" />
+    <Compile Include="ClassMethod.fs" />
     <Compile Include="ClassMember.fs" />
     <Compile Include="Class.fs" />
     <Compile Include="ProgramMember.fs" />
