@@ -1,6 +1,6 @@
 class Tree
 {
-	int value = 'a';
+	int value = -1;
     Tree left = null;
     Tree right = null;
 
