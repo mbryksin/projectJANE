@@ -1,6 +1,6 @@
 class Tree
 {
-	int value = 0;
+	int value = 'a';
     Tree left = null;
     Tree right = null;
 
@@ -39,7 +39,7 @@ class Tree
 
     void insert(int val)
     {
-		if (value == 0) 
+		if (value == -1) 
         {           
 			value = val;  
         }         
