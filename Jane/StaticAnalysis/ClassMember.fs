@@ -34,14 +34,16 @@ let SA_ClassMember (p : Program) (c : Class) (cm : ClassMember) =
             | :? IntType     as it -> [it :> Type; new FloatType(it.Dimension, pos) :> Type]
             | :? FloatType   as ft -> [ft :> Type; new IntType(ft.Dimension, pos) :> Type]
             | :? CustomType  as ct ->
-                match ct.ClassOrInterface.Value with
-                | :? Interface as i -> i.AllAncestors.ToListValues() 
+                if ct.ClassOrInterface.IsSome then
+                    match ct.ClassOrInterface.Value with
+                    | :? Interface as i -> i.AllAncestors.ToListValues() 
+                                           |> List.map (fun c -> new CustomType(c.Name.Value, ct.Dimension, pos) :> Type)
+                                           |> fun l -> (List.Cons (cf.Type, l))
+                    | :? Class as c -> c.AllAncestors.ToListValues() 
                                        |> List.map (fun c -> new CustomType(c.Name.Value, ct.Dimension, pos) :> Type)
                                        |> fun l -> (List.Cons (cf.Type, l))
-                | :? Class as c -> c.AllAncestors.ToListValues() 
-                                   |> List.map (fun c -> new CustomType(c.Name.Value, ct.Dimension, pos) :> Type)
-                                   |> fun l -> (List.Cons (cf.Type, l))
-                | _  -> []
+                    | _  -> []
+                else []
             | _ -> []
         let context = if cf.IsStatic then c.StaticContext else c.Context |> List.filter (fun v -> v.Name <> cf.Name.Value)
         SA_Expression p cf.Body expectedTypes context
