@@ -38,7 +38,6 @@ class SquareMatrix
 
 	int GetSize()
 	{
-		int r = a.(1+1);
 		return size;
 	}
 
