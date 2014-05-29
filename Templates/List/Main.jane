@@ -1,0 +1,57 @@
+class Main
+{
+	static void main()
+	{
+		List list = List.One();
+		for (int i = 2; i <= 100; i = i + 1)
+		{
+			list.addElem(i);
+		}
+		
+		Console.writeLine(list);
+	}
+}
+
+class List
+{
+	List(int h, List t)
+	{
+		head = h;
+		tail = t;
+	}
+
+	int head = 0;
+	List tail = null;
+
+	static List One()
+	{
+		List l = new List(1, null);
+		return l;
+	}
+
+	int getHead() 
+	{
+		return head;
+	}
+
+	List getTail()
+	{
+		return tail;
+	}
+	
+	void setHead(int value)
+	{
+		head = value;
+	}
+	
+	void setTail(List value)
+	{
+		tail = value;
+	}
+	
+	void addElem(int elem)
+	{
+		tail = new List(head, tail);
+		head = elem;
+	}
+}
