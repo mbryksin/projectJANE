@@ -1,0 +1,162 @@
+class SquareMatrix
+{
+
+//////////////////////////////////////////////////////////////
+
+	SquareMatrix(float[][] m)
+	{
+		matrix = m;
+		size = Array.length(m);
+		for (int i = 0; i < size; i = i + 1)
+		{
+			if (size != Array.length(m[i]))
+			{
+				size = -1;
+			}
+		}
+		if (size == -1)
+		{
+			size = 0;
+			matrix = Array.create(0, 0);
+		}
+	}
+
+//////////////////////////////////////////////////////////////
+
+	float[][] matrix = Array.create(0, 0);
+
+	int size = 0;
+
+//////////////////////////////////////////////////////////////
+	
+	int Get(int i, int j)
+	{
+		return matrix[i][j];
+	}
+
+//////////////////////////////////////////////////////////////
+
+	int GetSize()
+	{
+		return size;
+	}
+
+//////////////////////////////////////////////////////////////
+
+	void Set(int i, int j, int n)
+	{
+		matrix[i][j] = n;
+	}
+
+//////////////////////////////////////////////////////////////
+
+	void Add(SquareMatrix m)
+	{
+		if (size == m.GetSize())
+		{
+			for (int i = 0; i < size; i = i + 1)
+			{
+				for (int j = 0; j < size; j = j + 1)
+				{
+					matrix[i][j] = matrix[i][j] + m.Get(i, j);
+				}
+			}
+		}
+	}
+
+//////////////////////////////////////////////////////////////
+
+	void Invert()
+	{
+		for (int i = 0; i < size; i = i + 1)
+		{
+			for (int j = 0; j < size; j = j + 1)
+			{
+				matrix[i][j] = -matrix[i][j];
+			}
+		}
+	}
+
+//////////////////////////////////////////////////////////////
+
+
+	void Subtract(SquareMatrix m)
+	{
+		if (size == m.GetSize())
+		{
+			for (int i = 0; i < size; i = i + 1)
+			{
+				for (int j = 0; j < size; j = j + 1)
+				{
+					matrix[i][j] = matrix[i][j] - m.Get(i, j);
+				}
+			}
+		}
+	}
+
+//////////////////////////////////////////////////////////////
+
+	void Multiply(SquareMatrix m)
+	{
+		if (size == m.GetSize())
+		{
+			for (int i = 0; i < size; i = i + 1)
+			{
+				float[] temp = Array.create(size, 0);
+				
+				for (int j = 0; j < size; j = j + 1)
+				{
+					temp[j] = matrix[i][j];
+					matrix[i][j] = 0;
+				}
+
+				for (int j = 0; j < size; j = j + 1)
+				{
+					for (int k = 0; k < size; k = k + 1)
+					{
+						matrix[i][j] = matrix[i][j] + temp[k] * m.Get(k, j);
+					}
+				}
+			}
+		}
+	}
+
+//////////////////////////////////////////////////////////////
+
+	void Print()
+	{
+		Console.writeLine(matrix);
+	}
+
+//////////////////////////////////////////////////////////////
+
+}
+
+class mainClass
+{
+	static void main()
+	{
+		float[][] m1 = {{ 1,  2,  3,  4}, 
+                        { 5,  6,  7,  8}, 
+                        { 9, 10, 11, 12},
+                        {13, 14, 15, 16}};
+
+		float[][] m2 = {{ 0,  2,  0,  4}, 
+                        { 5,  0,  7,  0}, 
+                        { 0, 10,  0, 12},
+                        {13,  0, 15,  0}};
+
+
+		SquareMatrix matrix1 = new SquareMatrix(m1);
+		SquareMatrix matrix2 = new SquareMatrix(m2);
+		matrix1.Print();
+		matrix1.Add(matrix2);
+		matrix1.Print();
+		matrix1.Multiply(matrix2);
+		matrix1.Print();
+		matrix1.Invert();
+		matrix1.Print();
+  		matrix1.Subtract(matrix1);
+		matrix1.Print();
+	}
+}

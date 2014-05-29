@@ -20,10 +20,14 @@ and  Variable(name : string, varType : Type, value : Val) =
     let name = name
     let varType = varType 
     let mutable value = value 
+    let mutable isFinal = false
 
     member x.Name = name
     member x.Val = value
     member x.Type = varType
+    
+    member x.IsFinal with get() = isFinal
+                     and set(b) = isFinal <- b
 
     member x.Assign(assignValue : Val) = 
         value <- assignValue

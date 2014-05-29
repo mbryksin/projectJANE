@@ -6,6 +6,7 @@ open AST
 open SA.HelperFunctions
 open SA.Errors
 open SA.Dictionary
+open SA.InterfaceMember
 
 // GD ~ Gathering Data
 // SA ~ Static Analysis
@@ -60,8 +61,9 @@ let GD_Interface (p : Program) (i : Interface) =
     
     // Интерфейс сам себе не предок
     ignore <| i.AllAncestors.Remove(i.Name.Value)
-    ()
-
+    
+    // Сбор информации на нижних уровнях
+    i.MemberList |> List.iter (GD_InterfaceMember p i)
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

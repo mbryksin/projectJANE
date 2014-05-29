@@ -1,0 +1,5 @@
+Author: Notter_Killer
+Version: 258
+Main-Class: mainClass
+Sources:
+mainClass.jane

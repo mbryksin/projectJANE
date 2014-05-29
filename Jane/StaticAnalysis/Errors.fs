@@ -30,3 +30,13 @@ type Error with
 
     static member ObjectIsNotExist (name : ID) (typeObject : string) =
         new Error (sprintf "%s with name \"%A\" not exists." typeObject name, name.Position)
+
+    static member InterfaceMemberIsNotImplemented (im : InterfaceMember) (i : Interface) (c : Class) =
+        new Error (sprintf "In class \"%A\" not implement member \"%A\" of interface \"%A\"." c.Name im.Name i.Name, c.Position)
+
+    static member ExpectedTypes (types : Type list) (n : Node) =
+        let str = types |> List.map (fun t -> t.Name) |> String.concat "\", \""
+        new Error (sprintf "Expected types: \"%s\"." str, n.Position)
+
+    static member ExpectedValueType (n : Node) =
+        new Error ("Expected value type.", n.Position)

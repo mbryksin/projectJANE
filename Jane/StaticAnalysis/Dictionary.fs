@@ -27,6 +27,12 @@ type Dictionary<'TKey, 'TValue> with
     member x.TryAddListWithAction list action = 
         List.iter (fun (a, b) -> x.TryAddWithAction a b action) list
 
+    /// <summary> 
+    /// Добавляет или заменяет значение по ключу. 
+    /// </summary>
+    member x.AddOrUpdate key value = 
+        if x.ContainsKey(key) then x.[key] <- value else x.Add(key, value)
+
     /// <summary>
     /// Добавляет список указанных ключей и значений в словарь. 
     /// В случае повтора - бездействие.

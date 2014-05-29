@@ -6,12 +6,23 @@ type Type(name : string, dimension : int, pos : Position) =
     member x.Name      = name
     member x.Dimension = dimension
 
+    override x.Equals(y : obj) =
+        if y :? Type then
+            let y = y :?> Type
+            name = y.Name && dimension = y.Dimension
+        else false
+
     override x.ToString() = sprintf "%s%s" name (String.replicate dimension "[]")
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 type CustomType(name : string, dimension : int, pos : Position) =
     inherit Type(name, dimension, pos)
+
+    let mutable classOrInterface : Node option = None
+
+    member x.ClassOrInterface with get() = classOrInterface
+                              and set(n) = classOrInterface <- n
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
