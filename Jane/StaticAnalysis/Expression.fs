@@ -40,7 +40,7 @@ let rec SA_Expression (p : Program) (expr : Expression) (expectedTypes : Type li
         | NOT   -> let isBad = isBadExpr ((<>) boolType)
                    if isBad then ErrorCreator ()
                    else NextExpression uo.Operand [boolType]
-        | MINUS -> let isBad = isBadExpr (fun (t : Type) -> t = intType || t = floatType)
+        | MINUS -> let isBad = isBadExpr (fun (t : Type) -> t <> intType && t <> floatType)
                    if isBad then ErrorCreator ()
                    else NextExpression uo.Operand [intType; floatType] 
           
